@@ -66,6 +66,8 @@ build EFI executables and ROMs using the GNU tools.
 %build
 source ./edksetup.sh
 
+# Build is broken if MAKEFLAGS contains -j option.
+unset MAKEFLAGS
 make -C $WORKSPACE/BaseTools
 
 %install
