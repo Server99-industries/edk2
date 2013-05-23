@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -21,6 +21,8 @@ Source0:	edk2-r%{SVNREV}.tar.xz
 License:	BSD
 Group:		Applications/Emulators
 URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
+
+ExclusiveArch:	%{ix86} x86_64 %{arm}
 
 BuildRequires:	python2-devel
 BuildRequires:	libuuid-devel
@@ -159,6 +161,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Thu May 23 2013 Dan Horák <dan[at]danny.cz> 20130515svn14365-3
+- set ExclusiveArch
+
 * Thu May 16 2013 Paolo Bonzini <pbonzini@redhat.com> 20130515svn14365-2
 - Fix edk2-tools-python Requires
 
