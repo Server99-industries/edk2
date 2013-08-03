@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -161,6 +161,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20130515svn14365-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Thu May 23 2013 Dan Horák <dan[at]danny.cz> 20130515svn14365-3
 - set ExclusiveArch
 
