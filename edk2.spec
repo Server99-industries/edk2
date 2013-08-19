@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -32,7 +32,6 @@ Requires:	edk2-tools%{?_isa} = %{version}-%{release}
 %description
 This package provides tools that are needed to build EFI executables
 and ROMs using the GNU tools.
-
 
 %package tools
 Summary:	EFI Development Kit II Tools
@@ -62,11 +61,22 @@ Group:		Development/Tools
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
+%package shell
+Summary: UEFI 2.0 Shell
+
+%description shell
+The shell provides a standard pre-boot command line
+processor to run on top of a UEFI 2.0 firmware.
+
 %prep
 %setup -q -n %{name}-r%{SVNREV}
+# remove non-working compiler option
+sed -i 's/ -m *elf_x86_64//' BaseTools/Conf/tools_def.template
 
 %build
+make -C BaseTools
 source ./edksetup.sh
+build -a X64 -b RELEASE -p ShellPkg/ShellPkg.dsc -t GCC46
 
 # Build is broken if MAKEFLAGS contains -j option.
 unset MAKEFLAGS
@@ -107,6 +117,9 @@ export PYTHONPATH
 exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}/$i
   chmod +x %{buildroot}%{_bindir}/$i
 done
+
+mkdir -p %{buildroot}%{_prefix}/lib/efi-shell
+install -m 0755 -D Build/Shell/RELEASE_GCC46/X64/Shell.efi %{buildroot}%{_prefix}/lib/efi-shell/shellx64.efi
 
 %files tools
 %{_bindir}/BootSectImage
@@ -160,7 +173,14 @@ done
 %doc BaseTools/UserManuals/VfrCompiler_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
+%files shell
+%dir %{_prefix}/lib/efi-shell
+%{_prefix}/lib/efi-shell/shellx64.efi
+
 %changelog
+* Mon Aug 19 2013 Kay Sievers <kay@redhat.com> - 20130515svn14365-5
+- Add sub-package with EFI shell
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20130515svn14365-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
