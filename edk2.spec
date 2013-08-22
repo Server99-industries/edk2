@@ -1,6 +1,15 @@
 %define SVNDATE 20130515
 %define SVNREV  14365
 
+%ifarch %{ix86}
+%global machine_type_name ia32
+%global edk2_build_arch   IA32
+%endif
+%ifarch x86_64
+%global machine_type_name x64
+%global edk2_build_arch   X64
+%endif
+
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
@@ -22,7 +31,9 @@ License:	BSD
 Group:		Applications/Emulators
 URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
 
-ExclusiveArch:	%{ix86} x86_64 %{arm}
+# We need to build tools on ARM, but how is still an open question
+# https://bugzilla.redhat.com/show_bug.cgi?id=992180
+ExclusiveArch:	%{ix86} x86_64
 
 BuildRequires:	python2-devel
 BuildRequires:	libuuid-devel
@@ -30,8 +41,8 @@ BuildRequires:	libuuid-devel
 Requires:	edk2-tools%{?_isa} = %{version}-%{release}
 
 %description
-This package provides tools that are needed to build EFI executables
-and ROMs using the GNU tools.
+EDK II is a development code base for creating UEFI drivers, applications
+and firmware images.
 
 %package tools
 Summary:	EFI Development Kit II Tools
@@ -76,7 +87,7 @@ sed -i 's/ -m *elf_x86_64//' BaseTools/Conf/tools_def.template
 %build
 make -C BaseTools
 source ./edksetup.sh
-build -a X64 -b RELEASE -p ShellPkg/ShellPkg.dsc -t GCC46
+build -a %{edk2_build_arch} -b RELEASE -p ShellPkg/ShellPkg.dsc -t GCC46
 
 # Build is broken if MAKEFLAGS contains -j option.
 unset MAKEFLAGS
@@ -119,7 +130,8 @@ exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}
 done
 
 mkdir -p %{buildroot}%{_prefix}/lib/efi-shell
-install -m 0755 -D Build/Shell/RELEASE_GCC46/X64/Shell.efi %{buildroot}%{_prefix}/lib/efi-shell/shellx64.efi
+install -m 0755 -D Build/Shell/RELEASE_GCC46/%{edk2_build_arch}/Shell.efi \
+  %{buildroot}%{_prefix}/lib/efi-shell/shell%{machine_type_name}.efi
 
 %files tools
 %{_bindir}/BootSectImage
@@ -175,7 +187,7 @@ install -m 0755 -D Build/Shell/RELEASE_GCC46/X64/Shell.efi %{buildroot}%{_prefix
 
 %files shell
 %dir %{_prefix}/lib/efi-shell
-%{_prefix}/lib/efi-shell/shellx64.efi
+%{_prefix}/lib/efi-shell/shell%{machine_type_name}.efi
 
 %changelog
 * Mon Aug 19 2013 Kay Sievers <kay@redhat.com> - 20130515svn14365-5
