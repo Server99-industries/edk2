@@ -1,19 +1,10 @@
 %define SVNDATE 20130515
 %define SVNREV  14365
 
-%ifarch %{ix86}
-%global machine_type_name ia32
-%global edk2_build_arch   IA32
-%endif
-%ifarch x86_64
-%global machine_type_name x64
-%global edk2_build_arch   X64
-%endif
-
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -31,7 +22,7 @@ License:	BSD
 Group:		Applications/Emulators
 URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
 
-# We need to build tools on ARM, but how is still an open question
+# We need to build tools everywhere, but how is still an open question
 # https://bugzilla.redhat.com/show_bug.cgi?id=992180
 ExclusiveArch:	%{ix86} x86_64
 
@@ -72,22 +63,11 @@ Group:		Development/Tools
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
-%package shell
-Summary: UEFI 2.0 Shell
-
-%description shell
-The shell provides a standard pre-boot command line
-processor to run on top of a UEFI 2.0 firmware.
-
 %prep
 %setup -q -n %{name}-r%{SVNREV}
-# remove non-working compiler option
-sed -i 's/ -m *elf_x86_64//' BaseTools/Conf/tools_def.template
 
 %build
-make -C BaseTools
 source ./edksetup.sh
-build -a %{edk2_build_arch} -b RELEASE -p ShellPkg/ShellPkg.dsc -t GCC46
 
 # Build is broken if MAKEFLAGS contains -j option.
 unset MAKEFLAGS
@@ -128,10 +108,6 @@ export PYTHONPATH
 exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}/$i
   chmod +x %{buildroot}%{_bindir}/$i
 done
-
-mkdir -p %{buildroot}%{_prefix}/lib/efi-shell
-install -m 0755 -D Build/Shell/RELEASE_GCC46/%{edk2_build_arch}/Shell.efi \
-  %{buildroot}%{_prefix}/lib/efi-shell/shell%{machine_type_name}.efi
 
 %files tools
 %{_bindir}/BootSectImage
@@ -185,11 +161,11 @@ install -m 0755 -D Build/Shell/RELEASE_GCC46/%{edk2_build_arch}/Shell.efi \
 %doc BaseTools/UserManuals/VfrCompiler_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
-%files shell
-%dir %{_prefix}/lib/efi-shell
-%{_prefix}/lib/efi-shell/shell%{machine_type_name}.efi
-
 %changelog
+* Fri Aug 30 2013 Paolo Bonzini <pbonzini@redhat.com> - 20130515svn14365-6
+- Revert previous change; firmware packages should be noarch, and building
+  BaseTools twice is simply wrong.
+
 * Mon Aug 19 2013 Kay Sievers <kay@redhat.com> - 20130515svn14365-5
 - Add sub-package with EFI shell
 
