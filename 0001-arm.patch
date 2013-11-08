@@ -167,11 +167,11 @@ index 0000000..bea7e82
 +  //
 +  // Microsoft* compiler requires _EFIAPI useage, __cdecl is Microsoft* specific C.
 +  // 
-+  #define EFIAPI __cdecl  
++  #define EFIAPI 
 +#endif
 +
 +#if __GNUC__
-+  #define EFIAPI __attribute__((cdecl))    
++  #define EFIAPI 
 +#endif
 +
 +//
