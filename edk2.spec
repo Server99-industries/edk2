@@ -24,7 +24,7 @@ URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
 
 # We need to build tools everywhere, but how is still an open question
 # https://bugzilla.redhat.com/show_bug.cgi?id=992180
-ExclusiveArch:	%{ix86} x86_64
+#ExclusiveArch:	%{ix86} x86_64
 
 BuildRequires:	python2-devel
 BuildRequires:	libuuid-devel
