@@ -1,14 +1,3 @@
-From 3eaa4cd1f26313e4dd9f76ad5cd61f6eb11785b6 Mon Sep 17 00:00:00 2001
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 8 Nov 2013 13:51:34 +0100
-Subject: [PATCH] arm
-
----
- BaseTools/Source/C/GNUmakefile                 |   3 +
- BaseTools/Source/C/Include/Arm/ProcessorBind.h | 168 +++++++++++++++++++++++++
- 2 files changed, 171 insertions(+)
- create mode 100644 BaseTools/Source/C/Include/Arm/ProcessorBind.h
-
 diff --git a/BaseTools/Source/C/GNUmakefile b/BaseTools/Source/C/GNUmakefile
 index e0dde3e..bee0059 100644
 --- a/BaseTools/Source/C/GNUmakefile
@@ -197,6 +186,18 @@ index 0000000..bea7e82
 +#endif
 +
 +#endif
--- 
-1.8.4.2
-
+diff --git a/BaseTools/Source/C/Makefiles/header.makefile b/BaseTools/Source/C/Makefiles/header.makefile
+index 9aa83c0..c67e86d 100644
+--- a/BaseTools/Source/C/Makefiles/header.makefile
++++ b/BaseTools/Source/C/Makefiles/header.makefile
+@@ -30,6 +30,10 @@ ifeq ($(ARCH), IA32)
+ ARCH_INCLUDE = -I $(MAKEROOT)/Include/Ia32/
+ endif
+ 
++ifeq ($(ARCH), ARM)
++ARCH_INCLUDE = -I $(MAKEROOT)/Include/Arm/
++endif
++
+ ifeq ($(ARCH), X64)
+ ARCH_INCLUDE = -I $(MAKEROOT)/Include/X64/
+ endif
