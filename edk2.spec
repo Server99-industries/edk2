@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -164,6 +164,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Fri Nov 8 2013 Paolo Bonzini <pbonzini@redhat.com> - 20130515svn14365-7
+- Make BaseTools compile on ARM.
+
 * Fri Aug 30 2013 Paolo Bonzini <pbonzini@redhat.com> - 20130515svn14365-6
 - Revert previous change; firmware packages should be noarch, and building
   BaseTools twice is simply wrong.
