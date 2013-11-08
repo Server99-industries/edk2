@@ -17,6 +17,7 @@ Summary:	EFI Development Kit II
 # rm -rf edk2-r${SVNREV}/FatBinPkg
 # tar -cv edk2-r${SVNREV} | xz -6 > edk2-r${SVNREV}.tar.xz
 Source0:	edk2-r%{SVNREV}.tar.xz
+Patch1:		basetools-arm.patch
 
 License:	BSD
 Group:		Applications/Emulators
@@ -24,7 +25,7 @@ URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
 
 # We need to build tools everywhere, but how is still an open question
 # https://bugzilla.redhat.com/show_bug.cgi?id=992180
-ExclusiveArch:	%{ix86} x86_64
+ExclusiveArch:	%{ix86} x86_64 %{arm}
 
 BuildRequires:	python2-devel
 BuildRequires:	libuuid-devel
@@ -65,6 +66,7 @@ build EFI executables and ROMs using the GNU tools.
 
 %prep
 %setup -q -n %{name}-r%{SVNREV}
+%patch1 -p1
 
 %build
 source ./edksetup.sh
