@@ -1,10 +1,10 @@
-%define SVNDATE 20130515
-%define SVNREV  14365
+%define SVNDATE 20131114
+%define SVNREV  14844
 
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	7%{?dist}
+Release:	1%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -164,6 +164,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Thu Nov 14 2013 Paolo Bonzini <pbonzini@redhat.com> - 20131114svn14844-1
+- Upgrade to r14844.
+
 * Fri Nov 8 2013 Paolo Bonzini <pbonzini@redhat.com> - 20130515svn14365-7
 - Make BaseTools compile on ARM.
 
