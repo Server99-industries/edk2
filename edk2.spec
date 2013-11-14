@@ -17,6 +17,7 @@ Summary:	EFI Development Kit II
 # rm -rf edk2-r${SVNREV}/FatBinPkg
 # tar -cv edk2-r${SVNREV} | xz -6 > edk2-r${SVNREV}.tar.xz
 Source0:	edk2-r%{SVNREV}.tar.xz
+Patch1:		basetools-arm.patch
 
 License:	BSD
 Group:		Applications/Emulators
@@ -65,6 +66,7 @@ build EFI executables and ROMs using the GNU tools.
 
 %prep
 %setup -q -n %{name}-r%{SVNREV}
+%patch1 -p1
 
 %build
 source ./edksetup.sh
@@ -164,7 +166,7 @@ done
 %changelog
 * Thu Nov 14 2013 Paolo Bonzini <pbonzini@redhat.com> - 20131114svn14844-1
 - Upgrade to r14844.
-- Remove patch 1.
+- Remove upstreamed parts of patch 1.
 
 * Fri Nov 8 2013 Paolo Bonzini <pbonzini@redhat.com> - 20130515svn14365-7
 - Make BaseTools compile on ARM.
