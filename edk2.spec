@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -164,6 +164,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20131114svn14844-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Thu Nov 14 2013 Paolo Bonzini <pbonzini@redhat.com> - 20131114svn14844-1
 - Upgrade to r14844.
 - Remove upstreamed parts of patch 1.
