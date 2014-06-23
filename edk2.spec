@@ -1,10 +1,10 @@
-%define SVNDATE 20131114
-%define SVNREV  14844
+%define SVNDATE   20140328
+%define SVNREV    15376
 
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -90,7 +90,9 @@ install	\
 	BaseTools/Source/C/bin/GenVtf \
 	BaseTools/Source/C/bin/GnuGenBootSector \
 	BaseTools/Source/C/bin/LzmaCompress \
+	BaseTools/BinWrappers/PosixLike/LzmaF86Compress \
 	BaseTools/Source/C/bin/Split \
+	BaseTools/Source/C/bin/TianoCompress \
 	BaseTools/Source/C/bin/VfrCompile \
 	BaseTools/Source/C/bin/VolInfo \
 	%{buildroot}%{_bindir}
@@ -99,11 +101,24 @@ ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
 	%{buildroot}%{_bindir}/GenBootSector
 
 mkdir -p %{buildroot}%{_datadir}/%{name}
+
+mkdir -p %{buildroot}%{_datadir}/%{name}/Conf
+install \
+        BaseTools/Conf/build_rule.template \
+        BaseTools/Conf/tools_def.template \
+        BaseTools/Conf/target.template \
+        %{buildroot}%{_datadir}/%{name}/Conf
+
+mkdir -p %{buildroot}%{_datadir}/%{name}/Scripts
+install \
+        BaseTools/Scripts/gcc4.4-ld-script \
+        %{buildroot}%{_datadir}/%{name}/Scripts
+
 cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
 
 find %{buildroot}%{_datadir}/%{name}/Python -name "*.pyd" | xargs rm
 
-for i in BPDG GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
+for i in build BPDG Ecc GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
   echo '#!/bin/sh
 PYTHONPATH=%{_datadir}/%{name}/Python
 export PYTHONPATH
@@ -125,12 +140,18 @@ done
 %{_bindir}/GenVtf
 %{_bindir}/GnuGenBootSector
 %{_bindir}/LzmaCompress
+%{_bindir}/LzmaF86Compress
 %{_bindir}/Split
+%{_bindir}/TianoCompress
 %{_bindir}/VfrCompile
 %{_bindir}/VolInfo
+%{_datadir}/%{name}/Conf/
+%{_datadir}/%{name}/Scripts/
 
 %files tools-python
+%{_bindir}/build
 %{_bindir}/BPDG
+%{_bindir}/Ecc
 %{_bindir}/GenDepex
 %{_bindir}/GenFds
 %{_bindir}/GenPatchPcdTable
@@ -142,6 +163,7 @@ done
 
 %files tools-doc
 %doc BaseTools/UserManuals/BootSectImage_Utility_Man_Page.rtf
+%doc BaseTools/UserManuals/Build_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/EfiLdrImage_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/EfiRom_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/GenBootSector_Utility_Man_Page.rtf
@@ -159,11 +181,18 @@ done
 %doc BaseTools/UserManuals/PatchPcdValue_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/SplitFile_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/TargetTool_Utility_Man_Page.rtf
+%doc BaseTools/UserManuals/TianoCompress_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/Trim_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/VfrCompiler_Utility_Man_Page.rtf
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Mon Jun 23 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140328svn15376-3
+- Rebase to get GCC48 configuration
+- Package EDK_TOOLS_PATH as /usr/share/edk2
+- Package "build" and LzmaF86Compress too, as well as the new
+  tools Ecc and TianoCompress.
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20131114svn14844-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
