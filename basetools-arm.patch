@@ -1,7 +1,7 @@
-diff --git a/BaseTools/Source/C/GNUmakefile b/BaseTools/Source/C/GNUmakefile
+diff --git a/Source/C/GNUmakefile b/Source/C/GNUmakefile
 index e0dde3e..bee0059 100644
---- a/BaseTools/Source/C/GNUmakefile
-+++ b/BaseTools/Source/C/GNUmakefile
+--- a/Source/C/GNUmakefile
++++ b/Source/C/GNUmakefile
 @@ -22,6 +22,9 @@ ifndef ARCH
    ifeq ($(uname_m),x86_64)
      ARCH=X64

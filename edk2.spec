@@ -1,7 +1,6 @@
-%define SVNDATE   20140328
-%define SVNREV    15376
+%define SVNDATE   20140624
+%define SVNREV    2649
 
-# More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
 Release:	4%{?dist}
@@ -11,12 +10,10 @@ Summary:	EFI Development Kit II
 # Tarballs are created with:
 
 # svn export -r ${SVNREV} \
-#     https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2 edk2-r${SVNREV}
-# rm -rf edk2-r${SVNREV}/BaseTools/Bin
-# rm -rf edk2-r${SVNREV}/ShellBinPkg
-# rm -rf edk2-r${SVNREV}/FatBinPkg
-# tar -cv edk2-r${SVNREV} | xz -6 > edk2-r${SVNREV}.tar.xz
-Source0:	edk2-r%{SVNREV}.tar.xz
+#     https://edk2-buildtools.svn.sourceforge.net/svnroot/edk2-buildtools/trunk/BaseTools edk2-buildtools-r${SVNREV}
+# rm -rf edk2-buildtools-r${SVNREV}/Bin
+# tar -cv edk2-buildtools-r${SVNREV} | xz -6 > edk2-buildtools-r${SVNREV}.tar.xz
+Source0:	edk2-buildtools-r%{SVNREV}.tar.xz
 Patch1:		basetools-arm.patch
 Patch2:		edk2-remove-tree-check.patch
 
@@ -32,6 +29,7 @@ BuildRequires:	python2-devel
 BuildRequires:	libuuid-devel
 
 Requires:	edk2-tools%{?_isa} = %{version}-%{release}
+Requires:	edk2-tools-doc%{?_isa} = %{version}-%{release}
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
@@ -66,37 +64,37 @@ This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
 %prep
-%setup -q -n %{name}-r%{SVNREV}
+%setup -q -n edk2-buildtools-r%{SVNREV}
 %patch1 -p1
 %patch2 -p1
 
 %build
-source ./edksetup.sh
+export WORKSPACE=`pwd`
 
 # Build is broken if MAKEFLAGS contains -j option.
 unset MAKEFLAGS
-make -C $WORKSPACE/BaseTools
+make
 
 %install
 mkdir -p %{buildroot}%{_bindir}
 install	\
-	BaseTools/Source/C/bin/BootSectImage \
-	BaseTools/Source/C/bin/EfiLdrImage \
-	BaseTools/Source/C/bin/EfiRom \
-	BaseTools/Source/C/bin/GenCrc32 \
-	BaseTools/Source/C/bin/GenFfs \
-	BaseTools/Source/C/bin/GenFv \
-	BaseTools/Source/C/bin/GenFw \
-	BaseTools/Source/C/bin/GenPage \
-	BaseTools/Source/C/bin/GenSec \
-	BaseTools/Source/C/bin/GenVtf \
-	BaseTools/Source/C/bin/GnuGenBootSector \
-	BaseTools/Source/C/bin/LzmaCompress \
-	BaseTools/BinWrappers/PosixLike/LzmaF86Compress \
-	BaseTools/Source/C/bin/Split \
-	BaseTools/Source/C/bin/TianoCompress \
-	BaseTools/Source/C/bin/VfrCompile \
-	BaseTools/Source/C/bin/VolInfo \
+	Source/C/bin/BootSectImage \
+	Source/C/bin/EfiLdrImage \
+	Source/C/bin/EfiRom \
+	Source/C/bin/GenCrc32 \
+	Source/C/bin/GenFfs \
+	Source/C/bin/GenFv \
+	Source/C/bin/GenFw \
+	Source/C/bin/GenPage \
+	Source/C/bin/GenSec \
+	Source/C/bin/GenVtf \
+	Source/C/bin/GnuGenBootSector \
+	Source/C/bin/LzmaCompress \
+	BinWrappers/PosixLike/LzmaF86Compress \
+	Source/C/bin/Split \
+	Source/C/bin/TianoCompress \
+	Source/C/bin/VfrCompile \
+	Source/C/bin/VolInfo \
 	%{buildroot}%{_bindir}
 
 ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
@@ -104,22 +102,22 @@ ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
 
 mkdir -p %{buildroot}%{_datadir}/%{name}
 install \
-        BaseTools/BuildEnv \
+        BuildEnv \
         %{buildroot}%{_datadir}/%{name}
 
 mkdir -p %{buildroot}%{_datadir}/%{name}/Conf
 install \
-        BaseTools/Conf/build_rule.template \
-        BaseTools/Conf/tools_def.template \
-        BaseTools/Conf/target.template \
+        Conf/build_rule.template \
+        Conf/tools_def.template \
+        Conf/target.template \
         %{buildroot}%{_datadir}/%{name}/Conf
 
 mkdir -p %{buildroot}%{_datadir}/%{name}/Scripts
 install \
-        BaseTools/Scripts/gcc4.4-ld-script \
+        Scripts/gcc4.4-ld-script \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
-cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
+cp -R Source/Python %{buildroot}%{_datadir}/%{name}/Python
 
 find %{buildroot}%{_datadir}/%{name}/Python -name "*.pyd" | xargs rm
 
@@ -168,31 +166,34 @@ done
 %{_datadir}/%{name}/Python/
 
 %files tools-doc
-%doc BaseTools/UserManuals/BootSectImage_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/Build_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/EfiLdrImage_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/EfiRom_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenBootSector_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenCrc32_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenDepex_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenFds_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenFfs_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenFv_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenFw_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenPage_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenPatchPcdTable_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenSec_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/GenVtf_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/LzmaCompress_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/PatchPcdValue_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/SplitFile_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/TargetTool_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/TianoCompress_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/Trim_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/VfrCompiler_Utility_Man_Page.rtf
-%doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
+%doc UserManuals/BootSectImage_Utility_Man_Page.rtf
+%doc UserManuals/Build_Utility_Man_Page.rtf
+%doc UserManuals/EfiLdrImage_Utility_Man_Page.rtf
+%doc UserManuals/EfiRom_Utility_Man_Page.rtf
+%doc UserManuals/GenBootSector_Utility_Man_Page.rtf
+%doc UserManuals/GenCrc32_Utility_Man_Page.rtf
+%doc UserManuals/GenDepex_Utility_Man_Page.rtf
+%doc UserManuals/GenFds_Utility_Man_Page.rtf
+%doc UserManuals/GenFfs_Utility_Man_Page.rtf
+%doc UserManuals/GenFv_Utility_Man_Page.rtf
+%doc UserManuals/GenFw_Utility_Man_Page.rtf
+%doc UserManuals/GenPage_Utility_Man_Page.rtf
+%doc UserManuals/GenPatchPcdTable_Utility_Man_Page.rtf
+%doc UserManuals/GenSec_Utility_Man_Page.rtf
+%doc UserManuals/GenVtf_Utility_Man_Page.rtf
+%doc UserManuals/LzmaCompress_Utility_Man_Page.rtf
+%doc UserManuals/PatchPcdValue_Utility_Man_Page.rtf
+%doc UserManuals/SplitFile_Utility_Man_Page.rtf
+%doc UserManuals/TargetTool_Utility_Man_Page.rtf
+%doc UserManuals/TianoCompress_Utility_Man_Page.rtf
+%doc UserManuals/Trim_Utility_Man_Page.rtf
+%doc UserManuals/VfrCompiler_Utility_Man_Page.rtf
+%doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Tue Jun 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140624svn2649-1
+- Use standalone .tar.xz from buildtools repo
+
 * Tue Jun 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140328svn15376-4
 - Install BuildTools/BaseEnv
 

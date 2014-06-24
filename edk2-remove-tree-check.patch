@@ -1,5 +1,5 @@
---- a/BaseTools/BuildEnv
-+++ b/BaseTools/BuildEnv
+--- a/BuildEnv
++++ b/BuildEnv
 @@ -23,14 +23,6 @@
      return 0
    fi
