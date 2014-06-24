@@ -4,7 +4,7 @@
 # More subpackages to come once licensing issues are fixed
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -18,6 +18,7 @@ Summary:	EFI Development Kit II
 # tar -cv edk2-r${SVNREV} | xz -6 > edk2-r${SVNREV}.tar.xz
 Source0:	edk2-r%{SVNREV}.tar.xz
 Patch1:		basetools-arm.patch
+Patch2:		edk2-remove-tree-check.patch
 
 License:	BSD
 Group:		Applications/Emulators
@@ -67,6 +68,7 @@ build EFI executables and ROMs using the GNU tools.
 %prep
 %setup -q -n %{name}-r%{SVNREV}
 %patch1 -p1
+%patch2 -p1
 
 %build
 source ./edksetup.sh
@@ -101,6 +103,9 @@ ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
 	%{buildroot}%{_bindir}/GenBootSector
 
 mkdir -p %{buildroot}%{_datadir}/%{name}
+install \
+        BaseTools/BuildEnv \
+        %{buildroot}%{_datadir}/%{name}
 
 mkdir -p %{buildroot}%{_datadir}/%{name}/Conf
 install \
@@ -145,6 +150,7 @@ done
 %{_bindir}/TianoCompress
 %{_bindir}/VfrCompile
 %{_bindir}/VolInfo
+%{_datadir}/%{name}/BuildEnv
 %{_datadir}/%{name}/Conf/
 %{_datadir}/%{name}/Scripts/
 
@@ -187,6 +193,9 @@ done
 %doc BaseTools/UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Tue Jun 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140328svn15376-4
+- Install BuildTools/BaseEnv
+
 * Mon Jun 23 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140328svn15376-3
 - Rebase to get GCC48 configuration
 - Package EDK_TOOLS_PATH as /usr/share/edk2
