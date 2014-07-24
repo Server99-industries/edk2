@@ -1,5 +1,5 @@
-%define SVNDATE   20140624
-%define SVNREV    2649
+%define SVNDATE   20140724
+%define SVNREV    2670
 
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
@@ -191,6 +191,9 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Thu Jul 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140724svn2670-1
+- Rebase to 20140724svn2670-1
+
 * Tue Jun 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140624svn2649-1
 - Use standalone .tar.xz from buildtools repo
 

@@ -3,7 +3,7 @@ index e0dde3e..bee0059 100644
 --- a/Source/C/GNUmakefile
 +++ b/Source/C/GNUmakefile
 @@ -22,6 +22,9 @@ ifndef ARCH
-   ifeq ($(uname_m),x86_64)
+   ifneq (,$(strip $(filter $(uname_m), x86_64 amd64)))
      ARCH=X64
    endif
 +  ifeq ($(patsubst arm%,ARM,$(uname_m)),ARM)
