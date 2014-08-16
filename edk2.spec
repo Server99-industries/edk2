@@ -3,7 +3,7 @@
 
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -191,6 +191,9 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20140724svn2670-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Thu Jul 24 2014 Paolo Bonzini <pbonzini@redhat.com> - 20140724svn2670-1
 - Rebase to 20140724svn2670-1
 
