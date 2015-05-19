@@ -1,21 +1,20 @@
-%define SVNDATE   20140724
-%define SVNREV    2670
+%define SVNDATE   20150519
+%define SVNREV    17469
 
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	6%{?dist}
+Release:	1%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
 # Tarballs are created with:
 
 # svn export -r ${SVNREV} \
-#     https://edk2-buildtools.svn.sourceforge.net/svnroot/edk2-buildtools/trunk/BaseTools edk2-buildtools-r${SVNREV}
+#     https://svn.code.sf.net/p/edk2/code/trunk/edk2/BaseTools edk2-buildtools-r${SVNREV}
 # rm -rf edk2-buildtools-r${SVNREV}/Bin
 # tar -cv edk2-buildtools-r${SVNREV} | xz -6 > edk2-buildtools-r${SVNREV}.tar.xz
 Source0:	edk2-buildtools-r%{SVNREV}.tar.xz
 Patch1:		basetools-arm.patch
-Patch2:		edk2-remove-tree-check.patch
 
 License:	BSD
 Group:		Applications/Emulators
@@ -66,7 +65,6 @@ build EFI executables and ROMs using the GNU tools.
 %prep
 %setup -q -n edk2-buildtools-r%{SVNREV}
 %patch1 -p1
-%patch2 -p1
 
 %build
 export WORKSPACE=`pwd`
@@ -191,6 +189,10 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Tue May 19 2015 Bonzini <pbonzini@redhat.com> - 20150519svn17469-1
+- Rebase to 20150519svn17469-1
+- edk2-remove-tree-check.patch now upstream
+
 * Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 20140724svn2670-6
 - Rebuilt for GCC 5 C++11 ABI change
 
