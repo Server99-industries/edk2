@@ -3,7 +3,7 @@
 
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -189,6 +189,9 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20150519svn17469-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Tue May 19 2015 Bonzini <pbonzini@redhat.com> - 20150519svn17469-1
 - Rebase to 20150519svn17469-1
 - edk2-remove-tree-check.patch now upstream
