@@ -1,5 +1,5 @@
-%define SVNDATE   20150519
-%define SVNREV    17469
+%define SVNDATE   20151127
+%define SVNREV    18975
 
 Name:		edk2
 Version:	%{SVNDATE}svn%{SVNREV}
@@ -112,7 +112,7 @@ install \
 
 mkdir -p %{buildroot}%{_datadir}/%{name}/Scripts
 install \
-        Scripts/gcc4.4-ld-script \
+        Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
 cp -R Source/Python %{buildroot}%{_datadir}/%{name}/Python
@@ -189,7 +189,11 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
-* Tue May 19 2015 Bonzini <pbonzini@redhat.com> - 20150519svn17469-1
+* Tue Nov 27 2015 Paolo Bonzini <pbonzini@redhat.com> - 20151127svn18975-1
+- Rebase to 20151127svn18975-1
+- Linker script renamed to GccBase.lds
+
+* Tue May 19 2015 Paolo Bonzini <pbonzini@redhat.com> - 20150519svn17469-1
 - Rebase to 20150519svn17469-1
 - edk2-remove-tree-check.patch now upstream
 
