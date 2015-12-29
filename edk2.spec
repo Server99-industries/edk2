@@ -1,10 +1,10 @@
-%define SVNDATE   20151127
-%define SVNREV    18975
+%global SVNDATE   20151127
+%global SVNREV    18975
 
-Name:		edk2
-Version:	%{SVNDATE}svn%{SVNREV}
-Release:	1%{?dist}
-Summary:	EFI Development Kit II
+Name:           edk2
+Version:        %{SVNDATE}svn%{SVNREV}
+Release:        1%{?dist}
+Summary:        EFI Development Kit II
 
 # There are no formal releases from upstream.
 # Tarballs are created with:
@@ -13,40 +13,40 @@ Summary:	EFI Development Kit II
 #     https://svn.code.sf.net/p/edk2/code/trunk/edk2/BaseTools edk2-buildtools-r${SVNREV}
 # rm -rf edk2-buildtools-r${SVNREV}/Bin
 # tar -cv edk2-buildtools-r${SVNREV} | xz -6 > edk2-buildtools-r${SVNREV}.tar.xz
-Source0:	edk2-buildtools-r%{SVNREV}.tar.xz
-Patch1:		basetools-arm.patch
+Source0:        edk2-buildtools-r%{SVNREV}.tar.xz
+Patch1:         basetools-arm.patch
 
-License:	BSD
-Group:		Applications/Emulators
-URL:		http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
+License:        BSD
+Group:          Applications/Emulators
+URL:            http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
 
 # We need to build tools everywhere, but how is still an open question
 # https://bugzilla.redhat.com/show_bug.cgi?id=992180
-ExclusiveArch:	%{ix86} x86_64 %{arm}
+ExclusiveArch:  %{ix86} x86_64 %{arm}
 
-BuildRequires:	python2-devel
-BuildRequires:	libuuid-devel
+BuildRequires:  python2-devel
+BuildRequires:  libuuid-devel
 
-Requires:	edk2-tools%{?_isa} = %{version}-%{release}
-Requires:	edk2-tools-doc%{?_isa} = %{version}-%{release}
+Requires:       edk2-tools%{?_isa} = %{version}-%{release}
+Requires:       edk2-tools-doc%{?_isa} = %{version}-%{release}
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
 and firmware images.
 
 %package tools
-Summary:	EFI Development Kit II Tools
-Group:		Development/Tools
-Requires:	edk2-tools-python = %{version}-%{release}
+Summary:        EFI Development Kit II Tools
+Group:          Development/Tools
+Requires:       edk2-tools-python = %{version}-%{release}
 
 %description tools
 This package provides tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
 %package tools-python
-Summary:	EFI Development Kit II Tools
-Group:		Development/Tools
-Requires:	python
+Summary:        EFI Development Kit II Tools
+Group:          Development/Tools
+Requires:       python
 BuildArch:      noarch
 
 %description tools-python
@@ -55,8 +55,8 @@ and ROMs using the GNU tools.  You do not need to install this package;
 you probably want to install edk2-tools only.
 
 %package tools-doc
-Summary:	Documentation for EFI Development Kit II Tools
-Group:		Development/Tools
+Summary:        Documentation for EFI Development Kit II Tools
+Group:          Development/Tools
 
 %description tools-doc
 This package documents the tools that are needed to
@@ -75,28 +75,28 @@ make
 
 %install
 mkdir -p %{buildroot}%{_bindir}
-install	\
-	Source/C/bin/BootSectImage \
-	Source/C/bin/EfiLdrImage \
-	Source/C/bin/EfiRom \
-	Source/C/bin/GenCrc32 \
-	Source/C/bin/GenFfs \
-	Source/C/bin/GenFv \
-	Source/C/bin/GenFw \
-	Source/C/bin/GenPage \
-	Source/C/bin/GenSec \
-	Source/C/bin/GenVtf \
-	Source/C/bin/GnuGenBootSector \
-	Source/C/bin/LzmaCompress \
-	BinWrappers/PosixLike/LzmaF86Compress \
-	Source/C/bin/Split \
-	Source/C/bin/TianoCompress \
-	Source/C/bin/VfrCompile \
-	Source/C/bin/VolInfo \
-	%{buildroot}%{_bindir}
+install \
+        Source/C/bin/BootSectImage \
+        Source/C/bin/EfiLdrImage \
+        Source/C/bin/EfiRom \
+        Source/C/bin/GenCrc32 \
+        Source/C/bin/GenFfs \
+        Source/C/bin/GenFv \
+        Source/C/bin/GenFw \
+        Source/C/bin/GenPage \
+        Source/C/bin/GenSec \
+        Source/C/bin/GenVtf \
+        Source/C/bin/GnuGenBootSector \
+        Source/C/bin/LzmaCompress \
+        BinWrappers/PosixLike/LzmaF86Compress \
+        Source/C/bin/Split \
+        Source/C/bin/TianoCompress \
+        Source/C/bin/VfrCompile \
+        Source/C/bin/VolInfo \
+        %{buildroot}%{_bindir}
 
 ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
-	%{buildroot}%{_bindir}/GenBootSector
+        %{buildroot}%{_bindir}/GenBootSector
 
 mkdir -p %{buildroot}%{_datadir}/%{name}
 install \
