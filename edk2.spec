@@ -3,7 +3,7 @@
 
 Name:           edk2
 Version:        %{SVNDATE}svn%{SVNREV}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        EFI Development Kit II
 
 # There are no formal releases from upstream.
@@ -189,6 +189,9 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 20151127svn18975-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Tue Nov 27 2015 Paolo Bonzini <pbonzini@redhat.com> - 20151127svn18975-1
 - Rebase to 20151127svn18975-1
 - Linker script renamed to GccBase.lds
