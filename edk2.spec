@@ -15,6 +15,7 @@ Summary:        EFI Development Kit II
 # tar -cv edk2-buildtools-r${SVNREV} | xz -6 > edk2-buildtools-r${SVNREV}.tar.xz
 Source0:        edk2-buildtools-r%{SVNREV}.tar.xz
 Patch1:         basetools-arm.patch
+Patch2:         0001-BaseTools-LzmaCompress-eliminate-_maxMode-and-bogus-.patch
 
 License:        BSD
 Group:          Applications/Emulators
@@ -65,6 +66,8 @@ build EFI executables and ROMs using the GNU tools.
 %prep
 %setup -q -n edk2-buildtools-r%{SVNREV}
 %patch1 -p1
+%patch2 -p2
+
 
 %build
 export WORKSPACE=`pwd`
@@ -189,10 +192,13 @@ done
 %doc UserManuals/VolInfo_Utility_Man_Page.rtf
 
 %changelog
+* Mon Feb 15 2016 Cole Robinson <crobinso@redhat.com> 20151127svn18975-3
+- Fix FTBFS gcc warning (bz 1307439)
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 20151127svn18975-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
-* Tue Nov 27 2015 Paolo Bonzini <pbonzini@redhat.com> - 20151127svn18975-1
+* Fri Nov 27 2015 Paolo Bonzini <pbonzini@redhat.com> - 20151127svn18975-1
 - Rebase to 20151127svn18975-1
 - Linker script renamed to GccBase.lds
 
