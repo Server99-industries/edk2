@@ -3,7 +3,7 @@
 
 Name:           edk2
 Version:        %{SVNDATE}svn%{SVNREV}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        EFI Development Kit II
 
 # There are no formal releases from upstream.
