@@ -1,0 +1,60 @@
+From c6e5bbe0378662620e736c82bcd0d08db42e5979 Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Wed, 27 Jan 2016 03:05:18 +0100
+Subject: [PATCH 2/5] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE
+ core
+
+The DXE core logs a bunch of Properties Table and Memory Attributes Table
+related information, on the EFI_D_VERBOSE level, that I am at the moment
+not interested in. Suppress said output.
+
+Contributed-under: TianoCore Contribution Agreement 1.0
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+---
+ OvmfPkg/OvmfPkgIa32.dsc    | 2 ++
+ OvmfPkg/OvmfPkgIa32X64.dsc | 2 ++
+ OvmfPkg/OvmfPkgX64.dsc     | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
+index 36d3aaa..bf64882 100644
+--- a/OvmfPkg/OvmfPkgIa32.dsc
++++ b/OvmfPkg/OvmfPkgIa32.dsc
+@@ -516,6 +516,8 @@
+     <LibraryClasses>
+       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+       DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
++    <PcdsFixedAtBuild>
++      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
+   }
+ 
+   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index c05a90a..345c8ce 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -525,6 +525,8 @@
+     <LibraryClasses>
+       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+       DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
++    <PcdsFixedAtBuild>
++      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
+   }
+ 
+   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index eb3ad3f..0e02ba8 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -523,6 +523,8 @@
+     <LibraryClasses>
+       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+       DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
++    <PcdsFixedAtBuild>
++      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
+   }
+ 
+   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+-- 
+1.8.3.1
+

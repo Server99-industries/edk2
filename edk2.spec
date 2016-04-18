@@ -1,35 +1,52 @@
-%global SVNDATE   20151127
-%global SVNREV    18975
+%global edk2_date        20160418
+%global edk2_githash     a8c39ba
+%global openssl_version  1.0.2g
 
 Name:           edk2
-Version:        %{SVNDATE}svn%{SVNREV}
-Release:        3%{?dist}
+Version:        %{edk2_date}git%{edk2_githash}
+Release:        0%{dist}
 Summary:        EFI Development Kit II
 
-# There are no formal releases from upstream.
-# Tarballs are created with:
-
-# svn export -r ${SVNREV} \
-#     https://svn.code.sf.net/p/edk2/code/trunk/edk2/BaseTools edk2-buildtools-r${SVNREV}
-# rm -rf edk2-buildtools-r${SVNREV}/Bin
-# tar -cv edk2-buildtools-r${SVNREV} | xz -6 > edk2-buildtools-r${SVNREV}.tar.xz
-Source0:        edk2-buildtools-r%{SVNREV}.tar.xz
-Patch1:         basetools-arm.patch
-Patch2:         0001-BaseTools-LzmaCompress-eliminate-_maxMode-and-bogus-.patch
-
-License:        BSD
 Group:          Applications/Emulators
-URL:            http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=EDK2
+License:        BSD
+URL:            http://www.tianocore.org/edk2/
+Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.gz
+Source1:        https://www.openssl.org/source/openssl-%{openssl_version}.tar.gz
+Source3:        build-iso.sh
+Source9:        update-tarball.sh
 
-# We need to build tools everywhere, but how is still an open question
-# https://bugzilla.redhat.com/show_bug.cgi?id=992180
-ExclusiveArch:  %{ix86} x86_64 %{arm}
+Patch1:         0001-pick-up-any-display-device-not-only-vga.patch
+Patch2:         0001-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
+Patch3:         0001-EXCLUDE_SHELL_FROM_FD.patch
 
-BuildRequires:  python2-devel
+Patch10:        0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
+Patch11:        0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
+Patch12:        0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
+Patch13:        0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
+Patch14:        0005-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
+
+Patch20:        0001-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
+
+#
+# actual firmware builds are done on x86_64 and aarch64,
+# see all the %ifarch blocks below.
+#
+# edk2-tools builds are done on all x86 and arm.
+# in theory they should build everywhere without much trouble, but
+# in practice the edk2 build system barfs on archs it doesn't know
+# (such as ppc), so lets limit things to the known-good ones.
+#
+ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
+
+BuildRequires:  python
 BuildRequires:  libuuid-devel
-
-Requires:       edk2-tools%{?_isa} = %{version}-%{release}
-Requires:       edk2-tools-doc%{?_isa} = %{version}-%{release}
+%ifarch x86_64
+BuildRequires:  iasl
+BuildRequires:  nasm
+BuildRequires:  dosfstools
+BuildRequires:  mtools
+BuildRequires:  genisoimage
+%endif
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
@@ -38,8 +55,6 @@ and firmware images.
 %package tools
 Summary:        EFI Development Kit II Tools
 Group:          Development/Tools
-Requires:       edk2-tools-python = %{version}-%{release}
-
 %description tools
 This package provides tools that are needed to
 build EFI executables and ROMs using the GNU tools.
@@ -58,83 +73,149 @@ you probably want to install edk2-tools only.
 %package tools-doc
 Summary:        Documentation for EFI Development Kit II Tools
 Group:          Development/Tools
-
+BuildArch:      noarch
 %description tools-doc
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
-%prep
-%setup -q -n edk2-buildtools-r%{SVNREV}
-%patch1 -p1
-%patch2 -p2
+%ifarch x86_64
+%package ovmf
+Summary:        Open Virtual Machine Firmware
+License:        BSD and OpenSSL
+Provides:       OVMF
+BuildArch:      noarch
+%description ovmf
+EFI Development Kit II
+Open Virtual Machine Firmware (x64)
+%endif
 
+%ifarch aarch64
+%package aarch64
+Summary:        AARCH64 Virtual Machine Firmware
+Provides:       AAVMF
+BuildArch:      noarch
+%description aarch64
+EFI Development Kit II
+AARCH64 UEFI Firmware
+%endif
+
+%prep
+%setup -q -n tianocore-%{name}-%{edk2_githash}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+
+%patch20 -p1
+
+# add openssl
+tar -C CryptoPkg/Library/OpensslLib -xf %{SOURCE1}
+(cd CryptoPkg/Library/OpensslLib/openssl-%{openssl_version};
+ patch -p1 < ../EDKII_openssl-%{openssl_version}.patch)
+(cd CryptoPkg/Library/OpensslLib; ./Install.sh)
+cp CryptoPkg/Library/OpensslLib/openssl-*/LICENSE LICENSE.openssl
 
 %build
-export WORKSPACE=`pwd`
+source ./edksetup.sh
 
-# Build is broken if MAKEFLAGS contains -j option.
-unset MAKEFLAGS
-make
+# conpiler
+CC_FLAGS="-t GCC49"
+
+# parallel builds
+JOBS="%{?_smp_mflags}"
+JOBS="${JOBS#-j}"
+if test "$JOBS" != ""; then
+        CC_FLAGS="${CC_FLAGS} -n $JOBS"
+fi
+
+# common features
+CC_FLAGS="${CC_FLAGS} -b DEBUG"
+CC_FLAGS="${CC_FLAGS} --cmd-len=65536"
+
+# ovmf features
+OVMF_FLAGS="${CC_FLAGS}"
+OVMF_FLAGS="${OVMF_FLAGS} -D HTTP_BOOT_ENABLE"
+OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_IP6_ENABLE"
+
+# ovmf + secure boot features
+OVMF_SB_FLAGS="${OVMF_FLAGS}"
+OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SECURE_BOOT_ENABLE"
+OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SMM_REQUIRE"
+OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
+
+# arm firmware features
+ARM_FLAGS="${CC_FLAGS}"
+ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
+
+make -C BaseTools #%{?_smp_mflags}
+
+%ifarch x86_64
+# build ovmf
+mkdir -p ovmf
+build ${OVMF_FLAGS} -a X64 -p OvmfPkg/OvmfPkgX64.dsc
+cp Build/OvmfX64/*/FV/OVMF_*.fd ovmf
+rm -rf Build/OvmfX64
+
+# build ovmf with secure boot
+build ${OVMF_SB_FLAGS} -a IA32 -a X64 -p OvmfPkg/OvmfPkgIa32X64.dsc
+cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
+
+# build shell iso with EnrollDefaultKeys
+cp Build/Ovmf3264/*/X64/Shell.efi ovmf
+cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
+sh %{SOURCE3} ovmf
+%endif
+
+%ifarch aarch64
+# build arm/aarch64 firmware
+mkdir -p aarch64
+build $ARM_FLAGS -a AARCH64 -p ArmVirtPkg/ArmVirtQemu.dsc
+cp Build/ArmVirtQemu-AARCH64/DEBUG_*/FV/*.fd aarch64
+dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
+dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
+dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
+%endif
 
 %install
-mkdir -p %{buildroot}%{_bindir}
-install \
-        Source/C/bin/BootSectImage \
-        Source/C/bin/EfiLdrImage \
-        Source/C/bin/EfiRom \
-        Source/C/bin/GenCrc32 \
-        Source/C/bin/GenFfs \
-        Source/C/bin/GenFv \
-        Source/C/bin/GenFw \
-        Source/C/bin/GenPage \
-        Source/C/bin/GenSec \
-        Source/C/bin/GenVtf \
-        Source/C/bin/GnuGenBootSector \
-        Source/C/bin/LzmaCompress \
-        BinWrappers/PosixLike/LzmaF86Compress \
-        Source/C/bin/Split \
-        Source/C/bin/TianoCompress \
-        Source/C/bin/VfrCompile \
-        Source/C/bin/VolInfo \
+mkdir -p %{buildroot}%{_bindir} \
+         %{buildroot}%{_datadir}/%{name}/Conf \
+         %{buildroot}%{_datadir}/%{name}/Scripts
+install BaseTools/Source/C/bin/* \
         %{buildroot}%{_bindir}
-
-ln -f %{buildroot}%{_bindir}/GnuGenBootSector \
-        %{buildroot}%{_bindir}/GenBootSector
-
-mkdir -p %{buildroot}%{_datadir}/%{name}
-install \
-        BuildEnv \
+install BaseTools/BinWrappers/PosixLike/LzmaF86Compress \
+        %{buildroot}%{_bindir}
+install BaseTools/BuildEnv \
         %{buildroot}%{_datadir}/%{name}
-
-mkdir -p %{buildroot}%{_datadir}/%{name}/Conf
-install \
-        Conf/build_rule.template \
-        Conf/tools_def.template \
-        Conf/target.template \
+install BaseTools/Conf/*.template \
         %{buildroot}%{_datadir}/%{name}/Conf
-
-mkdir -p %{buildroot}%{_datadir}/%{name}/Scripts
-install \
-        Scripts/GccBase.lds \
+install BaseTools/Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
-cp -R Source/Python %{buildroot}%{_datadir}/%{name}/Python
-
-find %{buildroot}%{_datadir}/%{name}/Python -name "*.pyd" | xargs rm
-
+cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
 for i in build BPDG Ecc GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
-  echo '#!/bin/sh
-PYTHONPATH=%{_datadir}/%{name}/Python
-export PYTHONPATH
+echo '#!/bin/sh
+export PYTHONPATH=%{_datadir}/%{name}/Python
 exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}/$i
   chmod +x %{buildroot}%{_bindir}/$i
 done
+
+mkdir -p %{buildroot}/usr/share/%{name}
+%ifarch x86_64
+cp -a ovmf %{buildroot}/usr/share/%{name}
+%endif
+%ifarch aarch64
+cp -a aarch64 %{buildroot}/usr/share/%{name}
+%endif
 
 %files tools
 %{_bindir}/BootSectImage
 %{_bindir}/EfiLdrImage
 %{_bindir}/EfiRom
-%{_bindir}/GenBootSector
 %{_bindir}/GenCrc32
 %{_bindir}/GenFfs
 %{_bindir}/GenFv
@@ -149,9 +230,10 @@ done
 %{_bindir}/TianoCompress
 %{_bindir}/VfrCompile
 %{_bindir}/VolInfo
+%dir %{_datadir}/%{name}
 %{_datadir}/%{name}/BuildEnv
-%{_datadir}/%{name}/Conf/
-%{_datadir}/%{name}/Scripts/
+%{_datadir}/%{name}/Conf
+%{_datadir}/%{name}/Scripts
 
 %files tools-python
 %{_bindir}/build
@@ -164,34 +246,38 @@ done
 %{_bindir}/TargetTool
 %{_bindir}/Trim
 %{_bindir}/UPT
-%{_datadir}/%{name}/Python/
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/Python
 
 %files tools-doc
-%doc UserManuals/BootSectImage_Utility_Man_Page.rtf
-%doc UserManuals/Build_Utility_Man_Page.rtf
-%doc UserManuals/EfiLdrImage_Utility_Man_Page.rtf
-%doc UserManuals/EfiRom_Utility_Man_Page.rtf
-%doc UserManuals/GenBootSector_Utility_Man_Page.rtf
-%doc UserManuals/GenCrc32_Utility_Man_Page.rtf
-%doc UserManuals/GenDepex_Utility_Man_Page.rtf
-%doc UserManuals/GenFds_Utility_Man_Page.rtf
-%doc UserManuals/GenFfs_Utility_Man_Page.rtf
-%doc UserManuals/GenFv_Utility_Man_Page.rtf
-%doc UserManuals/GenFw_Utility_Man_Page.rtf
-%doc UserManuals/GenPage_Utility_Man_Page.rtf
-%doc UserManuals/GenPatchPcdTable_Utility_Man_Page.rtf
-%doc UserManuals/GenSec_Utility_Man_Page.rtf
-%doc UserManuals/GenVtf_Utility_Man_Page.rtf
-%doc UserManuals/LzmaCompress_Utility_Man_Page.rtf
-%doc UserManuals/PatchPcdValue_Utility_Man_Page.rtf
-%doc UserManuals/SplitFile_Utility_Man_Page.rtf
-%doc UserManuals/TargetTool_Utility_Man_Page.rtf
-%doc UserManuals/TianoCompress_Utility_Man_Page.rtf
-%doc UserManuals/Trim_Utility_Man_Page.rtf
-%doc UserManuals/VfrCompiler_Utility_Man_Page.rtf
-%doc UserManuals/VolInfo_Utility_Man_Page.rtf
+%doc BaseTools/UserManuals/*.rtf
+
+%ifarch x86_64
+%files ovmf
+%license OvmfPkg/License.txt
+%license LICENSE.openssl
+%doc OvmfPkg/README
+%dir /usr/share/%{name}
+%dir /usr/share/%{name}/ovmf
+/usr/share/%{name}/ovmf/OVMF*.fd
+/usr/share/%{name}/ovmf/*.efi
+/usr/share/%{name}/ovmf/*.iso
+%endif
+
+%ifarch aarch64
+%files aarch64
+%license ArmVirtPkg/License.txt
+%dir /usr/share/%{name}
+%dir /usr/share/%{name}/aarch64
+/usr/share/%{name}/aarch64/QEMU*.fd
+/usr/share/%{name}/aarch64/*.raw
+%endif
 
 %changelog
+* Mon Apr 18 2016 Gerd Hoffmann <kraxel@redhat.com> 20160418gita8c39ba-0
+- Update to latest git.
+- Add firmware builds (FatPkg is free now).
+
 * Mon Feb 15 2016 Cole Robinson <crobinso@redhat.com> 20151127svn18975-3
 - Fix FTBFS gcc warning (bz 1307439)
 

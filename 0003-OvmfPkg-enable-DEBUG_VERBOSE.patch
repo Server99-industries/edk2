@@ -1,0 +1,56 @@
+From 214090228fb08f03737ba90d29e23dc7b2235614 Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Sun, 8 Jul 2012 14:26:07 +0200
+Subject: [PATCH 3/5] OvmfPkg: enable DEBUG_VERBOSE
+
+Enable verbose debug logs.
+
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+---
+ OvmfPkg/OvmfPkgIa32.dsc    | 2 +-
+ OvmfPkg/OvmfPkgIa32X64.dsc | 2 +-
+ OvmfPkg/OvmfPkgX64.dsc     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
+index bf64882..aaaaaa8 100644
+--- a/OvmfPkg/OvmfPkgIa32.dsc
++++ b/OvmfPkg/OvmfPkgIa32.dsc
+@@ -392,7 +392,7 @@
+   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
+   #                             // significantly impact boot performance
+   # DEBUG_ERROR     0x80000000  // Error
+-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
+ 
+ !ifdef $(SOURCE_DEBUG_ENABLE)
+   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index 345c8ce..b4545b3 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -397,7 +397,7 @@
+   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
+   #                             // significantly impact boot performance
+   # DEBUG_ERROR     0x80000000  // Error
+-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
+ 
+ !ifdef $(SOURCE_DEBUG_ENABLE)
+   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index 0e02ba8..1836c25 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -397,7 +397,7 @@
+   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
+   #                             // significantly impact boot performance
+   # DEBUG_ERROR     0x80000000  // Error
+-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
+ 
+ !ifdef $(SOURCE_DEBUG_ENABLE)
+   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+-- 
+1.8.3.1
+
