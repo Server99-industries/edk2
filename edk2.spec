@@ -153,6 +153,7 @@ ARM_FLAGS="${CC_FLAGS}"
 ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
 make -C BaseTools #%{?_smp_mflags}
+sed -i -e 's/-Werror//' Conf/tools_def.txt
 
 %ifarch x86_64
 # build ovmf
