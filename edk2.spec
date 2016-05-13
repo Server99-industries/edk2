@@ -123,7 +123,7 @@ cp CryptoPkg/Library/OpensslLib/openssl-*/LICENSE LICENSE.openssl
 %build
 source ./edksetup.sh
 
-# conpiler
+# compiler
 CC_FLAGS="-t GCC49"
 
 # parallel builds
