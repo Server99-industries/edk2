@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        0%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -45,6 +45,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 
 BuildRequires:  python
 BuildRequires:  libuuid-devel
+BuildRequires:  gcc-aarch64-linux-gnu
 %ifarch x86_64
 BuildRequires:  iasl
 BuildRequires:  nasm
@@ -52,6 +53,7 @@ BuildRequires:  dosfstools
 BuildRequires:  mtools
 BuildRequires:  genisoimage
 %endif
+
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
@@ -94,7 +96,6 @@ EFI Development Kit II
 Open Virtual Machine Firmware (x64)
 %endif
 
-%ifarch aarch64
 %package aarch64
 Summary:        AARCH64 Virtual Machine Firmware
 Provides:       AAVMF
@@ -102,7 +103,7 @@ BuildArch:      noarch
 %description aarch64
 EFI Development Kit II
 AARCH64 UEFI Firmware
-%endif
+
 
 %prep
 %setup -q -n tianocore-%{name}-%{edk2_githash}
@@ -114,6 +115,7 @@ tar -C CryptoPkg/Library/OpensslLib -xf %{SOURCE1}
  patch -p1 < ../EDKII_openssl-%{openssl_version}.patch)
 (cd CryptoPkg/Library/OpensslLib; ./Install.sh)
 cp CryptoPkg/Library/OpensslLib/openssl-*/LICENSE LICENSE.openssl
+
 
 %build
 source ./edksetup.sh
@@ -147,6 +149,7 @@ OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
 ARM_FLAGS="${CC_FLAGS}"
 ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
+unset MAKEFLAGS
 make -C BaseTools #%{?_smp_mflags}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
@@ -167,15 +170,16 @@ cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{SOURCE3} ovmf
 %endif
 
-%ifarch aarch64
 # build arm/aarch64 firmware
+export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
 mkdir -p aarch64
 build $ARM_FLAGS -a AARCH64 -p ArmVirtPkg/ArmVirtQemu.dsc
 cp Build/ArmVirtQemu-AARCH64/DEBUG_*/FV/*.fd aarch64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
 dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
-%endif
+unset GCC49_AARCH64_PREFIX
+
 
 %install
 mkdir -p %{buildroot}%{_bindir} \
@@ -204,9 +208,8 @@ mkdir -p %{buildroot}/usr/share/%{name}
 %ifarch x86_64
 cp -a ovmf %{buildroot}/usr/share/%{name}
 %endif
-%ifarch aarch64
 cp -a aarch64 %{buildroot}/usr/share/%{name}
-%endif
+
 
 %files tools
 %{_bindir}/BootSectImage
@@ -260,16 +263,18 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/ovmf/*.iso
 %endif
 
-%ifarch aarch64
 %files aarch64
 %license ArmVirtPkg/License.txt
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/aarch64
 /usr/share/%{name}/aarch64/QEMU*.fd
 /usr/share/%{name}/aarch64/*.raw
-%endif
+
 
 %changelog
+* Sat May 21 2016 Cole Robinson <crobinso@redhat.com> - 20160418gita8c39ba-1
+- Distribute edk2-aarch64 on x86 (bz #1338027)
+
 * Mon Apr 18 2016 Gerd Hoffmann <kraxel@redhat.com> 20160418gita8c39ba-0
 - Update to latest git.
 - Add firmware builds (FatPkg is free now).
