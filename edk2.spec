@@ -15,17 +15,22 @@ Source1:        https://www.openssl.org/source/openssl-%{openssl_version}.tar.gz
 Source3:        build-iso.sh
 Source9:        update-tarball.sh
 
-Patch1:         0001-pick-up-any-display-device-not-only-vga.patch
-Patch2:         0001-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
-Patch3:         0001-EXCLUDE_SHELL_FROM_FD.patch
-
-Patch10:        0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
-Patch11:        0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
-Patch12:        0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
-Patch13:        0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
-Patch14:        0005-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
-
-Patch20:        0001-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
+# Debug output tweaks, not for upstream
+Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
+Patch0002: 0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
+Patch0003: 0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
+Patch0004: 0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
+Patch0005: 0005-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
+# Exclude EFI shell from firmware, suggested by pjones re: secureboot.
+# Not for upstream, see bug 1325023#c16
+Patch0006: 0006-EXCLUDE_SHELL_FROM_FD.patch
+# Ship EnrollDefaultKeys application.
+# Not for upstream, see bug 1325023#c16
+Patch0007: 0007-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
+# More text console resolutions. Upstreaming attempted, but failed
+Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
+# Support qemu 'secondary-vga'. Not send upstream yet
+Patch0009: 0009-pick-up-any-display-device-not-only-vga.patch
 
 #
 # actual firmware builds are done on x86_64 and aarch64,
@@ -101,17 +106,7 @@ AARCH64 UEFI Firmware
 
 %prep
 %setup -q -n tianocore-%{name}-%{edk2_githash}
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-
-%patch20 -p1
+%autopatch -p1
 
 # add openssl
 tar -C CryptoPkg/Library/OpensslLib -xf %{SOURCE1}

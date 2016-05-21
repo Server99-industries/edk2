@@ -1,7 +1,6 @@
-From f468bab8fa61f7b7d0b0149f374945eb549af16e Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 20 Feb 2014 22:54:45 +0100
-Subject: [PATCH 4/5] OvmfPkg: increase max debug message length to 512
+Subject: [PATCH] OvmfPkg: increase max debug message length to 512
 
 Contributed-under: TianoCore Contribution Agreement 1.0
 ---
@@ -21,6 +20,3 @@ index 44850a9..b6927d0 100644
  
  /**
    This constructor function does not have to do anything.
--- 
-1.8.3.1
-

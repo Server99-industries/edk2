@@ -1,7 +1,6 @@
-From 214090228fb08f03737ba90d29e23dc7b2235614 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 8 Jul 2012 14:26:07 +0200
-Subject: [PATCH 3/5] OvmfPkg: enable DEBUG_VERBOSE
+Subject: [PATCH] OvmfPkg: enable DEBUG_VERBOSE
 
 Enable verbose debug logs.
 
@@ -51,6 +50,3 @@ index 0e02ba8..1836c25 100644
  
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
--- 
-1.8.3.1
-

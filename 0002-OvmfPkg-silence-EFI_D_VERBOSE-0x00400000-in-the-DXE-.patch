@@ -1,8 +1,6 @@
-From c6e5bbe0378662620e736c82bcd0d08db42e5979 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
-Subject: [PATCH 2/5] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE
- core
+Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE core
 
 The DXE core logs a bunch of Properties Table and Memory Attributes Table
 related information, on the EFI_D_VERBOSE level, that I am at the moment
@@ -55,6 +53,3 @@ index eb3ad3f..0e02ba8 100644
    }
  
    IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
--- 
-1.8.3.1
-

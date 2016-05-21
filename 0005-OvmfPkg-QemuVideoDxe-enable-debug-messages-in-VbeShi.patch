@@ -1,7 +1,6 @@
-From 82175ef201595d45a0959249a36f4ffd74047fdb Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 20 May 2014 23:41:56 +0200
-Subject: [PATCH 5/5] OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim
+Subject: [PATCH] OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim
 
 Contributed-under: TianoCore Contribution Agreement 1.0
 ---
@@ -519,6 +518,3 @@ index cc9b6e1..db37f1d 100644
 +  /* 00000459 or al,[fs:bx+si]               */  0x64, 0x0A, 0x00,
  };
  #endif
--- 
-1.8.3.1
-

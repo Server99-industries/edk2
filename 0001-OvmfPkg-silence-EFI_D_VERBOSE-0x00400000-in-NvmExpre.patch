@@ -1,8 +1,6 @@
-From 4475c02d63dda9e2da4c663593491a01ae8c6b5a Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
-Subject: [PATCH 1/5] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in
- NvmExpressDxe
+Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in NvmExpressDxe
 
 NvmExpressDxe logs all BlockIo read & write calls on the EFI_D_VERBOSE
 level.
@@ -63,6 +61,3 @@ index e88e70d..eb3ad3f 100644
    MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
--- 
-1.8.3.1
-
