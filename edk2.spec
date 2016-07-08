@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -31,13 +31,13 @@ Patch0007: 0007-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
 # Support qemu 'secondary-vga'. Not send upstream yet
 Patch0009: 0009-pick-up-any-display-device-not-only-vga.patch
+# Tweak the tools_def to support cross-compiling.  These files are meant
+# for customization, so this is not upstream.
+Patch0010: 0010-prepare-tools_def-for-x86-cross.patch
 
 #
-# actual firmware builds are done on x86_64 and aarch64,
-# see all the %ifarch blocks below.
-#
-# edk2-tools builds are done on all x86 and arm.
-# in theory they should build everywhere without much trouble, but
+# actual firmware builds support cross-compiling.  edk2-tools
+# in theory should build everywhere without much trouble, but
 # in practice the edk2 build system barfs on archs it doesn't know
 # (such as ppc), so lets limit things to the known-good ones.
 #
@@ -46,13 +46,12 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 BuildRequires:  python
 BuildRequires:  libuuid-devel
 BuildRequires:  gcc-aarch64-linux-gnu
-%ifarch x86_64
+BuildRequires:  gcc-x86_64-linux-gnu
 BuildRequires:  iasl
 BuildRequires:  nasm
 BuildRequires:  dosfstools
 BuildRequires:  mtools
 BuildRequires:  genisoimage
-%endif
 
 
 %description
@@ -85,7 +84,6 @@ BuildArch:      noarch
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
-%ifarch x86_64
 %package ovmf
 Summary:        Open Virtual Machine Firmware
 License:        BSD and OpenSSL
@@ -94,7 +92,6 @@ BuildArch:      noarch
 %description ovmf
 EFI Development Kit II
 Open Virtual Machine Firmware (x64)
-%endif
 
 %package aarch64
 Summary:        AARCH64 Virtual Machine Firmware
@@ -153,8 +150,9 @@ unset MAKEFLAGS
 make -C BaseTools #%{?_smp_mflags}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
-%ifarch x86_64
 # build ovmf
+export GCC49_IA32_PREFIX="x86_64-linux-gnu-"
+export GCC49_X64_PREFIX="x86_64-linux-gnu-"
 mkdir -p ovmf
 build ${OVMF_FLAGS} -a X64 -p OvmfPkg/OvmfPkgX64.dsc
 cp Build/OvmfX64/*/FV/OVMF_*.fd ovmf
@@ -168,7 +166,8 @@ cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
 cp Build/Ovmf3264/*/X64/Shell.efi ovmf
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{SOURCE3} ovmf
-%endif
+unset GCC49_IA32_PREFIX
+unset GCC49_X64_PREFIX
 
 # build arm/aarch64 firmware
 export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
@@ -205,9 +204,7 @@ exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}
 done
 
 mkdir -p %{buildroot}/usr/share/%{name}
-%ifarch x86_64
 cp -a ovmf %{buildroot}/usr/share/%{name}
-%endif
 cp -a aarch64 %{buildroot}/usr/share/%{name}
 
 
@@ -251,7 +248,6 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 %files tools-doc
 %doc BaseTools/UserManuals/*.rtf
 
-%ifarch x86_64
 %files ovmf
 %license OvmfPkg/License.txt
 %license LICENSE.openssl
@@ -261,7 +257,6 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/ovmf/OVMF*.fd
 /usr/share/%{name}/ovmf/*.efi
 /usr/share/%{name}/ovmf/*.iso
-%endif
 
 %files aarch64
 %license ArmVirtPkg/License.txt
@@ -272,6 +267,9 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Fri Jul 8 2016 Paolo Bonzini <pbonzini@redhat.com> - 20160418gita8c39ba-2
+- Distribute edk2-ovmf on aarch64
+
 * Sat May 21 2016 Cole Robinson <crobinso@redhat.com> - 20160418gita8c39ba-1
 - Distribute edk2-aarch64 on x86 (bz #1338027)
 
