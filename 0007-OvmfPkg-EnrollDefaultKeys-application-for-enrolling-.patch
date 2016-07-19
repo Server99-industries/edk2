@@ -1,3 +1,4 @@
+From da502f7cc283055a65ab3caeaa62eb5c6a6fddb5 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Mon, 6 Jul 2015 20:22:02 +0200
 Subject: [PATCH] OvmfPkg: EnrollDefaultKeys: application for enrolling default
@@ -43,21 +44,21 @@ DB:
 Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 ---
- OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c   | 960 ++++++++++++++++++++++++
+ OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c   | 963 ++++++++++++++++++++++++
  OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.inf |  51 ++
  OvmfPkg/OvmfPkgIa32.dsc                         |   4 +
  OvmfPkg/OvmfPkgIa32X64.dsc                      |   4 +
  OvmfPkg/OvmfPkgX64.dsc                          |   4 +
- 5 files changed, 1023 insertions(+)
+ 5 files changed, 1026 insertions(+)
  create mode 100644 OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c
  create mode 100644 OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.inf
 
 diff --git a/OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c b/OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c
 new file mode 100644
-index 0000000..081212b
+index 0000000..447288f
 --- /dev/null
 +++ b/OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c
-@@ -0,0 +1,960 @@
+@@ -0,0 +1,963 @@
 +/** @file
 +  Enroll default PK, KEK, DB.
 +
@@ -723,6 +724,8 @@ index 0000000..081212b
 +  UINT8            *Data;
 +  UINT8            *Position;
 +
++  Status = EFI_SUCCESS;
++
 +  //
 +  // compute total size first, for UINT32 range check, and allocation
 +  //
@@ -800,10 +803,11 @@ index 0000000..081212b
 +
 +    RepeatingHeader = (REPEATING_HEADER *)Position;
 +    CopyGuid (&RepeatingHeader->SignatureType, &gEfiCertX509Guid);
-+    RepeatingHeader->SignatureListSize   = sizeof *RepeatingHeader + CertSize;
++    RepeatingHeader->SignatureListSize   =
++      (UINT32)(sizeof *RepeatingHeader + CertSize);
 +    RepeatingHeader->SignatureHeaderSize = 0;
 +    RepeatingHeader->SignatureSize       =
-+      sizeof RepeatingHeader->SignatureOwner + CertSize;
++      (UINT32)(sizeof RepeatingHeader->SignatureOwner + CertSize);
 +    CopyGuid (&RepeatingHeader->SignatureOwner, OwnerGuid);
 +    Position += sizeof *RepeatingHeader;
 +
@@ -1076,10 +1080,10 @@ index 0000000..ac919bb
 +  UefiLib
 +  UefiRuntimeServicesTableLib
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index aaaaaa8..90980d4 100644
+index 8af3267..6fb5c9c 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -725,6 +725,10 @@
+@@ -749,6 +749,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1091,10 +1095,10 @@ index aaaaaa8..90980d4 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index b4545b3..4d0ec9c 100644
+index 4bb38d0..e5abaff 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -734,6 +734,10 @@
+@@ -758,6 +758,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1106,10 +1110,10 @@ index b4545b3..4d0ec9c 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 1836c25..aca5476 100644
+index be3aa1f..4c36a7d 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -732,6 +732,10 @@
+@@ -756,6 +756,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1120,3 +1124,6 @@ index 1836c25..aca5476 100644
  !endif
  
    OvmfPkg/PlatformDxe/Platform.inf
+-- 
+1.8.3.1
+

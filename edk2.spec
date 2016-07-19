@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -267,6 +267,9 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Thu Jul 19 2016 Gerd Hoffmann <kraxel@redhat.com> 20160418gita8c39ba-3
+- Update EnrollDefaultKeys patch.
+
 * Fri Jul 8 2016 Paolo Bonzini <pbonzini@redhat.com> - 20160418gita8c39ba-2
 - Distribute edk2-ovmf on aarch64
 
