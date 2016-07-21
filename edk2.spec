@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -46,6 +46,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 BuildRequires:  python
 BuildRequires:  libuuid-devel
 BuildRequires:  gcc-aarch64-linux-gnu
+BuildRequires:  gcc-arm-linux-gnu
 BuildRequires:  gcc-x86_64-linux-gnu
 BuildRequires:  iasl
 BuildRequires:  nasm
@@ -100,6 +101,13 @@ BuildArch:      noarch
 %description aarch64
 EFI Development Kit II
 AARCH64 UEFI Firmware
+
+%package arm
+Summary:        ARM Virtual Machine Firmware
+BuildArch:      noarch
+%description arm
+EFI Development Kit II
+armv7 UEFI Firmware
 
 
 %prep
@@ -169,7 +177,7 @@ sh %{SOURCE3} ovmf
 unset GCC49_IA32_PREFIX
 unset GCC49_X64_PREFIX
 
-# build arm/aarch64 firmware
+# build aarch64 firmware
 export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
 mkdir -p aarch64
 build $ARM_FLAGS -a AARCH64 -p ArmVirtPkg/ArmVirtQemu.dsc
@@ -178,6 +186,16 @@ dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
 dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 unset GCC49_AARCH64_PREFIX
+
+# build aarch64 firmware
+export GCC49_ARM_PREFIX="arm-linux-gnu-"
+mkdir -p arm
+build $ARM_FLAGS -a ARM -p ArmVirtPkg/ArmVirtQemu.dsc
+cp Build/ArmVirtQemu-ARM/DEBUG_*/FV/*.fd arm
+dd of="arm/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
+dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
+dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
+unset GCC49_ARM_PREFIX
 
 
 %install
@@ -206,6 +224,7 @@ done
 mkdir -p %{buildroot}/usr/share/%{name}
 cp -a ovmf %{buildroot}/usr/share/%{name}
 cp -a aarch64 %{buildroot}/usr/share/%{name}
+cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %files tools
@@ -265,9 +284,19 @@ cp -a aarch64 %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/aarch64/QEMU*.fd
 /usr/share/%{name}/aarch64/*.raw
 
+%files arm
+%license ArmVirtPkg/License.txt
+%dir /usr/share/%{name}
+%dir /usr/share/%{name}/arm
+/usr/share/%{name}/arm/QEMU*.fd
+/usr/share/%{name}/arm/*.raw
+
 
 %changelog
-* Thu Jul 19 2016 Gerd Hoffmann <kraxel@redhat.com> 20160418gita8c39ba-3
+* Thu Jul 21 2016 Gerd Hoffmann <kraxel@redhat.com> - 20160418gita8c39ba-4
+- Also build for armv7.
+
+* Tue Jul 19 2016 Gerd Hoffmann <kraxel@redhat.com> 20160418gita8c39ba-3
 - Update EnrollDefaultKeys patch.
 
 * Fri Jul 8 2016 Paolo Bonzini <pbonzini@redhat.com> - 20160418gita8c39ba-2
