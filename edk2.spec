@@ -4,16 +4,23 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
 Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.gz
-Source1:        https://www.openssl.org/source/openssl-%{openssl_version}.tar.gz
+# We have to remove certain patented algorithms from the openssl source
+# tarball with the hobble-openssl script which is included below.
+# The original openssl upstream tarball cannot be shipped in the .src.rpm.
+Source1:        openssl-%{openssl_version}-hobbled.tar.gz
+Source2:        hobble-openssl
 Source3:        build-iso.sh
 Source9:        update-tarball.sh
+# Version of the OpenSSL patch that does not include the removed srp.* files.
+# This is not a Patch file because we manually replace and apply it.
+Source10:       EDKII_openssl-1.0.2g-no-srp.patch
 
 # Debug output tweaks, not for upstream
 Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
@@ -113,6 +120,9 @@ armv7 UEFI Firmware
 %prep
 %setup -q -n tianocore-%{name}-%{edk2_githash}
 %autopatch -p1
+
+# replace upstream patch with ours
+cp %{SOURCE10} CryptoPkg/Library/OpensslLib/EDKII_openssl-%{openssl_version}.patch
 
 # add openssl
 tar -C CryptoPkg/Library/OpensslLib -xf %{SOURCE1}
@@ -293,6 +303,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Fri Sep  9 2016 Tom Callaway <spot@fedoraproject.org> - 20160418gita8c39ba-5
+- replace legally problematic openssl source with "hobbled" tarball
+
 * Thu Jul 21 2016 Gerd Hoffmann <kraxel@redhat.com> - 20160418gita8c39ba-4
 - Also build for armv7.
 
