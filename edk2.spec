@@ -1,10 +1,10 @@
-%global edk2_date        20160418
-%global edk2_githash     a8c39ba
-%global openssl_version  1.0.2g
+%global edk2_date        20161105
+%global edk2_githash     3b25ca8
+%global openssl_version  1.0.2j
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        5%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -14,13 +14,14 @@ Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.gz
 # We have to remove certain patented algorithms from the openssl source
 # tarball with the hobble-openssl script which is included below.
 # The original openssl upstream tarball cannot be shipped in the .src.rpm.
-Source1:        openssl-%{openssl_version}-hobbled.tar.gz
+Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        hobble-openssl
 Source3:        build-iso.sh
 Source9:        update-tarball.sh
-# Version of the OpenSSL patch that does not include the removed srp.* files.
-# This is not a Patch file because we manually replace and apply it.
-Source10:       EDKII_openssl-1.0.2g-no-srp.patch
+
+# This is the version of the OpenSSL patch that EDK2 applies, but
+# with all changes to srp.* files removed.
+Source10:       EDKII_openssl-1.0.2j-no-srp.patch
 
 # Debug output tweaks, not for upstream
 Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
@@ -36,11 +37,9 @@ Patch0006: 0006-EXCLUDE_SHELL_FROM_FD.patch
 Patch0007: 0007-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 # More text console resolutions. Upstreaming attempted, but failed
 Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
-# Support qemu 'secondary-vga'. Not send upstream yet
-Patch0009: 0009-pick-up-any-display-device-not-only-vga.patch
-# Tweak the tools_def to support cross-compiling.  These files are meant
-# for customization, so this is not upstream.
-Patch0010: 0010-prepare-tools_def-for-x86-cross.patch
+# Tweak the tools_def to support cross-compiling.
+# These files are meant for customization, so this is not upstream.
+Patch0009: 0009-Tweak-the-tools_def-to-support-cross-compiling.patch
 
 #
 # actual firmware builds support cross-compiling.  edk2-tools
@@ -303,6 +302,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Sun Nov 06 2016 Cole Robinson <crobinso@redhat.com> - 20161105git3b25ca8-1
+- Rebase to git master
+
 * Fri Sep  9 2016 Tom Callaway <spot@fedoraproject.org> - 20160418gita8c39ba-5
 - replace legally problematic openssl source with "hobbled" tarball
 

@@ -60,7 +60,7 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 36 insertions(+), 1 deletion(-)
 
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c b/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
-index 6fde3b2..787bd35 100644
+index 3f445f0..2537e27 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
 @@ -103,7 +103,42 @@ TERMINAL_DEV  mTerminalDevTemplate = {

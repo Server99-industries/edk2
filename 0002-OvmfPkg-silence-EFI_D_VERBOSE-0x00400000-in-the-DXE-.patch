@@ -15,10 +15,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 36d3aaa..bf64882 100644
+index 048a144..c0440d9 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -516,6 +516,8 @@
+@@ -543,6 +543,8 @@
      <LibraryClasses>
        NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -26,12 +26,12 @@ index 36d3aaa..bf64882 100644
 +      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
    }
  
-   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+   MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index c05a90a..345c8ce 100644
+index fac0cf0..6f94bc7 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -525,6 +525,8 @@
+@@ -552,6 +552,8 @@
      <LibraryClasses>
        NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -39,12 +39,12 @@ index c05a90a..345c8ce 100644
 +      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
    }
  
-   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+   MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index eb3ad3f..0e02ba8 100644
+index bc62a64..a92bf19 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -523,6 +523,8 @@
+@@ -550,6 +550,8 @@
      <LibraryClasses>
        NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -52,4 +52,4 @@ index eb3ad3f..0e02ba8 100644
 +      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
    }
  
-   IntelFrameworkModulePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+   MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf

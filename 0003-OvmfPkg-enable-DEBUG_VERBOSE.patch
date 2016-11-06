@@ -12,10 +12,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index bf64882..aaaaaa8 100644
+index c0440d9..fa9661c 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -392,7 +392,7 @@
+@@ -408,7 +408,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -25,10 +25,10 @@ index bf64882..aaaaaa8 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 345c8ce..b4545b3 100644
+index 6f94bc7..667584a 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -397,7 +397,7 @@
+@@ -413,7 +413,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -38,10 +38,10 @@ index 345c8ce..b4545b3 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 0e02ba8..1836c25 100644
+index a92bf19..5ae8469 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -397,7 +397,7 @@
+@@ -413,7 +413,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error

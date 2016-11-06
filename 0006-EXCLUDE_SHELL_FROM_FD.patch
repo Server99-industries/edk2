@@ -9,10 +9,10 @@ Subject: [PATCH] EXCLUDE_SHELL_FROM_FD
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index 93a51a5..9ae7982 100644
+index 2a5b211..ebdab17 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -273,11 +273,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+@@ -281,11 +281,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
  
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  
@@ -24,13 +24,13 @@ index 93a51a5..9ae7982 100644
  !endif
 +!endif
  
- FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-   SECTION RAW = MdeModulePkg/Logo/Logo.bmp
+ INF MdeModulePkg/Logo/LogoDxe.inf
+ 
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index aad16a6..f58f18a 100644
+index 1c7df21..adf53f3 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -273,11 +273,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+@@ -281,11 +281,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
  
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  
@@ -42,13 +42,13 @@ index aad16a6..f58f18a 100644
  !endif
 +!endif
  
- FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-   SECTION RAW = MdeModulePkg/Logo/Logo.bmp
+ INF MdeModulePkg/Logo/LogoDxe.inf
+ 
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index 387b808..4e0c0ab 100644
+index 3bb11cb..edf1098 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -273,11 +273,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+@@ -281,11 +281,13 @@ INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
  
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  
@@ -60,5 +60,5 @@ index 387b808..4e0c0ab 100644
  !endif
 +!endif
  
- FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-   SECTION RAW = MdeModulePkg/Logo/Logo.bmp
+ INF MdeModulePkg/Logo/LogoDxe.inf
+ 
