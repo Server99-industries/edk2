@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -302,6 +302,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20161105git3b25ca8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Sun Nov 06 2016 Cole Robinson <crobinso@redhat.com> - 20161105git3b25ca8-1
 - Rebase to git master
 
