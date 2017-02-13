@@ -1,16 +1,16 @@
-%global edk2_date        20161105
-%global edk2_githash     3b25ca8
+%global edk2_date        20170209
+%global edk2_githash     296153c5
 %global openssl_version  1.0.2j
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
-Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.gz
+Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.xz
 # We have to remove certain patented algorithms from the openssl source
 # tarball with the hobble-openssl script which is included below.
 # The original openssl upstream tarball cannot be shipped in the .src.rpm.
@@ -40,6 +40,9 @@ Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
 # Tweak the tools_def to support cross-compiling.
 # These files are meant for customization, so this is not upstream.
 Patch0009: 0009-Tweak-the-tools_def-to-support-cross-compiling.patch
+
+# fix for build failure, sent upstream
+Patch0010: 0010-VfrCompile-fix-invalid-comparison-between-pointer-an.patch
 
 #
 # actual firmware builds support cross-compiling.  edk2-tools
@@ -302,6 +305,10 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Mon Feb 13 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-1
+- Rebase to git master
+- New patch 0010 fixes failure to build from source.
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20161105git3b25ca8-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
