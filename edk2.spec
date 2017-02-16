@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -305,6 +305,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Thu Feb 16 2017 Cole Robinson <crobinso@redhat.com> - 20170209git296153c5-2
+- Update EnrollDefaultKeys patch (bz #1398743)
+
 * Mon Feb 13 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-1
 - Rebase to git master
 - New patch 0010 fixes failure to build from source.
