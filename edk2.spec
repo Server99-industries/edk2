@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -103,6 +103,14 @@ BuildArch:      noarch
 EFI Development Kit II
 Open Virtual Machine Firmware (x64)
 
+%package ovmf-ia32
+Summary:        Open Virtual Machine Firmware
+License:        BSD and OpenSSL
+BuildArch:      noarch
+%description ovmf-ia32
+EFI Development Kit II
+Open Virtual Machine Firmware (ia32)
+
 %package aarch64
 Summary:        AARCH64 Virtual Machine Firmware
 Provides:       AAVMF
@@ -170,24 +178,42 @@ unset MAKEFLAGS
 make -C BaseTools #%{?_smp_mflags}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
-# build ovmf
+
+# build ovmf (x64)
 export GCC49_IA32_PREFIX="x86_64-linux-gnu-"
 export GCC49_X64_PREFIX="x86_64-linux-gnu-"
 mkdir -p ovmf
 build ${OVMF_FLAGS} -a X64 -p OvmfPkg/OvmfPkgX64.dsc
-cp Build/OvmfX64/*/FV/OVMF_*.fd ovmf
+cp Build/OvmfX64/*/FV/OVMF_*.fd ovmf/
 rm -rf Build/OvmfX64
 
-# build ovmf with secure boot
+# build ovmf (x64) with secure boot
 build ${OVMF_SB_FLAGS} -a IA32 -a X64 -p OvmfPkg/OvmfPkgIa32X64.dsc
 cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
 
-# build shell iso with EnrollDefaultKeys
-cp Build/Ovmf3264/*/X64/Shell.efi ovmf
+# build ovmf (x64) shell iso with EnrollDefaultKeys
+cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
-sh %{SOURCE3} ovmf
-unset GCC49_IA32_PREFIX
+sh %{_sourcedir}/build-iso.sh ovmf/
 unset GCC49_X64_PREFIX
+
+
+# build ovmf-ia32
+mkdir -p ovmf-ia32
+build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
+cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/
+rm -rf Build/OvmfIa32
+
+# build ovmf-ia32 with secure boot
+build ${OVMF_SB_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
+cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/OVMF_CODE.secboot.fd
+
+# build ovmf-ia32 shell iso with EnrollDefaultKeys
+cp Build/OvmfIa32/*/IA32/Shell.efi ovmf-ia32/Shell.efi
+cp Build/OvmfIa32/*/IA32/EnrollDefaultKeys.efi ovmf-ia32/EnrollDefaultKeys.efi
+sh %{_sourcedir}/build-iso.sh ovmf-ia32/
+unset GCC49_IA32_PREFIX
+
 
 # build aarch64 firmware
 export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
@@ -198,6 +224,7 @@ dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
 dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 unset GCC49_AARCH64_PREFIX
+
 
 # build aarch64 firmware
 export GCC49_ARM_PREFIX="arm-linux-gnu-"
@@ -235,6 +262,7 @@ done
 
 mkdir -p %{buildroot}/usr/share/%{name}
 cp -a ovmf %{buildroot}/usr/share/%{name}
+cp -a ovmf-ia32 %{buildroot}/usr/share/%{name}
 cp -a aarch64 %{buildroot}/usr/share/%{name}
 cp -a arm %{buildroot}/usr/share/%{name}
 
@@ -289,6 +317,16 @@ cp -a arm %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/ovmf/*.efi
 /usr/share/%{name}/ovmf/*.iso
 
+%files ovmf-ia32
+%license OvmfPkg/License.txt
+%license LICENSE.openssl
+%doc OvmfPkg/README
+%dir /usr/share/%{name}
+%dir /usr/share/%{name}/ovmf-ia32
+/usr/share/%{name}/ovmf-ia32/OVMF*.fd
+/usr/share/%{name}/ovmf-ia32/*.efi
+/usr/share/%{name}/ovmf-ia32/*.iso
+
 %files aarch64
 %license ArmVirtPkg/License.txt
 %dir /usr/share/%{name}
@@ -305,6 +343,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Wed Mar 15 2017 Cole Robinson <crobinso@redhat.com> - 20170209git296153c5-3
+- Ship ovmf-ia32 package (bz 1424722)
+
 * Thu Feb 16 2017 Cole Robinson <crobinso@redhat.com> - 20170209git296153c5-2
 - Update EnrollDefaultKeys patch (bz #1398743)
 
