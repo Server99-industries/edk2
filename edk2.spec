@@ -4,7 +4,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -344,6 +344,9 @@ cp -a arm %{buildroot}/usr/share/%{name}
 
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20170209git296153c5-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Mar 15 2017 Cole Robinson <crobinso@redhat.com> - 20170209git296153c5-3
 - Ship ovmf-ia32 package (bz 1424722)
 
