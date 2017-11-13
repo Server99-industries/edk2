@@ -2,9 +2,30 @@
 %global edk2_githash     296153c5
 %global openssl_version  1.0.2j
 
+%define cross 1
+
+%ifarch %{ix86} x86_64
+%define build_ovmf_ia32 1
+%ifarch x86_64
+%define build_ovmf_x64 1
+%endif
+%endif
+%ifarch aarch64
+%define build_aavmf_aarch64 1
+%endif
+%ifarch %{arm}
+%define build_aavmf_arm 1
+%endif
+%if 0%{?cross:1}
+%define build_ovmf_x64 1
+%define build_ovmf_ia32 1
+%define build_aavmf_aarch64 1
+%define build_aavmf_arm 1
+%endif
+
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        5%{dist}
+Release:        6%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -37,9 +58,11 @@ Patch0006: 0006-EXCLUDE_SHELL_FROM_FD.patch
 Patch0007: 0007-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 # More text console resolutions. Upstreaming attempted, but failed
 Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
+%if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
 # These files are meant for customization, so this is not upstream.
 Patch0009: 0009-Tweak-the-tools_def-to-support-cross-compiling.patch
+%endif
 
 # fix for build failure, sent upstream
 Patch0010: 0010-VfrCompile-fix-invalid-comparison-between-pointer-an.patch
@@ -54,9 +77,11 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 
 BuildRequires:  python
 BuildRequires:  libuuid-devel
+%if 0%{?cross:1}
 BuildRequires:  gcc-aarch64-linux-gnu
 BuildRequires:  gcc-arm-linux-gnu
 BuildRequires:  gcc-x86_64-linux-gnu
+%endif
 BuildRequires:  iasl
 BuildRequires:  nasm
 BuildRequires:  dosfstools
@@ -94,15 +119,19 @@ BuildArch:      noarch
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
+%if 0%{?build_ovmf_x64:1}
 %package ovmf
 Summary:        Open Virtual Machine Firmware
 License:        BSD and OpenSSL
-Provides:       OVMF
+Provides:       OVMF = %{version}-%{release}
+Obsoletes:      OVMF < %{version}-%{release}
 BuildArch:      noarch
 %description ovmf
 EFI Development Kit II
 Open Virtual Machine Firmware (x64)
+%endif
 
+%if 0%{?build_ovmf_ia32:1}
 %package ovmf-ia32
 Summary:        Open Virtual Machine Firmware
 License:        BSD and OpenSSL
@@ -110,21 +139,27 @@ BuildArch:      noarch
 %description ovmf-ia32
 EFI Development Kit II
 Open Virtual Machine Firmware (ia32)
+%endif
 
+%if 0%{?build_aavmf_aarch64:1}
 %package aarch64
 Summary:        AARCH64 Virtual Machine Firmware
-Provides:       AAVMF
+Provides:       AAVMF = %{version}-%{release}
+Obsoletes:      AAVMF < %{version}-%{release}
 BuildArch:      noarch
 %description aarch64
 EFI Development Kit II
 AARCH64 UEFI Firmware
+%endif
 
+%if 0%{?build_aavmf_arm:1}
 %package arm
 Summary:        ARM Virtual Machine Firmware
 BuildArch:      noarch
 %description arm
 EFI Development Kit II
 armv7 UEFI Firmware
+%endif
 
 
 %prep
@@ -180,9 +215,15 @@ make -C BaseTools #%{?_smp_mflags}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
 
-# build ovmf (x64)
+%if 0%{?cross:1}
 export GCC49_IA32_PREFIX="x86_64-linux-gnu-"
 export GCC49_X64_PREFIX="x86_64-linux-gnu-"
+export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
+export GCC49_ARM_PREFIX="arm-linux-gnu-"
+%endif
+
+# build ovmf (x64)
+%if 0%{?build_ovmf_x64:1}
 mkdir -p ovmf
 build ${OVMF_FLAGS} -a X64 -p OvmfPkg/OvmfPkgX64.dsc
 cp Build/OvmfX64/*/FV/OVMF_*.fd ovmf/
@@ -197,9 +238,11 @@ cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{_sourcedir}/build-iso.sh ovmf/
 unset GCC49_X64_PREFIX
+%endif
 
 
 # build ovmf-ia32
+%if 0%{?build_ovmf_ia32:1}
 mkdir -p ovmf-ia32
 build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
 cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/
@@ -214,10 +257,11 @@ cp Build/OvmfIa32/*/IA32/Shell.efi ovmf-ia32/Shell.efi
 cp Build/OvmfIa32/*/IA32/EnrollDefaultKeys.efi ovmf-ia32/EnrollDefaultKeys.efi
 sh %{_sourcedir}/build-iso.sh ovmf-ia32/
 unset GCC49_IA32_PREFIX
+%endif
 
 
 # build aarch64 firmware
-export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
+%if 0%{?build_aavmf_aarch64:1}
 mkdir -p aarch64
 build $ARM_FLAGS -a AARCH64 -p ArmVirtPkg/ArmVirtQemu.dsc
 cp Build/ArmVirtQemu-AARCH64/DEBUG_*/FV/*.fd aarch64
@@ -225,10 +269,11 @@ dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
 dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 unset GCC49_AARCH64_PREFIX
+%endif
 
 
 # build aarch64 firmware
-export GCC49_ARM_PREFIX="arm-linux-gnu-"
+%if 0%{?build_aavmf_arm:1}
 mkdir -p arm
 build $ARM_FLAGS -a ARM -p ArmVirtPkg/ArmVirtQemu.dsc
 cp Build/ArmVirtQemu-ARM/DEBUG_*/FV/*.fd arm
@@ -236,7 +281,7 @@ dd of="arm/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
 dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 unset GCC49_ARM_PREFIX
-
+%endif
 
 %install
 mkdir -p %{buildroot}%{_bindir} \
@@ -262,10 +307,28 @@ exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}
 done
 
 mkdir -p %{buildroot}/usr/share/%{name}
+%if 0%{?build_ovmf_x64:1}
 cp -a ovmf %{buildroot}/usr/share/%{name}
+# Libvirt hardcodes this directory name
+mkdir %{buildroot}/usr/share/OVMF
+ln -sf ../%{name}/ovmf/OVMF_CODE.fd                %{buildroot}/usr/share/OVMF
+ln -sf ../%{name}/ovmf/OVMF_CODE.secboot.fd        %{buildroot}/usr/share/OVMF
+ln -sf ../%{name}/ovmf/UefiShell.iso               %{buildroot}/usr/share/OVMF
+%endif
+%if 0%{?build_ovmf_ia32:1}
 cp -a ovmf-ia32 %{buildroot}/usr/share/%{name}
+%endif
+%if 0%{?build_aavmf_aarch64:1}
 cp -a aarch64 %{buildroot}/usr/share/%{name}
+# Libvirt hardcodes this directory name
+mkdir %{buildroot}/usr/share/AAVMF
+ln -sf ../%{name}/aarch64/QEMU_EFI-pflash.raw      %{buildroot}/usr/share/AAVMF/AAVMF_CODE.fd
+ln -sf ../%{name}/aarch64/vars-template-pflash.raw %{buildroot}/usr/share/AAVMF/AAVMF_VARS.fd
+%endif
+%if 0%{?build_aavmf_arm:1}
 cp -a arm %{buildroot}/usr/share/%{name}
+ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/AAVMF32_CODE.fd
+%endif
 
 
 %files tools
@@ -308,6 +371,7 @@ cp -a arm %{buildroot}/usr/share/%{name}
 %files tools-doc
 %doc BaseTools/UserManuals/*.rtf
 
+%if 0%{?build_ovmf_x64:1}
 %files ovmf
 %license OvmfPkg/License.txt
 %license LICENSE.openssl
@@ -317,7 +381,10 @@ cp -a arm %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/ovmf/OVMF*.fd
 /usr/share/%{name}/ovmf/*.efi
 /usr/share/%{name}/ovmf/*.iso
+/usr/share/OVMF
+%endif
 
+%if 0%{?build_ovmf_ia32:1}
 %files ovmf-ia32
 %license OvmfPkg/License.txt
 %license LICENSE.openssl
@@ -327,23 +394,34 @@ cp -a arm %{buildroot}/usr/share/%{name}
 /usr/share/%{name}/ovmf-ia32/OVMF*.fd
 /usr/share/%{name}/ovmf-ia32/*.efi
 /usr/share/%{name}/ovmf-ia32/*.iso
+%endif
 
+%if 0%{?build_aavmf_aarch64:1}
 %files aarch64
 %license ArmVirtPkg/License.txt
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/aarch64
 /usr/share/%{name}/aarch64/QEMU*.fd
 /usr/share/%{name}/aarch64/*.raw
+/usr/share/AAVMF/AAVMF_*
+%endif
 
+%if 0%{?build_aavmf_arm:1}
 %files arm
 %license ArmVirtPkg/License.txt
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/arm
 /usr/share/%{name}/arm/QEMU*.fd
 /usr/share/%{name}/arm/*.raw
+/usr/share/AAVMF/AAVMF32_*
+%endif
 
 
 %changelog
+* Mon Nov 13 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-6
+- Allow non-cross builds
+- Install /usr/share/OVMF and /usr/share/AAVMF
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20170209git296153c5-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
