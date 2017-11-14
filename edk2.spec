@@ -25,7 +25,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        6%{dist}
+Release:        7%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -313,6 +313,7 @@ cp -a ovmf %{buildroot}/usr/share/%{name}
 mkdir %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_CODE.fd                %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_CODE.secboot.fd        %{buildroot}/usr/share/OVMF
+ln -sf ../%{name}/ovmf/OVMF_VARS.fd                %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/UefiShell.iso               %{buildroot}/usr/share/OVMF
 %endif
 %if 0%{?build_ovmf_ia32:1}
