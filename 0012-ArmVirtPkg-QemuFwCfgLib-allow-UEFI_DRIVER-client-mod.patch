@@ -1,0 +1,37 @@
+From 22b073005af491eef177ef5f80ffe71c1ebabb03 Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Tue, 12 Apr 2016 20:50:25 +0200
+Subject: ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client modules (RH only)
+
+Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
+
+- no changes
+
+Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
+
+- no changes
+
+Contributed-under: TianoCore Contribution Agreement 1.0
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+(cherry picked from commit 8e2153358aa2bba2c91faa87a70beadcaae03fd8)
+(cherry picked from commit 5af259a93f4bbee5515ae18638068125e170f2cd)
+---
+ ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+index eff4a21..adf1ff6 100644
+--- a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
++++ b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+@@ -22,7 +22,7 @@
+   FILE_GUID                      = B271F41F-B841-48A9-BA8D-545B4BC2E2BF
+   MODULE_TYPE                    = BASE
+   VERSION_STRING                 = 1.0
+-  LIBRARY_CLASS                  = QemuFwCfgLib|DXE_DRIVER
++  LIBRARY_CLASS                  = QemuFwCfgLib|DXE_DRIVER UEFI_DRIVER
+ 
+   CONSTRUCTOR                    = QemuFwCfgInitialize
+ 
+-- 
+1.8.3.1
+

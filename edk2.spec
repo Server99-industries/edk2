@@ -1,6 +1,6 @@
-%global edk2_date        20170209
-%global edk2_githash     296153c5
-%global openssl_version  1.0.2j
+%global edk2_date        20171011
+%global edk2_githash     92d07e4
+%global openssl_version  1.1.0e
 
 %define cross 1
 
@@ -25,47 +25,44 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        7%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
 Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.xz
-# We have to remove certain patented algorithms from the openssl source
-# tarball with the hobble-openssl script which is included below.
-# The original openssl upstream tarball cannot be shipped in the .src.rpm.
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
-Source2:        hobble-openssl
-Source3:        build-iso.sh
-Source9:        update-tarball.sh
+Source2:        ovmf-whitepaper-c770f8c.txt
+Source10:       hobble-openssl
+Source11:       build-iso.sh
+Source12:       update-tarball.sh
+Source13:       openssl-patch-to-tarball.sh
 
-# This is the version of the OpenSSL patch that EDK2 applies, but
-# with all changes to srp.* files removed.
-Source10:       EDKII_openssl-1.0.2j-no-srp.patch
-
-# Debug output tweaks, not for upstream
 Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0002: 0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
 Patch0003: 0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
 Patch0004: 0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
-Patch0005: 0005-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
-# Exclude EFI shell from firmware, suggested by pjones re: secureboot.
-# Not for upstream, see bug 1325023#c16
-Patch0006: 0006-EXCLUDE_SHELL_FROM_FD.patch
-# Ship EnrollDefaultKeys application.
-# Not for upstream, see bug 1325023#c16
-Patch0007: 0007-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
-# More text console resolutions. Upstreaming attempted, but failed
-Patch0008: 0008-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
+Patch0005: 0005-BuildEnv-override-set-C-noclobber-of-sourcing-env.patch
+Patch0006: 0006-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
+Patch0008: 0008-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
+Patch0009: 0009-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
+Patch0010: 0010-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
+Patch0011: 0011-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
+Patch0012: 0012-ArmVirtPkg-QemuFwCfgLib-allow-UEFI_DRIVER-client-mod.patch
+Patch0013: 0013-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0014: 0014-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
+Patch0015: 0015-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
+Patch0016: 0016-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
+Patch0017: 0017-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
+Patch0018: 0018-ArmVirtPkg-set-early-hello-message.patch
+
+
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
 # These files are meant for customization, so this is not upstream.
-Patch0009: 0009-Tweak-the-tools_def-to-support-cross-compiling.patch
+Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 %endif
-
-# fix for build failure, sent upstream
-Patch0010: 0010-VfrCompile-fix-invalid-comparison-between-pointer-an.patch
 
 #
 # actual firmware builds support cross-compiling.  edk2-tools
@@ -166,16 +163,19 @@ armv7 UEFI Firmware
 %setup -q -n tianocore-%{name}-%{edk2_githash}
 %autopatch -p1
 
-# replace upstream patch with ours
-cp %{SOURCE10} CryptoPkg/Library/OpensslLib/EDKII_openssl-%{openssl_version}.patch
+
+# Ensure old shell and binary packages are not used
+rm -rf EdkShellBinPkg
+rm -rf EdkShellPkg
+rm -rf FatBinPkg
+rm -rf ShellBinPkg
+
+cp -a -- %{SOURCE2} .
 
 # add openssl
-tar -C CryptoPkg/Library/OpensslLib -xf %{SOURCE1}
-(cd CryptoPkg/Library/OpensslLib/openssl-%{openssl_version};
- patch -p1 < ../EDKII_openssl-%{openssl_version}.patch)
-(cd CryptoPkg/Library/OpensslLib; ./Install.sh)
-cp CryptoPkg/Library/OpensslLib/openssl-*/LICENSE LICENSE.openssl
-
+(cd .. && tar -xvf %{SOURCE1})
+cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
+base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
 
 %build
 source ./edksetup.sh
@@ -237,7 +237,6 @@ cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
 cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{_sourcedir}/build-iso.sh ovmf/
-unset GCC49_X64_PREFIX
 %endif
 
 
@@ -256,7 +255,6 @@ cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/OVMF_CODE.secboot.fd
 cp Build/OvmfIa32/*/IA32/Shell.efi ovmf-ia32/Shell.efi
 cp Build/OvmfIa32/*/IA32/EnrollDefaultKeys.efi ovmf-ia32/EnrollDefaultKeys.efi
 sh %{_sourcedir}/build-iso.sh ovmf-ia32/
-unset GCC49_IA32_PREFIX
 %endif
 
 
@@ -268,7 +266,6 @@ cp Build/ArmVirtQemu-AARCH64/DEBUG_*/FV/*.fd aarch64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="aarch64/QEMU_EFI-pflash.raw" if="aarch64/QEMU_EFI.fd" conv=notrunc
 dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
-unset GCC49_AARCH64_PREFIX
 %endif
 
 
@@ -280,7 +277,6 @@ cp Build/ArmVirtQemu-ARM/DEBUG_*/FV/*.fd arm
 dd of="arm/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
 dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
 dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
-unset GCC49_ARM_PREFIX
 %endif
 
 %install
@@ -333,7 +329,9 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %files tools
+%license License.txt
 %{_bindir}/BootSectImage
+%{_bindir}/Brotli
 %{_bindir}/EfiLdrImage
 %{_bindir}/EfiRom
 %{_bindir}/GenCrc32
@@ -377,6 +375,7 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 %license OvmfPkg/License.txt
 %license LICENSE.openssl
 %doc OvmfPkg/README
+%doc ovmf-whitepaper-c770f8c.txt
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/ovmf
 /usr/share/%{name}/ovmf/OVMF*.fd
@@ -390,6 +389,7 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 %license OvmfPkg/License.txt
 %license LICENSE.openssl
 %doc OvmfPkg/README
+%doc ovmf-whitepaper-c770f8c.txt
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/ovmf-ia32
 /usr/share/%{name}/ovmf-ia32/OVMF*.fd
@@ -399,7 +399,8 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 %if 0%{?build_aavmf_aarch64:1}
 %files aarch64
-%license ArmVirtPkg/License.txt
+%license OvmfPkg/License.txt
+%license LICENSE.openssl
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/aarch64
 /usr/share/%{name}/aarch64/QEMU*.fd
@@ -409,7 +410,8 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 %if 0%{?build_aavmf_arm:1}
 %files arm
-%license ArmVirtPkg/License.txt
+%license OvmfPkg/License.txt
+%license LICENSE.openssl
 %dir /usr/share/%{name}
 %dir /usr/share/%{name}/arm
 /usr/share/%{name}/arm/QEMU*.fd
@@ -419,6 +421,11 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %changelog
+* Tue Nov 14 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-6
+- Import source and patches from RHEL version
+- Update OpenSSL to 1.1.0e
+- Refresh 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
+
 * Mon Nov 13 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-6
 - Allow non-cross builds
 - Install /usr/share/OVMF and /usr/share/AAVMF
