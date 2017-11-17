@@ -1,0 +1,105 @@
+From: Ruiyu Ni <ruiyu.ni@intel.com>
+Subject: [PATCH] MdeModulePkg/Bds: Check variable name even *if* OptionNumber is NULL
+Date: Thu, 16 Nov 2017 18:04:43 +0100
+
+Current implementation skips to check whether the last four
+characters are digits when the OptionNumber is NULL.
+Even worse, it may incorrectly return FALSE when OptionNumber is
+NULL.
+
+The patch fixes it to always check the variable name even
+OptionNumber is NULL.
+
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Ruiyu Ni <ruiyu.ni@intel.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Laszlo Ersek <lersek@redhat.com>
+(cherry picked from commit 5e6e2dcc380dcd841f6f979fea8c302c80a87ec3)
+---
+ MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c | 45 +++++++++++++-------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
+
+diff --git a/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c b/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
+index b0a35058d02b..32918caf324c 100644
+--- a/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
++++ b/MdeModulePkg/Library/UefiBootManagerLib/BmLoadOption.c
+@@ -785,6 +785,8 @@ EfiBootManagerIsValidLoadOptionVariableName (
+   UINTN                             VariableNameLen;
+   UINTN                             Index;
+   UINTN                             Uint;
++  EFI_BOOT_MANAGER_LOAD_OPTION_TYPE LocalOptionType;
++  UINT16                            LocalOptionNumber;
+ 
+   if (VariableName == NULL) {
+     return FALSE;
+@@ -792,39 +794,52 @@ EfiBootManagerIsValidLoadOptionVariableName (
+ 
+   VariableNameLen = StrLen (VariableName);
+ 
++  //
++  // Return FALSE when the variable name length is too small.
++  //
+   if (VariableNameLen <= 4) {
+     return FALSE;
+   }
+ 
+-  for (Index = 0; Index < ARRAY_SIZE (mBmLoadOptionName); Index++) {
+-    if ((VariableNameLen - 4 == StrLen (mBmLoadOptionName[Index])) &&
+-        (StrnCmp (VariableName, mBmLoadOptionName[Index], VariableNameLen - 4) == 0)
++  //
++  // Return FALSE when the variable name doesn't start with Driver/SysPrep/Boot/PlatformRecovery.
++  //
++  for (LocalOptionType = 0; LocalOptionType < ARRAY_SIZE (mBmLoadOptionName); LocalOptionType++) {
++    if ((VariableNameLen - 4 == StrLen (mBmLoadOptionName[LocalOptionType])) &&
++        (StrnCmp (VariableName, mBmLoadOptionName[LocalOptionType], VariableNameLen - 4) == 0)
+         ) {
+       break;
+     }
+   }
++  if (LocalOptionType == ARRAY_SIZE (mBmLoadOptionName)) {
++    return FALSE;
++  }
+ 
+-  if (Index == ARRAY_SIZE (mBmLoadOptionName)) {
++  //
++  // Return FALSE when the last four characters are not hex digits.
++  //
++  LocalOptionNumber = 0;
++  for (Index = VariableNameLen - 4; Index < VariableNameLen; Index++) {
++    Uint = BmCharToUint (VariableName[Index]);
++    if (Uint == -1) {
++      break;
++    } else {
++      LocalOptionNumber = (UINT16) Uint + LocalOptionNumber * 0x10;
++    }
++  }
++  if (Index != VariableNameLen) {
+     return FALSE;
+   }
+ 
+   if (OptionType != NULL) {
+-    *OptionType = (EFI_BOOT_MANAGER_LOAD_OPTION_TYPE) Index;
++    *OptionType = LocalOptionType;
+   }
+ 
+   if (OptionNumber != NULL) {
+-    *OptionNumber = 0;
+-    for (Index = VariableNameLen - 4; Index < VariableNameLen; Index++) {
+-      Uint = BmCharToUint (VariableName[Index]);
+-      if (Uint == -1) {
+-        break;
+-      } else {
+-        *OptionNumber = (UINT16) Uint + *OptionNumber * 0x10;
+-      }
+-    }
++    *OptionNumber = LocalOptionNumber;
+   }
+ 
+-  return (BOOLEAN) (Index == VariableNameLen);
++  return TRUE;
+ }
+ 
+ /**
+-- 
+2.14.1.3.gb7cf6e02401b
+

@@ -1,0 +1,34 @@
+From: Ruiyu Ni <ruiyu.ni@intel.com>
+Subject: [PATCH] MdeModulePkg/Bds: Remove assertion in BmCharToUint
+Date: Thu, 16 Nov 2017 18:04:42 +0100
+
+BmCharToUint() could be called using external data and it
+already contains logic to return -1 when data is invalid,
+so removing unnecessary assertion to avoid system hang.
+
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Ruiyu Ni <ruiyu.ni@intel.com>
+Reviewed-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Star Zeng <star.zeng@intel.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+(cherry picked from commit 618ef6f9bae14e1543d61993ab7ab8992063e4cc)
+---
+ MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c b/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
+index 11ab86792a52..a3fa25424592 100644
+--- a/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
++++ b/MdeModulePkg/Library/UefiBootManagerLib/BmMisc.c
+@@ -420,7 +420,6 @@ BmCharToUint (
+     return (Char - L'A' + 0xA);
+   }
+ 
+-  ASSERT (FALSE);
+   return (UINTN) -1;
+ }
+ 
+-- 
+2.14.1.3.gb7cf6e02401b
+
+

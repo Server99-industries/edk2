@@ -2,10 +2,14 @@
 %global edk2_githash     92d07e4
 %global openssl_version  1.1.0e
 
+%if 0%{?fedora:1}
 %define cross 1
+%endif
 
 %ifarch %{ix86} x86_64
+%if 0%{?fedora:1}
 %define build_ovmf_ia32 1
+%endif
 %ifarch x86_64
 %define build_ovmf_x64 1
 %endif
@@ -25,7 +29,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -39,6 +43,7 @@ Source11:       build-iso.sh
 Source12:       update-tarball.sh
 Source13:       openssl-patch-to-tarball.sh
 
+# non-upstream patches
 Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0002: 0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
 Patch0003: 0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
@@ -57,13 +62,23 @@ Patch0016: 0016-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0017: 0017-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0018: 0018-ArmVirtPkg-set-early-hello-message.patch
 
+# upstream backports
+Patch0019: 0019-MdeModulePkg-PciBus-Fix-bug-that-PCI-BUS-claims-too-much-resource.patch
+Patch0020: 0020-MdeModulePkg-Bds-Remove-assertion-in-BmCharToUint.patch
+Patch0021: 0021-MdeModulePkg-Bds-Check-variable-name-even-if-OptionNumber-is-NULL.patch
+
+# submitted upstream
+Patch0022: 0022-OvmfPkg-make-it-a-proper-BASE-library.patch
+Patch0023: 0023-OvmfPkg-create-a-separate-PlatformDebugLibIoPort-ins.patch
+Patch0024: 0024-OvmfPkg-save-on-I-O-port-accesses-when-the-debug-por.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
-# These files are meant for customization, so this is not upstream.
+# These files are meant for customization, so this is not upstream too.
 Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 %endif
 
+%if 0%{?fedora:1}
 #
 # actual firmware builds support cross-compiling.  edk2-tools
 # in theory should build everywhere without much trouble, but
@@ -71,6 +86,9 @@ Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 # (such as ppc), so lets limit things to the known-good ones.
 #
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
+%else
+ExclusiveArch:  x86_64 aarch64
+%endif
 
 BuildRequires:  python
 BuildRequires:  libuuid-devel
@@ -421,7 +439,12 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %changelog
-* Tue Nov 14 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-6
+* Fri Nov 17 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-2
+- Backport patches 19-21 from RHEL
+- Add patches 22-24 to fix SEV slowness
+- Add fedora conditionals
+
+* Tue Nov 14 2017 Paolo Bonzini <pbonzini@redhat.com> - 20171011git92d07e4-1
 - Import source and patches from RHEL version
 - Update OpenSSL to 1.1.0e
 - Refresh 0099-Tweak-the-tools_def-to-support-cross-compiling.patch

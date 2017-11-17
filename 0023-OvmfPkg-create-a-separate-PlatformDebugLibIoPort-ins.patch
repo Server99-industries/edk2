@@ -1,0 +1,254 @@
+From ba774b89b5a206c71a2ce0db8184747fac0f6af7 Mon Sep 17 00:00:00 2001
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 16 Nov 2017 10:33:29 +0100
+Subject: [PATCH 2/3] OvmfPkg: create a separate PlatformDebugLibIoPort
+ instance for SEC
+
+The next patch will want to add a global variable to
+PlatformDebugLibIoPort, but this is not suitable for the SEC
+phase, because SEC runs from read-only flash.  The solution is
+to have two library instances, one for SEC and another
+for all other firmware phases.  This patch adds the "plumbing"
+for the SEC library instance, separating the INF files and
+moving the constructor to a separate C source file.
+
+Contributed-under: TianoCore Contribution Agreement 1.1
+Cc: Laszlo Ersek <lersek@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Jordan Justen (Intel address) <jordan.l.justen@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ OvmfPkg/OvmfPkgIa32.dsc                            |  2 +-
+ OvmfPkg/OvmfPkgIa32X64.dsc                         |  2 +-
+ OvmfPkg/OvmfPkgX64.dsc                             |  2 +-
+ .../PlatformDebugLibIoPort.inf                     |  3 +-
+ .../PlatformRomDebugLibIoPort.inf                  | 52 ++++++++++++++++++++++
+ OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c  | 15 -------
+ .../PlatformDebugLibIoPort/DebugLibDetect.c        | 31 +++++++++++++
+ .../PlatformDebugLibIoPort/DebugLibDetectRom.c     | 31 +++++++++++++
+ 8 files changed, 119 insertions(+), 19 deletions(-)
+ create mode 100644 OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+ create mode 100644 OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.c
+ create mode 100644 OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetectRom.c
+
+diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
+index c2f534fdbf..7ccb61147f 100644
+--- a/OvmfPkg/OvmfPkgIa32.dsc
++++ b/OvmfPkg/OvmfPkgIa32.dsc
+@@ -207,7 +207,7 @@ [LibraryClasses.common.SEC]
+ !ifdef $(DEBUG_ON_SERIAL_PORT)
+   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+ !else
+-  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
++  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+ !endif
+   ReportStatusCodeLib|MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
+   ExtractGuidedSectionLib|MdePkg/Library/BaseExtractGuidedSectionLib/BaseExtractGuidedSectionLib.inf
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index 9f300a2e6f..237ec71b5e 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -212,7 +212,7 @@ [LibraryClasses.common.SEC]
+ !ifdef $(DEBUG_ON_SERIAL_PORT)
+   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+ !else
+-  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
++  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+ !endif
+   ReportStatusCodeLib|MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
+   ExtractGuidedSectionLib|MdePkg/Library/BaseExtractGuidedSectionLib/BaseExtractGuidedSectionLib.inf
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index 1ffcf37f8b..a5047fa38e 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -212,7 +212,7 @@ [LibraryClasses.common.SEC]
+ !ifdef $(DEBUG_ON_SERIAL_PORT)
+   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+ !else
+-  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
++  DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+ !endif
+   ReportStatusCodeLib|MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
+   ExtractGuidedSectionLib|MdePkg/Library/BaseExtractGuidedSectionLib/BaseExtractGuidedSectionLib.inf
+diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf b/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
+index 0e74fe94cb..de3c2f542b 100644
+--- a/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
++++ b/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
+@@ -21,7 +21,7 @@ [Defines]
+   FILE_GUID                      = DF934DA3-CD31-49FE-AF50-B3C87C79325F
+   MODULE_TYPE                    = BASE
+   VERSION_STRING                 = 1.0
+-  LIBRARY_CLASS                  = DebugLib
++  LIBRARY_CLASS                  = DebugLib|PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER SMM_CORE DXE_SMM_DRIVER UEFI_DRIVER UEFI_APPLICATION
+   CONSTRUCTOR                    = PlatformDebugLibIoPortConstructor
+ 
+ #
+@@ -30,6 +30,7 @@ [Defines]
+ 
+ [Sources]
+   DebugLib.c
++  DebugLibDetect.c
+ 
+ [Packages]
+   MdePkg/MdePkg.dec
+diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf b/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+new file mode 100644
+index 0000000000..491c0318de
+--- /dev/null
++++ b/OvmfPkg/Library/PlatformDebugLibIoPort/PlatformRomDebugLibIoPort.inf
+@@ -0,0 +1,52 @@
++## @file
++#  Instance of Debug Library for the QEMU debug console port.
++#  It uses Print Library to produce formatted output strings.
++#
++#  Copyright (c) 2006 - 2015, Intel Corporation. All rights reserved.<BR>
++#  Copyright (c) 2017, Red Hat, Inc.<BR>
++#
++#  This program and the accompanying materials
++#  are licensed and made available under the terms and conditions of the BSD License
++#  which accompanies this distribution. The full text of the license may be found at
++#  http://opensource.org/licenses/bsd-license.php.
++#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
++#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
++#
++#
++##
++
++[Defines]
++  INF_VERSION                    = 0x00010005
++  BASE_NAME                      = PlatformRomDebugLibIoPort
++  FILE_GUID                      = CEB0D9D3-328F-4C24-8C02-28FA1986AE1B
++  MODULE_TYPE                    = BASE
++  VERSION_STRING                 = 1.0
++  LIBRARY_CLASS                  = DebugLib|SEC
++  CONSTRUCTOR                    = PlatformRomDebugLibIoPortConstructor
++
++#
++#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
++#
++
++[Sources]
++  DebugLib.c
++  DebugLibDetectRom.c
++
++[Packages]
++  MdePkg/MdePkg.dec
++  OvmfPkg/OvmfPkg.dec
++
++[LibraryClasses]
++  BaseMemoryLib
++  IoLib
++  PcdLib
++  PrintLib
++  BaseLib
++  DebugPrintErrorLevelLib
++
++[Pcd]
++  gUefiOvmfPkgTokenSpaceGuid.PcdDebugIoPort                ## CONSUMES
++  gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue        ## CONSUMES
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask            ## CONSUMES
++  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel    ## CONSUMES
++
+diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
+index 74f4d9c2d6..5a1c86f2c3 100644
+--- a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
++++ b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
+@@ -28,21 +28,6 @@
+ //
+ #define MAX_DEBUG_MESSAGE_LENGTH  0x200
+ 
+-/**
+-  This constructor function does not have to do anything.
+-
+-  @retval RETURN_SUCCESS   The constructor always returns RETURN_SUCCESS.
+-
+-**/
+-RETURN_STATUS
+-EFIAPI
+-PlatformDebugLibIoPortConstructor (
+-  VOID
+-  )
+-{
+-  return RETURN_SUCCESS;
+-}
+-
+ /**
+   Prints a debug message to the debug output device if the specified error level is enabled.
+ 
+diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.c b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.c
+new file mode 100644
+index 0000000000..bad054f286
+--- /dev/null
++++ b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetect.c
+@@ -0,0 +1,31 @@
++/** @file
++  Constructor code for QEMU debug port library.
++  Non-SEC instance.
++
++  Copyright (c) 2017, Red Hat, Inc.<BR>
++  This program and the accompanying materials
++  are licensed and made available under the terms and conditions of the BSD License
++  which accompanies this distribution.  The full text of the license may be found at
++  http://opensource.org/licenses/bsd-license.php.
++
++  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
++  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
++
++**/
++
++#include <Base.h>
++
++/**
++  This constructor function does not have anything to do.
++
++  @retval RETURN_SUCCESS   The constructor always returns RETURN_SUCCESS.
++
++**/
++RETURN_STATUS
++EFIAPI
++PlatformDebugLibIoPortConstructor (
++  VOID
++  )
++{
++  return RETURN_SUCCESS;
++}
+diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetectRom.c b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetectRom.c
+new file mode 100644
+index 0000000000..83a118a0f7
+--- /dev/null
++++ b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLibDetectRom.c
+@@ -0,0 +1,31 @@
++/** @file
++  Constructor code for QEMU debug port library.
++  SEC instance.
++
++  Copyright (c) 2017, Red Hat, Inc.<BR>
++  This program and the accompanying materials
++  are licensed and made available under the terms and conditions of the BSD License
++  which accompanies this distribution.  The full text of the license may be found at
++  http://opensource.org/licenses/bsd-license.php.
++
++  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
++  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
++
++**/
++
++#include <Base.h>
++
++/**
++  This constructor function does not have anything to do.
++
++  @retval RETURN_SUCCESS   The constructor always returns RETURN_SUCCESS.
++
++**/
++RETURN_STATUS
++EFIAPI
++PlatformRomDebugLibIoPortConstructor (
++  VOID
++  )
++{
++  return RETURN_SUCCESS;
++}
+-- 
+2.14.3
+
