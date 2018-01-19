@@ -29,7 +29,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -77,6 +77,12 @@ Patch0024: 0024-OvmfPkg-save-on-I-O-port-accesses-when-the-debug-por.patch
 # These files are meant for customization, so this is not upstream too.
 Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 %endif
+
+# openssl patches from Fedora
+Patch1021: openssl-1.1.0-issuer-hash.patch
+Patch1039: openssl-1.1.0-cc-reqs.patch
+Patch1040: openssl-1.1.0-disable-ssl3.patch
+Patch1044: openssl-1.1.0-bio-fd-preserve-nl.patch
 
 %if 0%{?fedora:1}
 #
@@ -179,7 +185,6 @@ armv7 UEFI Firmware
 
 %prep
 %setup -q -n tianocore-%{name}-%{edk2_githash}
-%autopatch -p1
 
 
 # Ensure old shell and binary packages are not used
@@ -193,6 +198,8 @@ cp -a -- %{SOURCE2} .
 # add openssl
 (cd .. && tar -xvf %{SOURCE1})
 cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
+
+%autopatch -p1
 base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
 
 %build
@@ -214,6 +221,7 @@ CC_FLAGS="${CC_FLAGS} --cmd-len=65536"
 
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
+OVMF_FLAGS="${OVMF_FLAGS} -D TLS_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D HTTP_BOOT_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_IP6_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D FD_SIZE_2MB"
@@ -439,6 +447,10 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %changelog
+* Fri Jan 19 2018 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-3
+- Add OpenSSL patches from Fedora
+- Enable TLS_MODE
+
 * Fri Nov 17 2017 Paolo Bonzini <pbonzini@redhat.com> - 20170209git296153c5-2
 - Backport patches 19-21 from RHEL
 - Add patches 22-24 to fix SEV slowness
