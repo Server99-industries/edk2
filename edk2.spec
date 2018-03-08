@@ -29,7 +29,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
