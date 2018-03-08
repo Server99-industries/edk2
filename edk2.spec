@@ -66,11 +66,12 @@ Patch0018: 0018-ArmVirtPkg-set-early-hello-message.patch
 Patch0019: 0019-MdeModulePkg-PciBus-Fix-bug-that-PCI-BUS-claims-too-much-resource.patch
 Patch0020: 0020-MdeModulePkg-Bds-Remove-assertion-in-BmCharToUint.patch
 Patch0021: 0021-MdeModulePkg-Bds-Check-variable-name-even-if-OptionNumber-is-NULL.patch
-
-# submitted upstream
 Patch0022: 0022-OvmfPkg-make-it-a-proper-BASE-library.patch
 Patch0023: 0023-OvmfPkg-create-a-separate-PlatformDebugLibIoPort-ins.patch
 Patch0024: 0024-OvmfPkg-save-on-I-O-port-accesses-when-the-debug-por.patch
+Patch0025: 0025-BaseTools-header.makefile-add-Wno-stringop-truncatio.patch
+Patch0026: 0026-BaseTools-header.makefile-add-Wno-restrict.patch
+Patch0027: 0027-BaseTools-GenVtf-silence-false-stringop-overflow-war.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -105,8 +106,7 @@ BuildRequires:  gcc-x86_64-linux-gnu
 %endif
 BuildRequires:  iasl
 BuildRequires:  nasm
-BuildRequires:  dosfstools
-BuildRequires:  mtools
+BuildRequires:  qemu-img
 BuildRequires:  genisoimage
 
 
@@ -447,6 +447,10 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %changelog
+* Wed Mar 07 2018 Paolo Bonzini <pbonzini@redhat.com> - 20171011git92d07e4-5
+- Fix GCC 8 compilation
+- Replace dosfstools and mtools with qemu-img vvfat
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20171011git92d07e4-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
