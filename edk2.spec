@@ -97,6 +97,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 ExclusiveArch:  x86_64 aarch64
 %endif
 
+BuildRequires:  gcc gcc-c++
 BuildRequires:  python
 BuildRequires:  libuuid-devel
 %if 0%{?cross:1}
