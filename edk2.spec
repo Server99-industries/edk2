@@ -119,7 +119,7 @@ BuildRequires:  genisoimage
 
 # These are for QOSB
 BuildRequires:  python3-requests
-BuildRequires:  qemu
+BuildRequires:  qemu-system-x86
 %if %{?qosb_testing}
 # This is used for testing the enrollment: builds are run in a chroot, lacking
 # a kernel. The testing is only performed on x86_64 for now, but we can't make
