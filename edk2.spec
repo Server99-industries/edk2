@@ -1,7 +1,13 @@
 %global edk2_date        20171011
 %global edk2_githash     92d07e4
 %global openssl_version  1.1.0e
+%global qosb_version     1.1.2
 
+%define qosb_testing 0
+
+%ifarch x86_64
+%define qosb_testing 1
+%endif
 %if 0%{?fedora:1}
 %define cross 1
 %endif
@@ -29,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        5%{dist}
+Release:        6%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -38,6 +44,7 @@ URL:            http://www.tianocore.org/edk2/
 Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.xz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
+Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v%{qosb_version}/qemu-ovmf-secureboot-%{qosb_version}.tar.gz
 Source10:       hobble-openssl
 Source11:       build-iso.sh
 Source12:       update-tarball.sh
@@ -110,6 +117,19 @@ BuildRequires:  nasm
 BuildRequires:  qemu-img
 BuildRequires:  genisoimage
 
+# These are for QOSB
+BuildRequires:  python3-requests
+BuildRequires:  qemu
+%if %{?qosb_testing}
+# This is used for testing the enrollment: builds are run in a chroot, lacking
+# a kernel. The testing is only performed on x86_64 for now, but we can't make
+# the BuildRequires only on a specific arch, as that'd come through in the SRPM
+# NOTE: The actual enrollment needs to happen in all builds for all architectures,
+# because OVMF is built as noarch, which means that koji enforces that the build
+# results don't actually differ per arch, and then it picks a random arches' build
+# for the actual RPM.
+BuildRequires:  kernel-core
+%endif
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
@@ -140,6 +160,15 @@ BuildArch:      noarch
 %description tools-doc
 This package documents the tools that are needed to
 build EFI executables and ROMs using the GNU tools.
+
+%package qosb
+Summary:        Tool to enroll secureboot
+Group:          Development/Tools
+Buildarch:      noarch
+%description qosb
+This package contains QOSB (QEMU OVMF Secure Boot), which can enroll OVMF
+variable files to enforce Secure Boot.
+
 
 %if 0%{?build_ovmf_x64:1}
 %package ovmf
@@ -199,6 +228,11 @@ cp -a -- %{SOURCE2} .
 # add openssl
 (cd .. && tar -xvf %{SOURCE1})
 cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
+
+# Extract QOSB
+tar -xvf %{SOURCE3}
+mv qemu-ovmf-secureboot-%{qosb_version}/README.md README.qosb
+mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
 
 %autopatch -p1
 base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
@@ -264,6 +298,15 @@ cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
 cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{_sourcedir}/build-iso.sh ovmf/
+
+# Build enrolled VARS file
+python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
+	--qemu-binary /usr/bin/qemu-system-x86_64 \
+	--skip-testing \
+	--ovmf-binary ovmf/OVMF_CODE.secboot.fd \
+	--ovmf-template-vars ovmf/OVMF_VARS.fd \
+	--uefi-shell-iso ovmf/UefiShell.iso \
+	ovmf/OVMF_VARS.secboot.fd
 %endif
 
 
@@ -306,6 +349,23 @@ dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
 dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 %endif
 
+%check
+%if 0%{?build_ovmf_x64:1}
+%if 0%{?qosb_testing}
+# Verify enrolled VARS file
+python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
+	--qemu-binary /usr/bin/qemu-system-x86_64 \
+	--skip-enrollment \
+	--print-output \
+	--ovmf-binary ovmf/OVMF_CODE.secboot.fd \
+	--ovmf-template-vars ovmf/OVMF_VARS.fd \
+	--uefi-shell-iso ovmf/UefiShell.iso \
+	--no-download \
+	--kernel-path `rpm -ql kernel-core | grep "\/vmlinuz$" -m 1` \
+	ovmf/OVMF_VARS.secboot.fd
+%endif
+%endif
+
 %install
 mkdir -p %{buildroot}%{_bindir} \
          %{buildroot}%{_datadir}/%{name}/Conf \
@@ -337,6 +397,7 @@ mkdir %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_CODE.fd                %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_CODE.secboot.fd        %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_VARS.fd                %{buildroot}/usr/share/OVMF
+ln -sf ../%{name}/ovmf/OVMF_VARS.secboot.fd        %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/UefiShell.iso               %{buildroot}/usr/share/OVMF
 %endif
 %if 0%{?build_ovmf_ia32:1}
@@ -353,6 +414,8 @@ ln -sf ../%{name}/aarch64/vars-template-pflash.raw %{buildroot}/usr/share/AAVMF/
 cp -a arm %{buildroot}/usr/share/%{name}
 ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/AAVMF32_CODE.fd
 %endif
+
+install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_bindir}
 
 
 %files tools
@@ -396,6 +459,11 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 %files tools-doc
 %doc BaseTools/UserManuals/*.rtf
+
+%files qosb
+%license LICENSE.qosb
+%doc README.qosb
+%{_bindir}/ovmf-vars-generator
 
 %if 0%{?build_ovmf_x64:1}
 %files ovmf
@@ -448,6 +516,10 @@ ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/
 
 
 %changelog
+* Fri Mar 30 2018 Patrick Uiterwijk <puiterwijk@redhat.com> - 20171011git92d07e4-6
+- Add qemu-ovmf-secureboot (qosb)
+- Generate pre-enrolled Secure Boot OVMF VARS files
+
 * Wed Mar 07 2018 Paolo Bonzini <pbonzini@redhat.com> - 20171011git92d07e4-5
 - Fix GCC 8 compilation
 - Replace dosfstools and mtools with qemu-img vvfat
