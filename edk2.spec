@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        6%{dist}
+Release:        7%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -516,6 +516,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Tue May 01 2018 Cole Robinson <crobinso@redhat.com> - 20171011git92d07e4-7
+- Bump release for new build
+
 * Fri Mar 30 2018 Patrick Uiterwijk <puiterwijk@redhat.com> - 20171011git92d07e4-6
 - Add qemu-ovmf-secureboot (qosb)
 - Generate pre-enrolled Secure Boot OVMF VARS files
