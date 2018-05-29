@@ -1,7 +1,8 @@
-From 92424de98ffaf1fa81e6346949b1d2b5f9a637ca Mon Sep 17 00:00:00 2001
+From 8e8701871ac4e7fe08e4bfedf1ae6d856234a3d2 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:55 +0100
-Subject: OvmfPkg: EnrollDefaultKeys: application for enrolling default keys
+Subject: [PATCH 13/16] OvmfPkg: EnrollDefaultKeys: application for enrolling
+ default keys
 
 This application is meant to be invoked by the management layer, after
 booting the UEFI shell and getting a shell prompt on the serial console.
@@ -190,12 +191,13 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit c0b2615a9c0b4a4be1bffe45681a32915449279d)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c   | 1015 +++++++++++++++++++++++
- OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.inf |   52 ++
- OvmfPkg/OvmfPkgIa32.dsc                         |    4 +
- OvmfPkg/OvmfPkgIa32X64.dsc                      |    4 +
- OvmfPkg/OvmfPkgX64.dsc                          |    4 +
+ OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c | 1015 +++++++++++++++++
+ .../EnrollDefaultKeys/EnrollDefaultKeys.inf   |   52 +
+ OvmfPkg/OvmfPkgIa32.dsc                       |    4 +
+ OvmfPkg/OvmfPkgIa32X64.dsc                    |    4 +
+ OvmfPkg/OvmfPkgX64.dsc                        |    4 +
  5 files changed, 1079 insertions(+)
  create mode 100644 OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c
  create mode 100644 OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.inf
@@ -1280,10 +1282,10 @@ index 0000000..0ad86a2
 +  UefiLib
 +  UefiRuntimeServicesTableLib
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 61e606a..b0ad6e9 100644
+index 571118d..b8dac8b 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -821,6 +821,10 @@
+@@ -870,6 +870,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1295,10 +1297,10 @@ index 61e606a..b0ad6e9 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index bfe3baf..bf749d7 100644
+index c0b5271..a536f8f 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -830,6 +830,10 @@
+@@ -879,6 +879,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1310,10 +1312,10 @@ index bfe3baf..bf749d7 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 4365a7b..b677d15 100644
+index f2bb8c8..04bf911 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -828,6 +828,10 @@
+@@ -877,6 +877,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1325,5 +1327,5 @@ index 4365a7b..b677d15 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 -- 
-1.8.3.1
+2.17.0
 

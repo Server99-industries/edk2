@@ -1,7 +1,6 @@
-diff -up a/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c.issuer-hash b/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c
---- a/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c.issuer-hash	2016-07-18 15:16:32.788881100 +0200
-+++ b/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c	2016-07-18 15:17:16.671871840 +0200
-@@ -87,6 +87,7 @@ unsigned long X509_issuer_and_serial_has
+--- a/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c
++++ b/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c
+@@ -39,6 +39,7 @@ unsigned long X509_issuer_and_serial_hash(X509 *a)
  
      if (ctx == NULL)
          goto err;
@@ -9,3 +8,6 @@ diff -up a/CryptoPkg/Library/OpensslLib/openssl/crypto/x509/x509_cmp.c.issuer-ha
      f = X509_NAME_oneline(a->cert_info.issuer, NULL, 0);
      if (!EVP_DigestInit_ex(ctx, EVP_md5(), NULL))
          goto err;
+-- 
+2.17.0
+

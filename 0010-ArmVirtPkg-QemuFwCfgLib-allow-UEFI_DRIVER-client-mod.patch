@@ -1,7 +1,8 @@
-From 22b073005af491eef177ef5f80ffe71c1ebabb03 Mon Sep 17 00:00:00 2001
+From fea29c5c217f61d4169f8236711431a5d0c99f05 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 12 Apr 2016 20:50:25 +0200
-Subject: ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client modules (RH only)
+Subject: [PATCH 10/16] ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client
+ modules (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -15,6 +16,7 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 8e2153358aa2bba2c91faa87a70beadcaae03fd8)
 (cherry picked from commit 5af259a93f4bbee5515ae18638068125e170f2cd)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -33,5 +35,5 @@ index eff4a21..adf1ff6 100644
    CONSTRUCTOR                    = QemuFwCfgInitialize
  
 -- 
-1.8.3.1
+2.17.0
 

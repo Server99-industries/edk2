@@ -1,7 +1,8 @@
-From 23df46ebbe7b09451d3a05034acd4d3a25e7177b Mon Sep 17 00:00:00 2001
+From dfca43c4da3d1ba70b9f0de4fc041df57709d259 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:53 +0100
-Subject: OvmfPkg: allow exclusion of the shell from the firmware image
+Subject: [PATCH 12/16] OvmfPkg: allow exclusion of the shell from the firmware
+ image
 
 When '-D EXCLUDE_SHELL_FROM_FD' is passed to 'build', exclude the shell
 binary from the firmware image.
@@ -47,6 +48,7 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 9c391def70366cabae08e6008814299c3372fafd)
 (cherry picked from commit d9dd9ee42937b2611fe37183cc9ec7f62d946933)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.fdf    | 2 ++
  OvmfPkg/OvmfPkgIa32X64.fdf | 2 ++
@@ -54,15 +56,16 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index a967904..366d6bf 100644
+index f552bc9..73007dd 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -284,11 +284,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -288,12 +288,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  INF  ShellPkg/Application/Shell/Shell.inf
  !else
  INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
@@ -72,15 +75,16 @@ index a967904..366d6bf 100644
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index f5a1d86..e4ca33e 100644
+index ee77ae1..116b3c6 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -285,11 +285,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -289,12 +289,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  INF  ShellPkg/Application/Shell/Shell.inf
  !else
  INF  RuleOverride = BINARY USE = X64 EdkShellBinPkg/FullShell/FullShell.inf
@@ -90,15 +94,16 @@ index f5a1d86..e4ca33e 100644
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index 0bba313..3196b26 100644
+index 505d25d..84d5845 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -285,11 +285,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -289,12 +289,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  INF  ShellPkg/Application/Shell/Shell.inf
  !else
  INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
@@ -108,5 +113,5 @@ index 0bba313..3196b26 100644
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 -- 
-1.8.3.1
+2.17.0
 

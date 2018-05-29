@@ -1,7 +1,8 @@
-From 6734b88cf7abcaf42632e3d2fc469b2169dd2f16 Mon Sep 17 00:00:00 2001
+From d23f5e305ee7de36681dbce71826acf8a1b04d84 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:49:43 +0200
-Subject: ArmPlatformPkg: introduce fixed PCD for early hello message (RH only)
+Subject: [PATCH 14/16] ArmPlatformPkg: introduce fixed PCD for early hello
+ message (RH only)
 
 Drew has proposed that ARM|AARCH64 platform firmware (especially virtual
 machine firmware) print a reasonably early, simple hello message to the
@@ -29,17 +30,18 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 7ce97b06421434c82095f01a1753a8c9c546cc30)
 (cherry picked from commit 20b1f1cbd0590aa71c6d99d35e23cf08e0707750)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  ArmPlatformPkg/ArmPlatformPkg.dec | 7 +++++++
  1 file changed, 7 insertions(+)
 
 diff --git a/ArmPlatformPkg/ArmPlatformPkg.dec b/ArmPlatformPkg/ArmPlatformPkg.dec
-index 2d82ead..2380609 100644
+index dff4598..3c5c6c7 100644
 --- a/ArmPlatformPkg/ArmPlatformPkg.dec
 +++ b/ArmPlatformPkg/ArmPlatformPkg.dec
-@@ -126,6 +126,13 @@
-   gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L""|VOID*|0x0000001B
-   gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L""|VOID*|0x0000001C
+@@ -112,6 +112,13 @@
+   ## If set, this will swap settings for HDLCD RED_SELECT and BLUE_SELECT registers
+   gArmPlatformTokenSpaceGuid.PcdArmHdLcdSwapBlueRedSelect|FALSE|BOOLEAN|0x00000045
  
 +  #
 +  # Early hello message (ASCII string), printed to the serial port.
@@ -52,5 +54,5 @@ index 2d82ead..2380609 100644
    ## PL031 RealTimeClock
    gArmPlatformTokenSpaceGuid.PcdPL031RtcBase|0x0|UINT32|0x00000024
 -- 
-1.8.3.1
+2.17.0
 

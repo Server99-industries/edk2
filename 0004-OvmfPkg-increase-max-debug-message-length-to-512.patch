@@ -1,14 +1,22 @@
+From c946d99c660e5b5e6d28bf432f91711e28c37746 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 20 Feb 2014 22:54:45 +0100
-Subject: [PATCH] OvmfPkg: increase max debug message length to 512
+Subject: [PATCH 04/16] OvmfPkg: increase max debug message length to 512
 
-Contributed-under: TianoCore Contribution Agreement 1.0
+Upstream prefers short debug messages (sometimes even limited to 80
+characters), but any line length under 512 characters is just unsuitable
+for effective debugging. (For example, config strings in HII routing,
+logged by the platform driver "OvmfPkg/PlatformDxe" on DEBUG_VERBOSE
+level, can be several hundred characters long.) 512 is an empirically good
+value.
+
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 ---
  OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
-index 44850a9..b6927d0 100644
+index 36cde54..c0c4eae 100644
 --- a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
 +++ b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
 @@ -27,7 +27,7 @@
@@ -19,4 +27,7 @@ index 44850a9..b6927d0 100644
 +#define MAX_DEBUG_MESSAGE_LENGTH  0x200
  
  /**
-   This constructor function does not have to do anything.
+   Prints a debug message to the debug output device if the specified error level is enabled.
+-- 
+2.17.0
+

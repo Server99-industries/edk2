@@ -1,7 +1,6 @@
-diff -up a/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c.cc-reqs b/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c
---- a/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c.cc-reqs	2017-01-26 14:10:23.000000000 +0100
-+++ b/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c	2017-01-26 16:01:52.622308528 +0100
-@@ -75,6 +75,12 @@ static int rsa_builtin_keygen(RSA *rsa,
+--- a/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c
++++ b/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c
+@@ -86,6 +86,12 @@ static int rsa_builtin_keygen(RSA *rsa, int bits, BIGNUM *e_value,
      if (!rsa->iqmp && ((rsa->iqmp = BN_secure_new()) == NULL))
          goto err;
  
@@ -14,14 +13,17 @@ diff -up a/CryptoPkg/Library/OpensslLib/openssl/crypto/rsa/rsa_gen.c.cc-reqs b/C
      if (BN_copy(rsa->e, e_value) == NULL)
          goto err;
  
-@@ -103,7 +109,9 @@ static int rsa_builtin_keygen(RSA *rsa,
+@@ -118,7 +124,9 @@ static int rsa_builtin_keygen(RSA *rsa, int bits, BIGNUM *e_value,
          do {
              if (!BN_generate_prime_ex(rsa->q, bitsq, 0, NULL, NULL, cb))
                  goto err;
--        } while ((BN_cmp(rsa->p, rsa->q) == 0) && (++degenerate < 3));
+-        } while (BN_cmp(rsa->p, rsa->q) == 0);
 +            if (!BN_sub(r2, rsa->q, rsa->p))
 +                goto err;
-+        } while ((BN_ucmp(r2, r3) <= 0) && (++degenerate < 3));
-         if (degenerate == 3) {
-             ok = 0;             /* we set our own err */
-             RSAerr(RSA_F_RSA_BUILTIN_KEYGEN, RSA_R_KEY_SIZE_TOO_SMALL);
++        } while (BN_ucmp(r2, r3) <= 0);
+         if (!BN_sub(r2, rsa->q, BN_value_one()))
+             goto err;
+         ERR_set_mark();
+-- 
+2.17.0
+

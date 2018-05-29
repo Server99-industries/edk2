@@ -1,6 +1,6 @@
-%global edk2_date        20171011
-%global edk2_githash     92d07e4
-%global openssl_version  1.1.0e
+%global edk2_date        20180529
+%global edk2_githash     ee3198e672e2
+%global openssl_version  1.1.0h
 %global qosb_version     1.1.2
 
 %define qosb_testing 0
@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        7%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -55,30 +55,20 @@ Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0002: 0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
 Patch0003: 0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
 Patch0004: 0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
-Patch0005: 0005-BuildEnv-override-set-C-noclobber-of-sourcing-env.patch
-Patch0006: 0006-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
-Patch0008: 0008-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
-Patch0009: 0009-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
-Patch0010: 0010-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
-Patch0011: 0011-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
-Patch0012: 0012-ArmVirtPkg-QemuFwCfgLib-allow-UEFI_DRIVER-client-mod.patch
-Patch0013: 0013-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
-Patch0014: 0014-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
-Patch0015: 0015-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
-Patch0016: 0016-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
-Patch0017: 0017-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
-Patch0018: 0018-ArmVirtPkg-set-early-hello-message.patch
+Patch0005: 0005-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
+Patch0006: 0006-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
+Patch0007: 0007-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
+Patch0008: 0008-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
+Patch0009: 0009-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
+Patch0010: 0010-ArmVirtPkg-QemuFwCfgLib-allow-UEFI_DRIVER-client-mod.patch
+Patch0011: 0011-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0012: 0012-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
+Patch0013: 0013-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
+Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
+Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
+Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
 
-# upstream backports
-Patch0019: 0019-MdeModulePkg-PciBus-Fix-bug-that-PCI-BUS-claims-too-much-resource.patch
-Patch0020: 0020-MdeModulePkg-Bds-Remove-assertion-in-BmCharToUint.patch
-Patch0021: 0021-MdeModulePkg-Bds-Check-variable-name-even-if-OptionNumber-is-NULL.patch
-Patch0022: 0022-OvmfPkg-make-it-a-proper-BASE-library.patch
-Patch0023: 0023-OvmfPkg-create-a-separate-PlatformDebugLibIoPort-ins.patch
-Patch0024: 0024-OvmfPkg-save-on-I-O-port-accesses-when-the-debug-por.patch
-Patch0025: 0025-BaseTools-header.makefile-add-Wno-stringop-truncatio.patch
-Patch0026: 0026-BaseTools-header.makefile-add-Wno-restrict.patch
-Patch0027: 0027-BaseTools-GenVtf-silence-false-stringop-overflow-war.patch
+# upstream backports - None! :)
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -422,6 +412,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %license License.txt
 %{_bindir}/BootSectImage
 %{_bindir}/Brotli
+%{_bindir}/DevicePath
 %{_bindir}/EfiLdrImage
 %{_bindir}/EfiRom
 %{_bindir}/GenCrc32
@@ -516,6 +507,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Tue May 29 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-1
+- Bump release for new build
+
 * Tue May 01 2018 Cole Robinson <crobinso@redhat.com> - 20171011git92d07e4-7
 - Bump release for new build
 

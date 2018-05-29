@@ -1,7 +1,7 @@
-From 9a8a034ebc082f86fdbb54dc1303a5059508e14c Mon Sep 17 00:00:00 2001
+From 3a78f0402caa01f9d33d5b0c22c5dbaff2f42b31 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 12 Jun 2014 00:17:59 +0200
-Subject: OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim
+Subject: [PATCH 06/16] OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim
 
 The Int10h VBE Shim is capable of emitting short debug messages when the
 win2k8r2 UEFI guest uses (emulates) the Video BIOS. In upstream the quiet
@@ -22,9 +22,10 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit ccda46526bb2e573d9b54f0db75d27e442b4566f)
 (cherry picked from commit ed45b26dbeadd63dd8f2edf627290957d8bbb3b2)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  OvmfPkg/QemuVideoDxe/VbeShim.asm |   2 +-
- OvmfPkg/QemuVideoDxe/VbeShim.h   | 481 +++++++++++++++++++++++++--------------
+ OvmfPkg/QemuVideoDxe/VbeShim.h   | 481 ++++++++++++++++++++-----------
  2 files changed, 308 insertions(+), 175 deletions(-)
 
 diff --git a/OvmfPkg/QemuVideoDxe/VbeShim.asm b/OvmfPkg/QemuVideoDxe/VbeShim.asm
@@ -538,5 +539,5 @@ index cc9b6e1..325d647 100644
  };
  #endif
 -- 
-1.8.3.1
+2.17.0
 

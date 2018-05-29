@@ -1,8 +1,8 @@
-From b9c5c901f25e48d68eef6e78a4abca00e153f574 Mon Sep 17 00:00:00 2001
+From e4342f9f5ddd4d45e0098697c38a55f9402d4e0f Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
-Subject: MdeModulePkg: TerminalDxe: set xterm resolution on mode change (RH
- only)
+Subject: [PATCH 08/16] MdeModulePkg: TerminalDxe: set xterm resolution on mode
+ change (RH only)
 
 The
 
@@ -29,17 +29,18 @@ Reference: <http://rtfm.etla.org/xterm/ctlseq.html>
 Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 2909e025db6878723b49644a8a0cf160d07e6444)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- MdeModulePkg/MdeModulePkg.dec                      |  4 +++
- .../Universal/Console/TerminalDxe/TerminalConOut.c | 30 ++++++++++++++++++++++
- .../Universal/Console/TerminalDxe/TerminalDxe.inf  |  2 ++
+ MdeModulePkg/MdeModulePkg.dec                 |  4 +++
+ .../Console/TerminalDxe/TerminalConOut.c      | 30 +++++++++++++++++++
+ .../Console/TerminalDxe/TerminalDxe.inf       |  2 ++
  3 files changed, 36 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index a3c0633..cd0264e 100644
+index cc39718..384d901 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -1758,6 +1758,10 @@
+@@ -1914,6 +1914,10 @@
    # @Prompt The address mask when memory encryption is enabled.
    gEfiMdeModulePkgTokenSpaceGuid.PcdPteMemoryEncryptionAddressOrMask|0x0|UINT64|0x30001047
  
@@ -51,7 +52,7 @@ index a3c0633..cd0264e 100644
    ## Specify memory size with page number for PEI code when
    #  Loading Module at Fixed Address feature is enabled.
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-index e677a76..e2bdc31 100644
+index 5a83431..fbc1e0a 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 @@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
@@ -63,10 +64,11 @@ index e677a76..e2bdc31 100644
  #include "Terminal.h"
  
  //
-@@ -87,6 +89,16 @@ CHAR16 mCursorForwardString[]      = { ESC, '[', '0', '0', 'C', 0 };
+@@ -86,6 +88,16 @@ CHAR16 mSetCursorPositionString[]  = { ESC, '[', '0', '0', ';', '0', '0', 'H', 0
+ CHAR16 mCursorForwardString[]      = { ESC, '[', '0', '0', 'C', 0 };
  CHAR16 mCursorBackwardString[]     = { ESC, '[', '0', '0', 'D', 0 };
  
- //
++//
 +// Note that this is an ASCII format string, taking two INT32 arguments:
 +// rows, columns.
 +//
@@ -76,10 +78,9 @@ index e677a76..e2bdc31 100644
 +#define RESIZE_SEQ_SIZE (sizeof mResizeTextAreaFormatString + 2 * (11 - 2))
 +
 +
-+//
+ //
  // Body of the ConOut functions
  //
- 
 @@ -508,6 +520,24 @@ TerminalConOutSetMode (
      return EFI_DEVICE_ERROR;
    }
@@ -126,5 +127,5 @@ index 0780296..bd2ba82 100644
  # [Event]
  # # Relative timer event set by UnicodeToEfiKey(), used to be one 2 seconds input timeout.
 -- 
-1.8.3.1
+2.17.0
 
