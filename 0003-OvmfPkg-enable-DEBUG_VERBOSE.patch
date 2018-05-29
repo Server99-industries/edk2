@@ -1,10 +1,12 @@
+From ce0900e38fcb54a7ea8a160204860b34b75610ca Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 8 Jul 2012 14:26:07 +0200
-Subject: [PATCH] OvmfPkg: enable DEBUG_VERBOSE
+Subject: [PATCH 03/16] OvmfPkg: enable DEBUG_VERBOSE
 
 Enable verbose debug logs.
 
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc    | 2 +-
  OvmfPkg/OvmfPkgIa32X64.dsc | 2 +-
@@ -12,10 +14,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index c0440d9..fa9661c 100644
+index 613b390..054839f 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -408,7 +408,7 @@
+@@ -481,7 +481,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -25,10 +27,10 @@ index c0440d9..fa9661c 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 6f94bc7..667584a 100644
+index b8e39ac..d033fcf 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -413,7 +413,7 @@
+@@ -486,7 +486,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -38,10 +40,10 @@ index 6f94bc7..667584a 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index a92bf19..5ae8469 100644
+index f69a5bd..de335a1 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -413,7 +413,7 @@
+@@ -486,7 +486,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -50,3 +52,6 @@ index a92bf19..5ae8469 100644
  
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+-- 
+2.17.0
+

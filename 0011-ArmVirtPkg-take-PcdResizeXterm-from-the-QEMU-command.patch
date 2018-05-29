@@ -1,7 +1,8 @@
-From c9081ebe3bcd28e5cce4bf58bd8d4fca12f9af7c Mon Sep 17 00:00:00 2001
+From 3be34f5ba685c15e8537e4489589bf01ad7ea731 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
-Subject: ArmVirtPkg: take PcdResizeXterm from the QEMU command line (RH only)
+Subject: [PATCH 11/16] ArmVirtPkg: take PcdResizeXterm from the QEMU command
+ line (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -20,19 +21,20 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit d4564d39dfdbf74e762af43314005a2c026cb262)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- ArmVirtPkg/ArmVirtQemu.dsc                         |  7 +-
- .../TerminalPcdProducerLib.c                       | 87 ++++++++++++++++++++++
- .../TerminalPcdProducerLib.inf                     | 41 ++++++++++
+ ArmVirtPkg/ArmVirtQemu.dsc                    |  7 +-
+ .../TerminalPcdProducerLib.c                  | 87 +++++++++++++++++++
+ .../TerminalPcdProducerLib.inf                | 41 +++++++++
  3 files changed, 134 insertions(+), 1 deletion(-)
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 045333d..2b1a383 100644
+index 7331597..4bf94ce 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -212,6 +212,8 @@
+@@ -208,6 +208,8 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0
    gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|FALSE
  
@@ -194,5 +196,5 @@ index 0000000..fecb37b
 +[Pcd]
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm
 -- 
-1.8.3.1
+2.17.0
 

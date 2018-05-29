@@ -1,7 +1,8 @@
-From b311932d3841c017a0f0fec553edcac365cc2038 Mon Sep 17 00:00:00 2001
+From 7ea5e9e4f9c358fe9cc10e57e34bb5ada33f1176 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
-Subject: OvmfPkg: take PcdResizeXterm from the QEMU command line (RH only)
+Subject: [PATCH 09/16] OvmfPkg: take PcdResizeXterm from the QEMU command line
+ (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -18,6 +19,7 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 6fa0c4d67c0bb8bde2ddd6db41c19eb0c40b2721)
 (cherry picked from commit 8abc2a6ddad25af7e88dc0cf57d55dfb75fbf92d)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc             | 1 +
  OvmfPkg/OvmfPkgIa32X64.dsc          | 1 +
@@ -27,10 +29,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  5 files changed, 5 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 8af11ff..61e606a 100644
+index 889735a..571118d 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -504,6 +504,7 @@
+@@ -530,6 +530,7 @@
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
@@ -39,10 +41,10 @@ index 8af11ff..61e606a 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 9e09a50..bfe3baf 100644
+index af2cdf1..c0b5271 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -510,6 +510,7 @@
+@@ -536,6 +536,7 @@
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
@@ -51,10 +53,10 @@ index 9e09a50..bfe3baf 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index a31dbf1..4365a7b 100644
+index 3572e42..f2bb8c8 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -509,6 +509,7 @@
+@@ -535,6 +535,7 @@
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
@@ -75,10 +77,10 @@ index 5a78668..544ac54 100644
  
    AmdSevInitialize ();
 diff --git a/OvmfPkg/PlatformPei/PlatformPei.inf b/OvmfPkg/PlatformPei/PlatformPei.inf
-index 16a8db7..9f89e08 100644
+index 30ceb4b..016c067 100644
 --- a/OvmfPkg/PlatformPei/PlatformPei.inf
 +++ b/OvmfPkg/PlatformPei/PlatformPei.inf
-@@ -90,6 +90,7 @@
+@@ -94,6 +94,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved
    gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration
@@ -87,5 +89,5 @@ index 16a8db7..9f89e08 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable
    gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack
 -- 
-1.8.3.1
+2.17.0
 

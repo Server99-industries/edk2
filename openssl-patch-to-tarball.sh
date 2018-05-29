@@ -12,9 +12,9 @@
   fedpkg switch-branch master
   gitk -- sources
 
-  # the commit that added the 1.1.0e hobbled tarball is c676ac32d544,
-  # subject "update to upstream version 1.1.0e"
-  git checkout c676ac32d544
+  # the commit that added the 1.1.0h hobbled tarball is 6eb8f620273
+  # subject "update to upstream version 1.1.0h"
+  git checkout 6eb8f620273
 
   # fetch the hobbled tarball and verify the checksum
   (
@@ -32,15 +32,16 @@
   # unpack the hobbled tarball into edk2, according to
   # "OpenSSL-HOWTO.txt"; WORKSPACE stands for the root of the edk2 project
   # tree
-  tar -x --xz -f openssl-1.1.0e-hobbled.tar.xz
-  mv -- openssl-1.1.0e "$WORKSPACE"/CryptoPkg/Library/OpensslLib/openssl
+  tar -x --xz -f openssl-1.1.0h-hobbled.tar.xz
+  mv -- openssl-1.1.0h "$WORKSPACE"/CryptoPkg/Library/OpensslLib/openssl
 
   # update the INF files as described in "OpenSSL-HOWTO.txt", then save
   # the results as a single commit
-  cd "$WORKSPACE"/CryptoPkg/Library/OpensslLib
-  perl process_files.pl
-  git add -A
-  git commit
+  (cd "$WORKSPACE"/CryptoPkg/Library/OpensslLib && perl process_files.pl)
+  git rm --cached CryptoPkg/Library/OpensslLib/openssl
+  git commit -m'remove openssl submodule'
+  git add -A CryptoPkg/Library/OpensslLib/openssl
+  git commit -m'add openssl 1.1.0h'
   git format-patch -1
 
 Then run the patch through this script which will build a new tar file.

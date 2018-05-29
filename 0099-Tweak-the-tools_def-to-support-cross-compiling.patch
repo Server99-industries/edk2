@@ -1,19 +1,21 @@
-From 63b708ccad8afd0b887258888a53fd4945cff682 Mon Sep 17 00:00:00 2001
-Message-Id: <63b708ccad8afd0b887258888a53fd4945cff682.1478467625.git.crobinso@redhat.com>
+From 3a25bb77d692c015c3c3135a4d4c39748f195de7 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Sun, 6 Nov 2016 13:50:31 -0500
 Subject: [PATCH] Tweak the tools_def to support cross-compiling.
 
 These files are meant for customization, so this is not upstream.
+Message-Id: <63b708ccad8afd0b887258888a53fd4945cff682.1478467625.git.crobinso@redhat.com>
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- BaseTools/Conf/tools_def.template | 343 ++++++++++++++++++--------------------
+ BaseTools/Conf/tools_def.template | 343 ++++++++++++++----------------
  1 file changed, 161 insertions(+), 182 deletions(-)
 
 diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
-index e93c2a0..2fc16c1 100755
+index 03d7000..b5dceb7 100755
 --- a/BaseTools/Conf/tools_def.template
 +++ b/BaseTools/Conf/tools_def.template
-@@ -178,27 +178,6 @@ DEFINE CYGWIN_BINIA32          = c:/cygwin/opt/tiano/i386-tiano-pe/i386-tiano-pe
+@@ -189,27 +189,6 @@ DEFINE CYGWIN_BINIA32          = c:/cygwin/opt/tiano/i386-tiano-pe/i386-tiano-pe
  DEFINE CYGWIN_BINX64           = c:/cygwin/opt/tiano/x86_64-pc-mingw64/x86_64-pc-mingw64/bin/
  DEFINE CYGWIN_BINIPF           = c:/cygwin/opt/tiano/gcc/ipf/bin/ia64-pc-elf-
  
@@ -41,7 +43,7 @@ index e93c2a0..2fc16c1 100755
  DEFINE UNIX_IASL_BIN           = ENV(IASL_PREFIX)iasl
  DEFINE WIN_IASL_BIN            = ENV(IASL_PREFIX)iasl.exe
  DEFINE WIN_ASL_BIN             = ENV(IASL_PREFIX)asl.exe
-@@ -4598,7 +4577,7 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
+@@ -4788,7 +4767,7 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
  ####################################################################################
  *_GCC44_*_*_FAMILY               = GCC
  
@@ -50,7 +52,7 @@ index e93c2a0..2fc16c1 100755
  *_GCC44_*_*_DLL                        = ENV(GCC44_DLL)
  *_GCC44_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
  
-@@ -4613,17 +4592,17 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
+@@ -4803,17 +4782,17 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
  ##################
  # GCC44 IA32 definitions
  ##################
@@ -79,7 +81,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC44_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC44_IA32_ASLDLINK_FLAGS       = DEF(GCC44_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -4641,17 +4620,17 @@ RELEASE_GCC44_IA32_CC_FLAGS       = DEF(GCC44_IA32_CC_FLAGS) -Os
+@@ -4831,17 +4810,17 @@ RELEASE_GCC44_IA32_CC_FLAGS       = DEF(GCC44_IA32_CC_FLAGS) -Os
  ##################
  # GCC44 X64 definitions
  ##################
@@ -108,7 +110,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC44_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC44_X64_ASLDLINK_FLAGS       = DEF(GCC44_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -4674,7 +4653,7 @@ RELEASE_GCC44_X64_CC_FLAGS       = DEF(GCC44_X64_CC_FLAGS) -Os
+@@ -4864,7 +4843,7 @@ RELEASE_GCC44_X64_CC_FLAGS       = DEF(GCC44_X64_CC_FLAGS) -Os
  ####################################################################################
  *_GCC45_*_*_FAMILY               = GCC
  
@@ -117,7 +119,7 @@ index e93c2a0..2fc16c1 100755
  *_GCC45_*_*_DLL                        = ENV(GCC45_DLL)
  *_GCC45_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
  
-@@ -4689,17 +4668,17 @@ RELEASE_GCC44_X64_CC_FLAGS       = DEF(GCC44_X64_CC_FLAGS) -Os
+@@ -4879,17 +4858,17 @@ RELEASE_GCC44_X64_CC_FLAGS       = DEF(GCC44_X64_CC_FLAGS) -Os
  ##################
  # GCC45 IA32 definitions
  ##################
@@ -146,7 +148,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC45_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC45_IA32_ASLDLINK_FLAGS       = DEF(GCC45_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -4717,17 +4696,17 @@ RELEASE_GCC45_IA32_CC_FLAGS       = DEF(GCC45_IA32_CC_FLAGS) -Os
+@@ -4907,17 +4886,17 @@ RELEASE_GCC45_IA32_CC_FLAGS       = DEF(GCC45_IA32_CC_FLAGS) -Os
  ##################
  # GCC45 X64 definitions
  ##################
@@ -175,7 +177,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC45_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC45_X64_ASLDLINK_FLAGS       = DEF(GCC45_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -4750,7 +4729,7 @@ RELEASE_GCC45_X64_CC_FLAGS       = DEF(GCC45_X64_CC_FLAGS) -Os
+@@ -4940,7 +4919,7 @@ RELEASE_GCC45_X64_CC_FLAGS       = DEF(GCC45_X64_CC_FLAGS) -Os
  ####################################################################################
  *_GCC46_*_*_FAMILY               = GCC
  
@@ -183,8 +185,8 @@ index e93c2a0..2fc16c1 100755
 +*_GCC46_*_MAKE_PATH                    = make
  *_GCC46_*_*_DLL                        = ENV(GCC46_DLL)
  *_GCC46_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
- *_GCC46_*_DTC_PATH                     = DEF(DTC_BIN)
-@@ -4766,17 +4745,17 @@ RELEASE_GCC45_X64_CC_FLAGS       = DEF(GCC45_X64_CC_FLAGS) -Os
+ 
+@@ -4955,17 +4934,17 @@ RELEASE_GCC45_X64_CC_FLAGS       = DEF(GCC45_X64_CC_FLAGS) -Os
  ##################
  # GCC46 IA32 definitions
  ##################
@@ -213,7 +215,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC46_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC46_IA32_ASLDLINK_FLAGS       = DEF(GCC46_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -4794,17 +4773,17 @@ RELEASE_GCC46_IA32_CC_FLAGS       = DEF(GCC46_IA32_CC_FLAGS) -Os -Wno-unused-but
+@@ -4983,17 +4962,17 @@ RELEASE_GCC46_IA32_CC_FLAGS       = DEF(GCC46_IA32_CC_FLAGS) -Os -Wno-unused-but
  ##################
  # GCC46 X64 definitions
  ##################
@@ -242,7 +244,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC46_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC46_X64_ASLDLINK_FLAGS       = DEF(GCC46_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -4861,7 +4840,7 @@ RELEASE_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -Wno-unused-but-set-v
+@@ -5050,7 +5029,7 @@ RELEASE_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -Wno-unused-but-set-v
  ####################################################################################
  *_GCC47_*_*_FAMILY               = GCC
  
@@ -250,8 +252,8 @@ index e93c2a0..2fc16c1 100755
 +*_GCC47_*_MAKE_PATH                    = make
  *_GCC47_*_*_DLL                        = ENV(GCC47_DLL)
  *_GCC47_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
- *_GCC47_*_DTC_PATH                     = DEF(DTC_BIN)
-@@ -4877,17 +4856,17 @@ RELEASE_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -Wno-unused-but-set-v
+ 
+@@ -5065,17 +5044,17 @@ RELEASE_GCC46_ARM_CC_FLAGS       = DEF(GCC46_ARM_CC_FLAGS) -Wno-unused-but-set-v
  ##################
  # GCC47 IA32 definitions
  ##################
@@ -280,7 +282,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC47_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC47_IA32_ASLDLINK_FLAGS       = DEF(GCC47_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -4905,17 +4884,17 @@ RELEASE_GCC47_IA32_CC_FLAGS       = DEF(GCC47_IA32_CC_FLAGS) -Os -Wno-unused-but
+@@ -5093,17 +5072,17 @@ RELEASE_GCC47_IA32_CC_FLAGS       = DEF(GCC47_IA32_CC_FLAGS) -Os -Wno-unused-but
  ##################
  # GCC47 X64 definitions
  ##################
@@ -309,7 +311,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC47_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC47_X64_ASLDLINK_FLAGS       = DEF(GCC47_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -5001,7 +4980,7 @@ RELEASE_GCC47_AARCH64_CC_FLAGS   = DEF(GCC47_AARCH64_CC_FLAGS) -Wno-unused-but-s
+@@ -5189,7 +5168,7 @@ RELEASE_GCC47_AARCH64_CC_FLAGS   = DEF(GCC47_AARCH64_CC_FLAGS) -Wno-unused-but-s
  ####################################################################################
  *_GCC48_*_*_FAMILY               = GCC
  
@@ -317,8 +319,8 @@ index e93c2a0..2fc16c1 100755
 +*_GCC48_*_MAKE_PATH                    = make
  *_GCC48_*_*_DLL                        = ENV(GCC48_DLL)
  *_GCC48_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
- *_GCC48_*_DTC_PATH                     = DEF(DTC_BIN)
-@@ -5017,17 +4996,17 @@ RELEASE_GCC47_AARCH64_CC_FLAGS   = DEF(GCC47_AARCH64_CC_FLAGS) -Wno-unused-but-s
+ 
+@@ -5204,17 +5183,17 @@ RELEASE_GCC47_AARCH64_CC_FLAGS   = DEF(GCC47_AARCH64_CC_FLAGS) -Wno-unused-but-s
  ##################
  # GCC48 IA32 definitions
  ##################
@@ -347,7 +349,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC48_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC48_IA32_ASLDLINK_FLAGS       = DEF(GCC48_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -5045,17 +5024,17 @@ RELEASE_GCC48_IA32_CC_FLAGS       = DEF(GCC48_IA32_CC_FLAGS) -Os -Wno-unused-but
+@@ -5232,17 +5211,17 @@ RELEASE_GCC48_IA32_CC_FLAGS       = DEF(GCC48_IA32_CC_FLAGS) -Os -Wno-unused-but
  ##################
  # GCC48 X64 definitions
  ##################
@@ -376,7 +378,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC48_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC48_X64_ASLDLINK_FLAGS       = DEF(GCC48_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -5141,7 +5120,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
+@@ -5328,7 +5307,7 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
  ####################################################################################
  *_GCC49_*_*_FAMILY               = GCC
  
@@ -384,8 +386,8 @@ index e93c2a0..2fc16c1 100755
 +*_GCC49_*_MAKE_PATH                    = make
  *_GCC49_*_*_DLL                        = ENV(GCC49_DLL)
  *_GCC49_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
- *_GCC49_*_DTC_PATH                     = DEF(DTC_BIN)
-@@ -5157,17 +5136,17 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
+ 
+@@ -5343,17 +5322,17 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
  ##################
  # GCC49 IA32 definitions
  ##################
@@ -414,7 +416,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC49_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
  *_GCC49_IA32_ASLDLINK_FLAGS       = DEF(GCC49_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -5185,17 +5164,17 @@ RELEASE_GCC49_IA32_CC_FLAGS       = DEF(GCC49_IA32_CC_FLAGS) -Os -Wno-unused-but
+@@ -5371,17 +5350,17 @@ RELEASE_GCC49_IA32_CC_FLAGS       = DEF(GCC49_IA32_CC_FLAGS) -Os -Wno-unused-but
  ##################
  # GCC49 X64 definitions
  ##################
@@ -443,7 +445,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC49_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
  *_GCC49_X64_ASLDLINK_FLAGS       = DEF(GCC49_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
-@@ -5287,7 +5266,7 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
+@@ -5473,7 +5452,7 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
  ####################################################################################
  *_GCC5_*_*_FAMILY                = GCC
  
@@ -451,8 +453,8 @@ index e93c2a0..2fc16c1 100755
 +*_GCC5_*_MAKE_PATH               = make
  *_GCC5_*_*_DLL                   = ENV(GCC5_DLL)
  *_GCC5_*_ASL_PATH                = DEF(UNIX_IASL_BIN)
- *_GCC5_*_DTC_PATH                = DEF(DTC_BIN)
-@@ -5303,17 +5282,17 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
+ 
+@@ -5488,17 +5467,17 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
  ##################
  # GCC5 IA32 definitions
  ##################
@@ -481,7 +483,7 @@ index e93c2a0..2fc16c1 100755
  
  *_GCC5_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32 -fno-lto
  *_GCC5_IA32_ASLDLINK_FLAGS       = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386
-@@ -5335,17 +5314,17 @@ RELEASE_GCC5_IA32_DLINK_FLAGS    = DEF(GCC5_IA32_X64_DLINK_FLAGS) -flto -Os -Wl,
+@@ -5520,17 +5499,17 @@ RELEASE_GCC5_IA32_DLINK_FLAGS    = DEF(GCC5_IA32_X64_DLINK_FLAGS) -flto -Os -Wl,
  ##################
  # GCC5 X64 definitions
  ##################
@@ -511,5 +513,5 @@ index e93c2a0..2fc16c1 100755
  *_GCC5_X64_ASLCC_FLAGS           = DEF(GCC_ASLCC_FLAGS) -m64 -fno-lto
  *_GCC5_X64_ASLDLINK_FLAGS        = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
 -- 
-2.14.3
+2.17.0
 
