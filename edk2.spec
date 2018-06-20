@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -68,7 +68,10 @@ Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
 
-# upstream backports - None! :)
+# upstream backports
+Patch0050: 0050-OvmfPkg-PlatformBootManagerLib-connect-consoles-unco.patch
+Patch0051: 0051-ArmVirtPkg-PlatformBootManagerLib-connect-Virtio-RNG.patch
+Patch0052: 0052-OvmfPkg-PlatformBootManagerLib-connect-Virtio-RNG-de.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -507,8 +510,12 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Jun 20 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-2
+- Backport two bug fixes from RHEL: connect again virtio-rng devices, and
+  connect consoles unconditionally in OVMF (ARM firmware already did it)
+
 * Tue May 29 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-1
-- Bump release for new build
+- Rebase to ee3198e672e2
 
 * Tue May 01 2018 Cole Robinson <crobinso@redhat.com> - 20171011git92d07e4-7
 - Bump release for new build
