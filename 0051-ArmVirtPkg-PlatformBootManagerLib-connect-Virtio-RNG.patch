@@ -1,0 +1,199 @@
+From c4add6b6e971e0bb3f276ed3636a083e782e96cc Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Thu, 17 May 2018 21:51:11 +0200
+Subject: [PATCH] ArmVirtPkg/PlatformBootManagerLib: connect Virtio RNG devices
+ again
+
+Virtio RNG devices are never boot devices, so in commit ff1d0fbfbaec we
+stopped connecting them. This is a problem because an OS boot loader may
+depend on EFI_RNG_PROTOCOL to seed the OS's RNG.
+
+Connect Virtio RNG devices again. And, while commit ff1d0fbfbaec removed
+that from PlatformBootManagerAfterConsole(), reintroduce it now to
+PlatformBootManagerBeforeConsole() -- this way Driver#### options launched
+between both functions may access EFI_RNG_PROTOCOL too.
+
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: ff1d0fbfbaec55038ccf888759588fa4e21516f4
+Ref: https://bugzilla.redhat.com/show_bug.cgi?id=1579518
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ .../PlatformBootManagerLib.inf                |   1 +
+ .../PlatformBootManagerLib/PlatformBm.c       | 129 ++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+
+diff --git a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+index 1e22f8bb38..d6c1ef95dc 100644
+--- a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
++++ b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+@@ -83,3 +83,4 @@ [Protocols]
+   gEfiLoadedImageProtocolGuid
+   gEfiPciRootBridgeIoProtocolGuid
+   gEfiSimpleFileSystemProtocolGuid
++  gVirtioDeviceProtocolGuid
+diff --git a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
+index 5d5e51d8c8..62cce6a01e 100644
+--- a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
++++ b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
+@@ -16,6 +16,7 @@
+ **/
+ 
+ #include <IndustryStandard/Pci22.h>
++#include <IndustryStandard/Virtio095.h>
+ #include <Library/BootLogoLib.h>
+ #include <Library/DevicePathLib.h>
+ #include <Library/PcdLib.h>
+@@ -27,6 +28,7 @@
+ #include <Protocol/LoadedImage.h>
+ #include <Protocol/PciIo.h>
+ #include <Protocol/PciRootBridgeIo.h>
++#include <Protocol/VirtioDevice.h>
+ #include <Guid/EventGroup.h>
+ #include <Guid/RootBridgesConnectedEventGroup.h>
+ 
+@@ -260,6 +262,121 @@ IsPciDisplay (
+ }
+ 
+ 
++/**
++  This FILTER_FUNCTION checks if a handle corresponds to a Virtio RNG device at
++  the VIRTIO_DEVICE_PROTOCOL level.
++**/
++STATIC
++BOOLEAN
++EFIAPI
++IsVirtioRng (
++  IN EFI_HANDLE   Handle,
++  IN CONST CHAR16 *ReportText
++  )
++{
++  EFI_STATUS             Status;
++  VIRTIO_DEVICE_PROTOCOL *VirtIo;
++
++  Status = gBS->HandleProtocol (Handle, &gVirtioDeviceProtocolGuid,
++                  (VOID**)&VirtIo);
++  if (EFI_ERROR (Status)) {
++    return FALSE;
++  }
++  return (BOOLEAN)(VirtIo->SubSystemDeviceId ==
++                   VIRTIO_SUBSYSTEM_ENTROPY_SOURCE);
++}
++
++
++/**
++  This FILTER_FUNCTION checks if a handle corresponds to a Virtio RNG device at
++  the EFI_PCI_IO_PROTOCOL level.
++**/
++STATIC
++BOOLEAN
++EFIAPI
++IsVirtioPciRng (
++  IN EFI_HANDLE   Handle,
++  IN CONST CHAR16 *ReportText
++  )
++{
++  EFI_STATUS          Status;
++  EFI_PCI_IO_PROTOCOL *PciIo;
++  UINT16              VendorId;
++  UINT16              DeviceId;
++  UINT8               RevisionId;
++  BOOLEAN             Virtio10;
++  UINT16              SubsystemId;
++
++  Status = gBS->HandleProtocol (Handle, &gEfiPciIoProtocolGuid,
++                  (VOID**)&PciIo);
++  if (EFI_ERROR (Status)) {
++    return FALSE;
++  }
++
++  //
++  // Read and check VendorId.
++  //
++  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, PCI_VENDOR_ID_OFFSET,
++                        1, &VendorId);
++  if (EFI_ERROR (Status)) {
++    goto PciError;
++  }
++  if (VendorId != VIRTIO_VENDOR_ID) {
++    return FALSE;
++  }
++
++  //
++  // Read DeviceId and RevisionId.
++  //
++  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, PCI_DEVICE_ID_OFFSET,
++                        1, &DeviceId);
++  if (EFI_ERROR (Status)) {
++    goto PciError;
++  }
++  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, PCI_REVISION_ID_OFFSET,
++                        1, &RevisionId);
++  if (EFI_ERROR (Status)) {
++    goto PciError;
++  }
++
++  //
++  // From DeviceId and RevisionId, determine whether the device is a
++  // modern-only Virtio 1.0 device. In case of Virtio 1.0, DeviceId can
++  // immediately be restricted to VIRTIO_SUBSYSTEM_ENTROPY_SOURCE, and
++  // SubsystemId will only play a sanity-check role. Otherwise, DeviceId can
++  // only be sanity-checked, and SubsystemId will decide.
++  //
++  if (DeviceId == 0x1040 + VIRTIO_SUBSYSTEM_ENTROPY_SOURCE &&
++      RevisionId >= 0x01) {
++    Virtio10 = TRUE;
++  } else if (DeviceId >= 0x1000 && DeviceId <= 0x103F && RevisionId == 0x00) {
++    Virtio10 = FALSE;
++  } else {
++    return FALSE;
++  }
++
++  //
++  // Read and check SubsystemId as dictated by Virtio10.
++  //
++  Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,
++                        PCI_SUBSYSTEM_ID_OFFSET, 1, &SubsystemId);
++  if (EFI_ERROR (Status)) {
++    goto PciError;
++  }
++  if (Virtio10 && SubsystemId >= 0x40) {
++    return TRUE;
++  }
++  if (!Virtio10 && SubsystemId == VIRTIO_SUBSYSTEM_ENTROPY_SOURCE) {
++    return TRUE;
++  }
++  return FALSE;
++
++PciError:
++  DEBUG ((DEBUG_ERROR, "%a: %s: %r\n", __FUNCTION__, ReportText, Status));
++  return FALSE;
++}
++
++
+ /**
+   This CALLBACK_FUNCTION attempts to connect a handle non-recursively, asking
+   the matching driver to produce all first-level child handles.
+@@ -644,6 +761,18 @@ PlatformBootManagerBeforeConsole (
+   // Register platform-specific boot options and keyboard shortcuts.
+   //
+   PlatformRegisterOptionsAndKeys ();
++
++  //
++  // At this point, VIRTIO_DEVICE_PROTOCOL instances exist only for Virtio MMIO
++  // transports. Install EFI_RNG_PROTOCOL instances on Virtio MMIO RNG devices.
++  //
++  FilterAndProcess (&gVirtioDeviceProtocolGuid, IsVirtioRng, Connect);
++
++  //
++  // Install both VIRTIO_DEVICE_PROTOCOL and (dependent) EFI_RNG_PROTOCOL
++  // instances on Virtio PCI RNG devices.
++  //
++  FilterAndProcess (&gEfiPciIoProtocolGuid, IsVirtioPciRng, Connect);
+ }
+ 
+ /**
+-- 
+2.17.0
+
