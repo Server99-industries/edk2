@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -510,6 +510,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20180529gitee3198e672e2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Wed Jun 20 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-2
 - Backport two bug fixes from RHEL: connect again virtio-rng devices, and
   connect consoles unconditionally in OVMF (ARM firmware already did it)
