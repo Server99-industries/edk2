@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -72,6 +72,8 @@ Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
 Patch0050: 0050-OvmfPkg-PlatformBootManagerLib-connect-consoles-unco.patch
 Patch0051: 0051-ArmVirtPkg-PlatformBootManagerLib-connect-Virtio-RNG.patch
 Patch0052: 0052-OvmfPkg-PlatformBootManagerLib-connect-Virtio-RNG-de.patch
+Patch0053: 0053-ArmVirtPkg-unify-HttpLib-resolutions-in-ArmVirt.dsc..patch
+Patch0054: 0054-ArmVirtPkg-ArmVirtQemu-enable-the-IPv6-stack.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -166,6 +168,8 @@ variable files to enforce Secure Boot.
 %if 0%{?build_ovmf_x64:1}
 %package ovmf
 Summary:        Open Virtual Machine Firmware
+# OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
+# library.
 License:        BSD and OpenSSL
 Provides:       OVMF = %{version}-%{release}
 Obsoletes:      OVMF < %{version}-%{release}
@@ -178,6 +182,8 @@ Open Virtual Machine Firmware (x64)
 %if 0%{?build_ovmf_ia32:1}
 %package ovmf-ia32
 Summary:        Open Virtual Machine Firmware
+# OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
+# library.
 License:        BSD and OpenSSL
 BuildArch:      noarch
 %description ovmf-ia32
@@ -191,6 +197,8 @@ Summary:        AARCH64 Virtual Machine Firmware
 Provides:       AAVMF = %{version}-%{release}
 Obsoletes:      AAVMF < %{version}-%{release}
 BuildArch:      noarch
+# No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6 stack.
+License:        BSD and OpenSSL
 %description aarch64
 EFI Development Kit II
 AARCH64 UEFI Firmware
@@ -220,7 +228,6 @@ cp -a -- %{SOURCE2} .
 
 # add openssl
 (cd .. && tar -xvf %{SOURCE1})
-cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
 
 # Extract QOSB
 tar -xvf %{SOURCE3}
@@ -234,7 +241,7 @@ base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Log
 source ./edksetup.sh
 
 # compiler
-CC_FLAGS="-t GCC49"
+CC_FLAGS="-t GCC5"
 
 # parallel builds
 JOBS="%{?_smp_mflags}"
@@ -244,8 +251,8 @@ if test "$JOBS" != ""; then
 fi
 
 # common features
-CC_FLAGS="${CC_FLAGS} -b DEBUG"
-CC_FLAGS="${CC_FLAGS} --cmd-len=65536"
+CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
+CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
 
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
@@ -270,10 +277,10 @@ sed -i -e 's/-Werror//' Conf/tools_def.txt
 
 
 %if 0%{?cross:1}
-export GCC49_IA32_PREFIX="x86_64-linux-gnu-"
-export GCC49_X64_PREFIX="x86_64-linux-gnu-"
-export GCC49_AARCH64_PREFIX="aarch64-linux-gnu-"
-export GCC49_ARM_PREFIX="arm-linux-gnu-"
+export GCC5_IA32_PREFIX="x86_64-linux-gnu-"
+export GCC5_X64_PREFIX="x86_64-linux-gnu-"
+export GCC5_AARCH64_PREFIX="aarch64-linux-gnu-"
+export GCC5_ARM_PREFIX="arm-linux-gnu-"
 %endif
 
 # build ovmf (x64)
@@ -360,6 +367,7 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
 %endif
 
 %install
+cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
 mkdir -p %{buildroot}%{_bindir} \
          %{buildroot}%{_datadir}/%{name}/Conf \
          %{buildroot}%{_datadir}/%{name}/Scripts
@@ -413,6 +421,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 %files tools
 %license License.txt
+%license LICENSE.openssl
 %{_bindir}/BootSectImage
 %{_bindir}/Brotli
 %{_bindir}/DevicePath
@@ -510,6 +519,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Jul 18 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-4
+- Enable IPv6
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20180529gitee3198e672e2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
