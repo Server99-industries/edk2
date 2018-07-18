@@ -1,0 +1,188 @@
+From ae08ea246fe9b4a4e05b7ee6cdbd5b0fa38f3f69 Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Fri, 13 Jul 2018 01:41:12 +0200
+Subject: [PATCH 2/2] ArmVirtPkg/ArmVirtQemu: enable the IPv6 stack
+
+Add the IPv6 stack to ArmVirtQemu with a cumulative port of the following
+OvmfPkg commits:
+
+* 36c6413f76e5 "OvmfPkg: enable the IPv6 support", 2014-12-19
+
+* 96302b80d90e "OvmfPkg: Enable Network2 Shell Commands for IPv6",
+               2016-03-08
+
+* 6d0f8941bdc2 "OvmfPkg: always resolve OpenSslLib, IntrinsicLib and
+               BaseCryptLib", 2017-01-17
+
+* 32e22f20c985 "OvmfPkg: correct the IScsiDxe module included for the IPv6
+               stack", 2017-01-17
+
+The IPv6-enabled IScsiDxe driver depends on BaseCryptLib, and the
+"CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf" instance depends on
+IntrinsicLib and OpensslLib. This is why commit 6d0f8941bdc2 is relevant.
+
+However, unlike in OvmfPkg, in ArmVirtPkg we'll precisely track the
+firmware features that require these library classes. (The OvmfPkg
+discussion was quite complex, and the OvmfPkg solution was a compromise:
+<http://mid.mail-archive.com/1484569332-13440-1-git-send-email-jiaxin.wu@intel.com>.)
+
+The ArmVirtXen platform is not extended with the relevant drivers because
+currently it doesn't include any networking support.
+
+Cc: Julien Grall <julien.grall@linaro.org>
+Ref: https://bugzilla.tianocore.org/show_bug.cgi?id=1007
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ ArmVirtPkg/ArmVirt.dsc.inc           | 18 +++++++++++++++---
+ ArmVirtPkg/ArmVirtQemu.dsc           | 13 ++++++++++++-
+ ArmVirtPkg/ArmVirtQemuKernel.dsc     | 13 ++++++++++++-
+ ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc | 12 +++++++++++-
+ 4 files changed, 50 insertions(+), 6 deletions(-)
+
+diff --git a/ArmVirtPkg/ArmVirt.dsc.inc b/ArmVirtPkg/ArmVirt.dsc.inc
+index 76c400a5de..8bb54c5e65 100644
+--- a/ArmVirtPkg/ArmVirt.dsc.inc
++++ b/ArmVirtPkg/ArmVirt.dsc.inc
+@@ -80,6 +80,9 @@ [LibraryClasses.common]
+   DpcLib|MdeModulePkg/Library/DxeDpcLib/DxeDpcLib.inf
+   UdpIoLib|MdeModulePkg/Library/DxeUdpIoLib/DxeUdpIoLib.inf
+   IpIoLib|MdeModulePkg/Library/DxeIpIoLib/DxeIpIoLib.inf
++!if $(NETWORK_IP6_ENABLE) == TRUE
++  TcpIoLib|MdeModulePkg/Library/DxeTcpIoLib/DxeTcpIoLib.inf
++!endif
+ !if $(HTTP_BOOT_ENABLE) == TRUE
+   HttpLib|MdeModulePkg/Library/DxeHttpLib/DxeHttpLib.inf
+ !endif
+@@ -144,14 +147,20 @@ [LibraryClasses.common]
+   XenIoMmioLib|OvmfPkg/Library/XenIoMmioLib/XenIoMmioLib.inf
+ 
+   #
+-  # Secure Boot dependencies
++  # CryptoPkg libraries needed by multiple firmware features
+   #
+-!if $(SECURE_BOOT_ENABLE) == TRUE
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE)
+   IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
+   OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLibCrypto.inf
++  BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
++!endif
++
++  #
++  # Secure Boot dependencies
++  #
++!if $(SECURE_BOOT_ENABLE) == TRUE
+   TpmMeasurementLib|SecurityPkg/Library/DxeTpmMeasurementLib/DxeTpmMeasurementLib.inf
+   AuthVariableLib|SecurityPkg/Library/AuthVariableLib/AuthVariableLib.inf
+-  BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
+ 
+   # re-use the UserPhysicalPresent() dummy implementation from the ovmf tree
+   PlatformSecureLib|OvmfPkg/Library/PlatformSecureLib/PlatformSecureLib.inf
+@@ -406,6 +415,9 @@ [Components.common]
+       NULL|ShellPkg/Library/UefiShellDebug1CommandsLib/UefiShellDebug1CommandsLib.inf
+       NULL|ShellPkg/Library/UefiShellInstall1CommandsLib/UefiShellInstall1CommandsLib.inf
+       NULL|ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
++!if $(NETWORK_IP6_ENABLE) == TRUE
++      NULL|ShellPkg/Library/UefiShellNetwork2CommandsLib/UefiShellNetwork2CommandsLib.inf
++!endif
+       HandleParsingLib|ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
+       PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+       BcfgCommandLib|ShellPkg/Library/UefiShellBcfgCommandLib/UefiShellBcfgCommandLib.inf
+diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
+index 742df36285..885c6b14b8 100644
+--- a/ArmVirtPkg/ArmVirtQemu.dsc
++++ b/ArmVirtPkg/ArmVirtQemu.dsc
+@@ -34,6 +34,7 @@ [Defines]
+   # -D FLAG=VALUE
+   #
+   DEFINE SECURE_BOOT_ENABLE      = FALSE
++  DEFINE NETWORK_IP6_ENABLE      = FALSE
+   DEFINE HTTP_BOOT_ENABLE        = FALSE
+ 
+ !include ArmVirtPkg/ArmVirt.dsc.inc
+@@ -344,10 +345,20 @@ [Components.common]
+   MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+   MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+   MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+-  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
++!if $(NETWORK_IP6_ENABLE) == TRUE
++  NetworkPkg/Ip6Dxe/Ip6Dxe.inf
++  NetworkPkg/TcpDxe/TcpDxe.inf
++  NetworkPkg/Udp6Dxe/Udp6Dxe.inf
++  NetworkPkg/Dhcp6Dxe/Dhcp6Dxe.inf
++  NetworkPkg/Mtftp6Dxe/Mtftp6Dxe.inf
++  NetworkPkg/UefiPxeBcDxe/UefiPxeBcDxe.inf
++  NetworkPkg/IScsiDxe/IScsiDxe.inf
++!else
++  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
+   MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
++!endif
+ !if $(HTTP_BOOT_ENABLE) == TRUE
+   NetworkPkg/DnsDxe/DnsDxe.inf
+   NetworkPkg/HttpUtilitiesDxe/HttpUtilitiesDxe.inf
+diff --git a/ArmVirtPkg/ArmVirtQemuKernel.dsc b/ArmVirtPkg/ArmVirtQemuKernel.dsc
+index 4ae61ec635..434d6861a5 100644
+--- a/ArmVirtPkg/ArmVirtQemuKernel.dsc
++++ b/ArmVirtPkg/ArmVirtQemuKernel.dsc
+@@ -34,6 +34,7 @@ [Defines]
+   # -D FLAG=VALUE
+   #
+   DEFINE SECURE_BOOT_ENABLE      = FALSE
++  DEFINE NETWORK_IP6_ENABLE      = FALSE
+   DEFINE HTTP_BOOT_ENABLE        = FALSE
+ 
+ !include ArmVirtPkg/ArmVirt.dsc.inc
+@@ -333,10 +334,20 @@ [Components.common]
+   MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+   MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+   MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+-  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
++!if $(NETWORK_IP6_ENABLE) == TRUE
++  NetworkPkg/Ip6Dxe/Ip6Dxe.inf
++  NetworkPkg/TcpDxe/TcpDxe.inf
++  NetworkPkg/Udp6Dxe/Udp6Dxe.inf
++  NetworkPkg/Dhcp6Dxe/Dhcp6Dxe.inf
++  NetworkPkg/Mtftp6Dxe/Mtftp6Dxe.inf
++  NetworkPkg/UefiPxeBcDxe/UefiPxeBcDxe.inf
++  NetworkPkg/IScsiDxe/IScsiDxe.inf
++!else
++  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
+   MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
++!endif
+ !if $(HTTP_BOOT_ENABLE) == TRUE
+   NetworkPkg/DnsDxe/DnsDxe.inf
+   NetworkPkg/HttpUtilitiesDxe/HttpUtilitiesDxe.inf
+diff --git a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
+index 63a202c788..a6390bd4b8 100644
+--- a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
++++ b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
+@@ -125,10 +125,20 @@ [FV.FvMain]
+   INF MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+   INF MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+   INF MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+-  INF MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   INF MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
++!if $(NETWORK_IP6_ENABLE) == TRUE
++  INF NetworkPkg/Ip6Dxe/Ip6Dxe.inf
++  INF NetworkPkg/TcpDxe/TcpDxe.inf
++  INF NetworkPkg/Udp6Dxe/Udp6Dxe.inf
++  INF NetworkPkg/Dhcp6Dxe/Dhcp6Dxe.inf
++  INF NetworkPkg/Mtftp6Dxe/Mtftp6Dxe.inf
++  INF NetworkPkg/UefiPxeBcDxe/UefiPxeBcDxe.inf
++  INF NetworkPkg/IScsiDxe/IScsiDxe.inf
++!else
++  INF MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+   INF MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
+   INF MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
++!endif
+ !if $(HTTP_BOOT_ENABLE) == TRUE
+   INF NetworkPkg/DnsDxe/DnsDxe.inf
+   INF NetworkPkg/HttpUtilitiesDxe/HttpUtilitiesDxe.inf
+-- 
+2.17.1
+

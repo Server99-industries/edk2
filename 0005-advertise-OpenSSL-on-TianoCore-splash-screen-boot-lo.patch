@@ -73,11 +73,13 @@ Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
   - a new UNI (~description) file for the new driver INF file.
 
 - In the OVMF DSC and FDF files, we select the new driver INF for
-  inclusion if either SECURE_BOOT_ENABLE or TLS_ENABLE is set, as they
-  both make use of OpenSSL (although different subsets of it).
+  inclusion if either SECURE_BOOT_ENABLE, NETWORK_IP6_ENABLE, or
+  TLS_ENABLE is set, as they all make use of OpenSSL (although
+  different subsets of it).
 
 - In the AAVMF DSC and FDF files, we only look at SECURE_BOOT_ENABLE,
-  because the ArmVirtQemu platform does not support TLS_ENABLE yet.
+  or NETWORK_IP6_ENABLE, because the ArmVirtQemu platform does not
+  support TLS_ENABLE yet.
 
 - This patch is best displayed with "git show --find-copies-harder".
 
@@ -96,7 +98,7 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc   |    4 +
  ArmVirtPkg/ArmVirtQemuKernel.dsc       |    4 +
  MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 | 2743 ++++++++++++++++++++++++
- MdeModulePkg/Logo/Logo-OpenSSL.idf     |   18 +
+ MdeModulePkg/Logo/Logo-OpenSSL.idf     |   15 +
  MdeModulePkg/Logo/LogoOpenSSLDxe.inf   |   61 +
  MdeModulePkg/Logo/LogoOpenSSLDxe.uni   |   22 +
  OvmfPkg/OvmfPkgIa32.dsc                |    4 +
@@ -105,7 +107,7 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  OvmfPkg/OvmfPkgIa32X64.fdf             |    4 +
  OvmfPkg/OvmfPkgX64.dsc                 |    4 +
  OvmfPkg/OvmfPkgX64.fdf                 |    4 +
- 13 files changed, 2880 insertions(+)
+ 13 files changed, 2877 insertions(+)
  create mode 100644 MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64
  create mode 100644 MdeModulePkg/Logo/Logo-OpenSSL.idf
  create mode 100644 MdeModulePkg/Logo/LogoOpenSSLDxe.inf
@@ -119,7 +121,7 @@ index d74feb7..7331597 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-+!if $(SECURE_BOOT_ENABLE) == TRUE
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE)
 +  MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    MdeModulePkg/Logo/LogoDxe.inf
@@ -135,7 +137,7 @@ index 89f95b2..8941b7f 100644
    #
    # TianoCore logo (splash screen)
    #
-+!if $(SECURE_BOOT_ENABLE) == TRUE
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE)
 +  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    INF MdeModulePkg/Logo/LogoDxe.inf
@@ -151,7 +153,7 @@ index 1e823ae..1981aae 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-+!if $(SECURE_BOOT_ENABLE) == TRUE
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE)
 +  MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    MdeModulePkg/Logo/LogoDxe.inf
@@ -2913,12 +2915,9 @@ new file mode 100644
 index 0000000..15de807
 --- /dev/null
 +++ b/MdeModulePkg/Logo/Logo-OpenSSL.idf
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,15 @@
 +// /** @file
 +// Platform Logo image definition file.
-+//
-+// Console Platfrom DXE Driver that specifies whether device can be used as console
-+// input/output device or error output device and update global variables accordingly.
 +//
 +// Copyright (c) 2016, Intel Corporation. All rights reserved.<BR>
 +//
@@ -3035,7 +3034,7 @@ index 054839f..889735a 100644
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +  MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    MdeModulePkg/Logo/LogoDxe.inf
@@ -3051,7 +3050,7 @@ index 0427ded..f552bc9 100644
  INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
  !endif
  
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
  INF MdeModulePkg/Logo/LogoDxe.inf
@@ -3067,7 +3066,7 @@ index d033fcf..af2cdf1 100644
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +  MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    MdeModulePkg/Logo/LogoDxe.inf
@@ -3083,7 +3082,7 @@ index 6df47f4..ee77ae1 100644
  INF  RuleOverride = BINARY USE = X64 EdkShellBinPkg/FullShell/FullShell.inf
  !endif
  
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
  INF MdeModulePkg/Logo/LogoDxe.inf
@@ -3099,7 +3098,7 @@ index de335a1..3572e42 100644
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +  MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
    MdeModulePkg/Logo/LogoDxe.inf
@@ -3115,7 +3114,7 @@ index 2e2a174..505d25d 100644
  INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
  !endif
  
-+!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
++!if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
 +INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 +!else
  INF MdeModulePkg/Logo/LogoDxe.inf
