@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -74,6 +74,10 @@ Patch0051: 0051-ArmVirtPkg-PlatformBootManagerLib-connect-Virtio-RNG.patch
 Patch0052: 0052-OvmfPkg-PlatformBootManagerLib-connect-Virtio-RNG-de.patch
 Patch0053: 0053-ArmVirtPkg-unify-HttpLib-resolutions-in-ArmVirt.dsc..patch
 Patch0054: 0054-ArmVirtPkg-ArmVirtQemu-enable-the-IPv6-stack.patch
+Patch0055: 0055-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-mark-Flash-me.patch
+Patch0056: 0056-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-Do-not-expose.patch
+Patch0057: 0057-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-Restore-C-bit.patch
+Patch0058: 0058-MdeModulePkg-Variable-Check-EFI_MEMORY_RUNTIME-attri.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -171,6 +175,7 @@ Summary:        Open Virtual Machine Firmware
 # OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
 # library.
 License:        BSD and OpenSSL
+Provides:       bundled(openssl)
 Provides:       OVMF = %{version}-%{release}
 Obsoletes:      OVMF < %{version}-%{release}
 BuildArch:      noarch
@@ -185,6 +190,7 @@ Summary:        Open Virtual Machine Firmware
 # OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
 # library.
 License:        BSD and OpenSSL
+Provides:       bundled(openssl)
 BuildArch:      noarch
 %description ovmf-ia32
 EFI Development Kit II
@@ -199,6 +205,7 @@ Obsoletes:      AAVMF < %{version}-%{release}
 BuildArch:      noarch
 # No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6 stack.
 License:        BSD and OpenSSL
+Provides:       bundled(openssl)
 %description aarch64
 EFI Development Kit II
 AARCH64 UEFI Firmware
@@ -519,6 +526,10 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Mon Jul 23 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-4
+- Fixes for AMD SEV on OVMF_CODE.fd
+- Add Provides for bundled OpenSSL
+
 * Wed Jul 18 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-3
 - Enable IPv6
 
