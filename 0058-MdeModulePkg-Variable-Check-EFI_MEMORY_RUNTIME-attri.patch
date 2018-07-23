@@ -1,0 +1,51 @@
+From f88290964fe528ffeb67ff108e8174fc2ce52741 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <brijesh.singh@amd.com>
+Date: Wed, 4 Jul 2018 10:02:16 +0800
+Subject: [PATCH] MdeModulePkg/Variable: Check EFI_MEMORY_RUNTIME attribute
+ before setting it
+
+Set the EFI_MEMORY_RUNTIME attribute in FtwNotificationEvent() only if
+the attribute is not already present. This will ensure that the attributes
+set by the platform drivers (e.g Ovmf pflash) is not lost.
+
+Cc: Dong Eric <eric.dong@intel.com>
+Cc: Justen Jordan L <jordan.l.justen@intel.com>
+Cc: Zeng Star <star.zeng@intel.com>
+Cc: Laszlo Ersek <lersek@redhat.com>
+Contributed-under: TianoCore Contribution Agreement 1.1
+Reviewed-by: Star Zeng <star.zeng@intel.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+---
+ .../Universal/Variable/RuntimeDxe/VariableDxe.c  | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableDxe.c b/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableDxe.c
+index 6b04f4f7b3..23186176be 100644
+--- a/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableDxe.c
++++ b/MdeModulePkg/Universal/Variable/RuntimeDxe/VariableDxe.c
+@@ -412,13 +412,15 @@ FtwNotificationEvent (
+   if (EFI_ERROR (Status)) {
+     DEBUG ((DEBUG_WARN, "Variable driver failed to get flash memory attribute.\n"));
+   } else {
+-    Status = gDS->SetMemorySpaceAttributes (
+-                    BaseAddress,
+-                    Length,
+-                    GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
+-                    );
+-    if (EFI_ERROR (Status)) {
+-      DEBUG ((DEBUG_WARN, "Variable driver failed to add EFI_MEMORY_RUNTIME attribute to Flash.\n"));
++    if ((GcdDescriptor.Attributes & EFI_MEMORY_RUNTIME) == 0) {
++      Status = gDS->SetMemorySpaceAttributes (
++                      BaseAddress,
++                      Length,
++                      GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
++                      );
++      if (EFI_ERROR (Status)) {
++        DEBUG ((DEBUG_WARN, "Variable driver failed to add EFI_MEMORY_RUNTIME attribute to Flash.\n"));
++      }
+     }
+   }
+ 
+-- 
+2.17.1
+

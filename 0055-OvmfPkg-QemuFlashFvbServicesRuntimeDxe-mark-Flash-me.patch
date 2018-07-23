@@ -1,0 +1,96 @@
+From 966363d5a34839399e3d9f68d4f4efb4b1a9ec66 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <brijesh.singh@amd.com>
+Date: Fri, 6 Jul 2018 10:00:40 -0500
+Subject: [PATCH] OvmfPkg/QemuFlashFvbServicesRuntimeDxe: mark Flash memory
+ range as MMIO
+
+The flash memory range is an IO address and should be presented as Memory
+Mapped IO in EFI Runtime mapping. This information can be used by OS
+when mapping the flash memory range.
+
+It is especially helpful in SEV guest case, in which IO addresses should
+be mapped as unencrypted. If memory region is not marked as MMIO then OS
+maps the range as encrypted.
+
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Anthony Perard <anthony.perard@citrix.com>
+Cc: Julien Grall <julien.grall@linaro.org>
+Cc: Justen Jordan L <jordan.l.justen@intel.com>
+Cc: Laszlo Ersek <lersek@redhat.com>
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Reviewed-by: Laszlo Ersek <lersek@redhat.com>
+Regression-tested-by: Laszlo Ersek <lersek@redhat.com>
+---
+ .../FwBlockService.c                          | 30 ++++++++++++++-----
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/FwBlockService.c b/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/FwBlockService.c
+index 558b395dff..b3f428bb42 100644
+--- a/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/FwBlockService.c
++++ b/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/FwBlockService.c
+@@ -831,12 +831,13 @@ ValidateFvHeader (
+ 
+ STATIC
+ EFI_STATUS
+-MarkMemoryRangeForRuntimeAccess (
++MarkIoMemoryRangeForRuntimeAccess (
+   EFI_PHYSICAL_ADDRESS                BaseAddress,
+   UINTN                               Length
+   )
+ {
+   EFI_STATUS                          Status;
++  EFI_GCD_MEMORY_SPACE_DESCRIPTOR     GcdDescriptor;
+ 
+   //
+   // Mark flash region as runtime memory
+@@ -847,18 +848,31 @@ MarkMemoryRangeForRuntimeAccess (
+                   );
+ 
+   Status = gDS->AddMemorySpace (
+-                  EfiGcdMemoryTypeSystemMemory,
++                  EfiGcdMemoryTypeMemoryMappedIo,
+                   BaseAddress,
+                   Length,
+                   EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                   );
+   ASSERT_EFI_ERROR (Status);
+ 
+-  Status = gBS->AllocatePages (
+-                  AllocateAddress,
+-                  EfiRuntimeServicesData,
+-                  EFI_SIZE_TO_PAGES (Length),
+-                  &BaseAddress
++  Status = gDS->AllocateMemorySpace (
++                  EfiGcdAllocateAddress,
++                  EfiGcdMemoryTypeMemoryMappedIo,
++                  0,
++                  Length,
++                  &BaseAddress,
++                  gImageHandle,
++                  NULL
++                  );
++  ASSERT_EFI_ERROR (Status);
++
++  Status = gDS->GetMemorySpaceDescriptor (BaseAddress, &GcdDescriptor);
++  ASSERT_EFI_ERROR (Status);
++
++  Status = gDS->SetMemorySpaceAttributes (
++                  BaseAddress,
++                  Length,
++                  GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
+                   );
+   ASSERT_EFI_ERROR (Status);
+ 
+@@ -1091,7 +1105,7 @@ FvbInitialize (
+   //
+   InstallProtocolInterfaces (FvbDevice);
+ 
+-  MarkMemoryRangeForRuntimeAccess (BaseAddress, Length);
++  MarkIoMemoryRangeForRuntimeAccess (BaseAddress, Length);
+ 
+   //
+   // Set several PCD values to point to flash
+-- 
+2.17.1
+
