@@ -1,7 +1,10 @@
-From e4342f9f5ddd4d45e0098697c38a55f9402d4e0f Mon Sep 17 00:00:00 2001
+From f337eb3972afcccabe86fe663202a758337d0ab8 Mon Sep 17 00:00:00 2001
+Message-Id: <f337eb3972afcccabe86fe663202a758337d0ab8.1534970217.git.crobinso@redhat.com>
+In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
+References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
-Subject: [PATCH 08/16] MdeModulePkg: TerminalDxe: set xterm resolution on mode
+Subject: [PATCH 08/17] MdeModulePkg: TerminalDxe: set xterm resolution on mode
  change (RH only)
 
 The
@@ -30,6 +33,7 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 2909e025db6878723b49644a8a0cf160d07e6444)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  MdeModulePkg/MdeModulePkg.dec                 |  4 +++
  .../Console/TerminalDxe/TerminalConOut.c      | 30 +++++++++++++++++++
@@ -37,10 +41,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 36 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index cc39718..384d901 100644
+index 6a6d9660ed..2dc1cf94e2 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -1914,6 +1914,10 @@
+@@ -1936,6 +1936,10 @@
    # @Prompt The address mask when memory encryption is enabled.
    gEfiMdeModulePkgTokenSpaceGuid.PcdPteMemoryEncryptionAddressOrMask|0x0|UINT64|0x30001047
  
@@ -52,7 +56,7 @@ index cc39718..384d901 100644
    ## Specify memory size with page number for PEI code when
    #  Loading Module at Fixed Address feature is enabled.
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-index 5a83431..fbc1e0a 100644
+index 4d7218e415..295e7641a5 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 @@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
@@ -107,7 +111,7 @@ index 5a83431..fbc1e0a 100644
  
    Status            = This->ClearScreen (This);
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-index 0780296..bd2ba82 100644
+index 0780296798..bd2ba828a6 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 @@ -60,6 +60,7 @@
@@ -127,5 +131,5 @@ index 0780296..bd2ba82 100644
  # [Event]
  # # Relative timer event set by UnicodeToEfiKey(), used to be one 2 seconds input timeout.
 -- 
-2.17.0
+2.17.1
 

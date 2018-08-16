@@ -1,12 +1,16 @@
-From ce0900e38fcb54a7ea8a160204860b34b75610ca Mon Sep 17 00:00:00 2001
+From c667557c191923e981b972b5679fc49cec60d7e5 Mon Sep 17 00:00:00 2001
+Message-Id: <c667557c191923e981b972b5679fc49cec60d7e5.1534970217.git.crobinso@redhat.com>
+In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
+References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 8 Jul 2012 14:26:07 +0200
-Subject: [PATCH 03/16] OvmfPkg: enable DEBUG_VERBOSE
+Subject: [PATCH 03/17] OvmfPkg: enable DEBUG_VERBOSE
 
 Enable verbose debug logs.
 
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc    | 2 +-
  OvmfPkg/OvmfPkgIa32X64.dsc | 2 +-
@@ -14,10 +18,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 613b390..054839f 100644
+index 83e47281ed..cd0e71869b 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -481,7 +481,7 @@
+@@ -486,7 +486,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -27,10 +31,10 @@ index 613b390..054839f 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index b8e39ac..d033fcf 100644
+index a2adacfbd3..7f7a78f60a 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -486,7 +486,7 @@
+@@ -491,7 +491,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -40,10 +44,10 @@ index b8e39ac..d033fcf 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index f69a5bd..de335a1 100644
+index b57e32f432..739807efc4 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -486,7 +486,7 @@
+@@ -491,7 +491,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -53,5 +57,5 @@ index f69a5bd..de335a1 100644
  !ifdef $(SOURCE_DEBUG_ENABLE)
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 -- 
-2.17.0
+2.17.1
 

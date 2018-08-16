@@ -1,7 +1,10 @@
-From 38c6368813e06e9e52a9c8e0dbd3713a6dec4d23 Mon Sep 17 00:00:00 2001
+From ade02daad705e1a4fd6468136de8fcb886f202a2 Mon Sep 17 00:00:00 2001
+Message-Id: <ade02daad705e1a4fd6468136de8fcb886f202a2.1534970217.git.crobinso@redhat.com>
+In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
+References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 11 Jun 2014 23:33:33 +0200
-Subject: [PATCH 05/16] advertise OpenSSL on TianoCore splash screen / boot
+Subject: [PATCH 05/17] advertise OpenSSL on TianoCore splash screen / boot
  logo
 
 Because we may include the OpenSSL library in our OVMF and AAVMF builds
@@ -93,6 +96,7 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 32192c62e289f261f5ce74acee48e5a94561f10b)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmVirtPkg/ArmVirtQemu.dsc             |    4 +
  ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc   |    4 +
@@ -114,10 +118,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  create mode 100644 MdeModulePkg/Logo/LogoOpenSSLDxe.uni
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index d74feb7..7331597 100644
+index 885c6b14b8..a7a3899560 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -329,7 +329,11 @@
+@@ -327,7 +327,11 @@
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -130,10 +134,10 @@ index d74feb7..7331597 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
-index 89f95b2..8941b7f 100644
+index a6390bd4b8..20a5bcb27b 100644
 --- a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
 +++ b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
-@@ -191,7 +191,11 @@ READ_LOCK_STATUS   = TRUE
+@@ -202,7 +202,11 @@ READ_LOCK_STATUS   = TRUE
    #
    # TianoCore logo (splash screen)
    #
@@ -146,10 +150,10 @@ index 89f95b2..8941b7f 100644
    #
    # Ramdisk support
 diff --git a/ArmVirtPkg/ArmVirtQemuKernel.dsc b/ArmVirtPkg/ArmVirtQemuKernel.dsc
-index 1e823ae..1981aae 100644
+index 434d6861a5..6e4e0249ef 100644
 --- a/ArmVirtPkg/ArmVirtQemuKernel.dsc
 +++ b/ArmVirtPkg/ArmVirtQemuKernel.dsc
-@@ -318,7 +318,11 @@
+@@ -316,7 +316,11 @@
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -163,7 +167,7 @@ index 1e823ae..1981aae 100644
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 b/MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64
 new file mode 100644
-index 0000000..567ca32
+index 0000000000..567ca32f05
 --- /dev/null
 +++ b/MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64
 @@ -0,0 +1,2743 @@
@@ -2912,7 +2916,7 @@ index 0000000..567ca32
 +AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 diff --git a/MdeModulePkg/Logo/Logo-OpenSSL.idf b/MdeModulePkg/Logo/Logo-OpenSSL.idf
 new file mode 100644
-index 0000000..15de807
+index 0000000000..e527cff79b
 --- /dev/null
 +++ b/MdeModulePkg/Logo/Logo-OpenSSL.idf
 @@ -0,0 +1,15 @@
@@ -2933,7 +2937,7 @@ index 0000000..15de807
 +#image IMG_LOGO Logo-OpenSSL.bmp
 diff --git a/MdeModulePkg/Logo/LogoOpenSSLDxe.inf b/MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 new file mode 100644
-index 0000000..2f79d87
+index 0000000000..2f79d873e2
 --- /dev/null
 +++ b/MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 @@ -0,0 +1,61 @@
@@ -3000,7 +3004,7 @@ index 0000000..2f79d87
 +  LogoDxeExtra.uni
 diff --git a/MdeModulePkg/Logo/LogoOpenSSLDxe.uni b/MdeModulePkg/Logo/LogoOpenSSLDxe.uni
 new file mode 100644
-index 0000000..7227ac3
+index 0000000000..7227ac3910
 --- /dev/null
 +++ b/MdeModulePkg/Logo/LogoOpenSSLDxe.uni
 @@ -0,0 +1,22 @@
@@ -3027,10 +3031,10 @@ index 0000000..7227ac3
 +#string STR_MODULE_DESCRIPTION          #language en-US "This module provides the logo bitmap picture (with OpenSSL advertisment) shown on setup screen, through EDKII Platform Logo protocol."
 +
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 054839f..889735a 100644
+index cd0e71869b..0a49336c0d 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -689,7 +689,11 @@
+@@ -694,7 +694,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3043,7 +3047,7 @@ index 054839f..889735a 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index 0427ded..f552bc9 100644
+index 52b8b1fea1..4177379a23 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
 @@ -295,7 +295,11 @@ INF  ShellPkg/Application/Shell/Shell.inf
@@ -3059,10 +3063,10 @@ index 0427ded..f552bc9 100644
  #
  # Network modules
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index d033fcf..af2cdf1 100644
+index 7f7a78f60a..a3d51ef0f7 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -698,7 +698,11 @@
+@@ -703,7 +703,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3075,7 +3079,7 @@ index d033fcf..af2cdf1 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index 6df47f4..ee77ae1 100644
+index 70845d6972..5e57161154 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
 @@ -296,7 +296,11 @@ INF  ShellPkg/Application/Shell/Shell.inf
@@ -3091,10 +3095,10 @@ index 6df47f4..ee77ae1 100644
  #
  # Network modules
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index de335a1..3572e42 100644
+index 739807efc4..f9b4ab4dfa 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -696,7 +696,11 @@
+@@ -701,7 +701,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3107,7 +3111,7 @@ index de335a1..3572e42 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index 2e2a174..505d25d 100644
+index 1eb46ac9a2..c81b422517 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
 @@ -296,7 +296,11 @@ INF  ShellPkg/Application/Shell/Shell.inf
@@ -3123,5 +3127,5 @@ index 2e2a174..505d25d 100644
  #
  # Network modules
 -- 
-2.17.0
+2.17.1
 

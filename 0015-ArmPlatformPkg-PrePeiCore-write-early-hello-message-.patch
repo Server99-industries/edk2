@@ -1,7 +1,10 @@
-From 9952e73e166f2cdd9df473b8ac51565204a0d89e Mon Sep 17 00:00:00 2001
+From e6c0f362edd5834b0d891fc44cd6873566bb0df4 Mon Sep 17 00:00:00 2001
+Message-Id: <e6c0f362edd5834b0d891fc44cd6873566bb0df4.1534970217.git.crobinso@redhat.com>
+In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
+References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
-Subject: [PATCH 15/16] ArmPlatformPkg: PrePeiCore: write early hello message
+Subject: [PATCH 15/17] ArmPlatformPkg: PrePeiCore: write early hello message
  to the serial port (RH)
 
 The FixedPcdGetSize() macro expands to an integer constant, therefore an
@@ -26,6 +29,7 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit b16c4c505ce0e27305235533eac9236aa66f132e)
 (cherry picked from commit 742e5bf6d5ce5a1e73879d6e5c0dd00feda7a9ac)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmPlatformPkg/PrePeiCore/MainMPCore.c          | 5 +++++
  ArmPlatformPkg/PrePeiCore/MainUniCore.c         | 5 +++++
@@ -35,7 +39,7 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  5 files changed, 15 insertions(+)
 
 diff --git a/ArmPlatformPkg/PrePeiCore/MainMPCore.c b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
-index dc47adb..cbd7223 100644
+index dc47adbaff..cbd72232c7 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainMPCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
 @@ -117,6 +117,11 @@ PrimaryMain (
@@ -51,7 +55,7 @@ index dc47adb..cbd7223 100644
  
    // Enable the GIC Distributor
 diff --git a/ArmPlatformPkg/PrePeiCore/MainUniCore.c b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
-index 134a469..af39fc0 100644
+index 134a469427..af39fc017c 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainUniCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
 @@ -35,6 +35,11 @@ PrimaryMain (
@@ -67,7 +71,7 @@ index 134a469..af39fc0 100644
  
    // Adjust the Temporary Ram as the new Ppi List (Common + Platform Ppi Lists) is created at
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-index 1608946..bf843d7 100644
+index 160894620c..bf843d7768 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
 @@ -21,6 +21,7 @@
@@ -79,7 +83,7 @@ index 1608946..bf843d7 100644
  #include <PiPei.h>
  #include <Ppi/TemporaryRamSupport.h>
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-index e3a31fa..1bc0c45 100644
+index e3a31fa7c6..1bc0c45420 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
 @@ -72,6 +72,8 @@
@@ -92,7 +96,7 @@ index e3a31fa..1bc0c45 100644
    gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
    gArmTokenSpaceGuid.PcdGicSgiIntId
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-index ec83cec..20698fc 100644
+index ec83cec2d8..20698fcfac 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
 @@ -71,3 +71,5 @@
@@ -102,5 +106,5 @@ index ec83cec..20698fc 100644
 +
 +  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
 -- 
-2.17.0
+2.17.1
 
