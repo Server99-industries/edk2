@@ -251,6 +251,7 @@ fi
 # common features
 CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
 CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
+CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
 
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
@@ -519,6 +520,8 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %changelog
 * Tue Aug 21 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-1
 - Update to edk2 git cb5f4f45ce, edk2-stable201808
+- Update to qemu-ovmf-secureboot-1.1.3
+- Enable TPM2 support
 
 * Mon Jul 23 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-5
 - Fixes for AMD SEV on OVMF_CODE.fd

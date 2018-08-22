@@ -1,23 +1,50 @@
-From 50f80eff5c33c1dd2cac2729581d43798cd8357c Mon Sep 17 00:00:00 2001
-Message-Id: <50f80eff5c33c1dd2cac2729581d43798cd8357c.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
+From 0f72cc846878cd2acb0577f8bfa0e58b6f06b55b Mon Sep 17 00:00:00 2001
+Message-Id: <0f72cc846878cd2acb0577f8bfa0e58b6f06b55b.1534972691.git.crobinso@redhat.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Thu, 16 Aug 2018 15:45:47 -0400
-Subject: [PATCH 17/17] Tweak the tools_def to support cross-compiling.
+Subject: [PATCH] Tweak the tools_def to support cross-compiling.
 
 These files are meant for customization, so this is not upstream.
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
- BaseTools/Conf/tools_def.template | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ BaseTools/Conf/tools_def.template | 44 +++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
-index a22b96c0b8..57ac7cd4eb 100755
+index a22b96c0b8..8b134ca93f 100755
 --- a/BaseTools/Conf/tools_def.template
 +++ b/BaseTools/Conf/tools_def.template
+@@ -5068,17 +5068,17 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
+ ##################
+ # GCC5 IA32 definitions
+ ##################
+-*_GCC5_IA32_OBJCOPY_PATH         = DEF(GCC5_IA32_PREFIX)objcopy
+-*_GCC5_IA32_CC_PATH              = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_SLINK_PATH           = DEF(GCC5_IA32_PREFIX)gcc-ar
+-*_GCC5_IA32_DLINK_PATH           = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_ASLDLINK_PATH        = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_ASM_PATH             = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_PP_PATH              = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_VFRPP_PATH           = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_ASLCC_PATH           = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_ASLPP_PATH           = DEF(GCC5_IA32_PREFIX)gcc
+-*_GCC5_IA32_RC_PATH              = DEF(GCC5_IA32_PREFIX)objcopy
++*_GCC5_IA32_OBJCOPY_PATH         = ENV(GCC5_IA32_PREFIX)objcopy
++*_GCC5_IA32_CC_PATH              = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_SLINK_PATH           = ENV(GCC5_IA32_PREFIX)gcc-ar
++*_GCC5_IA32_DLINK_PATH           = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_ASLDLINK_PATH        = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_ASM_PATH             = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_PP_PATH              = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_VFRPP_PATH           = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_ASLCC_PATH           = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_ASLPP_PATH           = ENV(GCC5_IA32_PREFIX)gcc
++*_GCC5_IA32_RC_PATH              = ENV(GCC5_IA32_PREFIX)objcopy
+ 
+ *_GCC5_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32 -fno-lto
+ *_GCC5_IA32_ASLDLINK_FLAGS       = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386 -no-pie
 @@ -5100,17 +5100,17 @@ RELEASE_GCC5_IA32_DLINK_FLAGS    = DEF(GCC5_IA32_X64_DLINK_FLAGS) -flto -Os -Wl,
  ##################
  # GCC5 X64 definitions
