@@ -1,0 +1,113 @@
+From 84570add9731d2099c6e5be43f96aed508fd4c39 Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Tue, 4 Nov 2014 23:02:53 +0100
+Subject: [PATCH] OvmfPkg: allow exclusion of the shell from the firmware image
+
+When '-D EXCLUDE_SHELL_FROM_FD' is passed to 'build', exclude the shell
+binary from the firmware image.
+
+Peter Jones advised us that firmware vendors for physical systems disable
+the memory-mapped, firmware image-contained UEFI shell in
+SecureBoot-enabled builds. The reason being that the memory-mapped shell
+can always load, it may have direct access to various hardware in the
+system, and it can run UEFI shell scripts (which cannot be signed at all).
+
+Intended use of the new build option:
+
+- In-tree builds: don't pass '-D EXCLUDE_SHELL_FROM_FD'. The resultant
+  firmware image will contain a shell binary, independently of SecureBoot
+  enablement, which is flexible for interactive development. (Ie. no
+  change for in-tree builds.)
+
+- RPM builds: pass both '-D SECURE_BOOT_ENABLE' and
+  '-D EXCLUDE_SHELL_FROM_FD'. The resultant RPM will provide:
+
+  - OVMF_CODE.fd: SecureBoot-enabled firmware, without builtin UEFI shell,
+
+  - OVMF_VARS.fd: variable store template matching OVMF_CODE.fd,
+
+  - UefiShell.iso: a bootable ISO image with the shell on it as default
+    boot loader. The shell binary will load when SecureBoot is turned off,
+    and won't load when SecureBoot is turned on (because it is not
+    signed).
+
+    UefiShell.iso is the reason we're not excluding the shell from the DSC
+    files as well, only the FDF files -- when '-D EXCLUDE_SHELL_FROM_FD'
+    is specified, the shell binary needs to be built the same, only it
+    will be included in UefiShell.iso.
+
+Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
+
+- no changes
+
+Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
+
+- no changes
+
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+(cherry picked from commit 9c391def70366cabae08e6008814299c3372fafd)
+(cherry picked from commit d9dd9ee42937b2611fe37183cc9ec7f62d946933)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ OvmfPkg/OvmfPkgIa32.fdf    | 2 ++
+ OvmfPkg/OvmfPkgIa32X64.fdf | 2 ++
+ OvmfPkg/OvmfPkgX64.fdf     | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
+index 4177379a23..8c0b6ee1bd 100644
+--- a/OvmfPkg/OvmfPkgIa32.fdf
++++ b/OvmfPkg/OvmfPkgIa32.fdf
+@@ -288,12 +288,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+ INF  FatPkg/EnhancedFatDxe/Fat.inf
+ INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
+ 
++!ifndef $(EXCLUDE_SHELL_FROM_FD)
+ !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  ShellPkg/Application/Shell/Shell.inf
+ !else
+ INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
+ !endif
++!endif
+ 
+ !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
+ INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
+diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
+index 5e57161154..8de20366d2 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.fdf
++++ b/OvmfPkg/OvmfPkgIa32X64.fdf
+@@ -289,12 +289,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+ INF  FatPkg/EnhancedFatDxe/Fat.inf
+ INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
+ 
++!ifndef $(EXCLUDE_SHELL_FROM_FD)
+ !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  ShellPkg/Application/Shell/Shell.inf
+ !else
+ INF  RuleOverride = BINARY USE = X64 EdkShellBinPkg/FullShell/FullShell.inf
+ !endif
++!endif
+ 
+ !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
+ INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
+diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
+index c81b422517..49ef829a3a 100644
+--- a/OvmfPkg/OvmfPkgX64.fdf
++++ b/OvmfPkg/OvmfPkgX64.fdf
+@@ -289,12 +289,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+ INF  FatPkg/EnhancedFatDxe/Fat.inf
+ INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
+ 
++!ifndef $(EXCLUDE_SHELL_FROM_FD)
+ !ifndef $(USE_OLD_SHELL)
+ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  ShellPkg/Application/Shell/Shell.inf
+ !else
+ INF  RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
+ !endif
++!endif
+ 
+ !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
+ INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf

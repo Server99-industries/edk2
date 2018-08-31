@@ -6,25 +6,21 @@ dir="$1"
 # cfg
 shell="$dir/Shell.efi"
 enroll="$dir/EnrollDefaultKeys.efi"
+root="$dir/image"
 vfat="$dir/shell.img"
 iso="$dir/UefiShell.iso"
-export MTOOLS_SKIP_CHECK=1
 
-# calc size
-s1=$(stat --format=%s -- $shell)
-s2=$(stat --format=%s -- $enroll)
-size=$(( ($s1 + $s2) * 11 / 10 ))
-set -x
-
-# create non-partitioned FAT image
-/usr/sbin/mkdosfs -C "$vfat" -n UEFI_SHELL -- "$(( $size / 1024 ))"
-mmd	-i "$vfat"			::efi
-mmd	-i "$vfat"			::efi/boot
-mcopy	-i "$vfat"	"$shell"	::efi/boot/bootx64.efi
-mcopy	-i "$vfat"	"$enroll"	::
-#mdir	-i "$vfat"	-/		::
+# create non-partitioned (1.44 MB floppy disk) FAT image
+mkdir "$root"
+mkdir "$root"/efi
+mkdir "$root"/efi/boot
+cp "$shell" "$root"/efi/boot/bootx64.efi
+cp "$enroll" "$root"
+qemu-img convert --image-opts \
+	driver=vvfat,floppy=on,fat-type=12,label=UEFI_SHELL,dir="$root/" \
+	$vfat
 
 # build ISO with FAT image file as El Torito EFI boot image
 genisoimage -input-charset ASCII -J -rational-rock \
 	-efi-boot "${vfat##*/}" -no-emul-boot -o "$iso" -- "$vfat"
-rm -f "$vfat"
+rm -rf "$root/" "$vfat"
