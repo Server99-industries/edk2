@@ -1,8 +1,7 @@
-From d45f1192743f3721936d531ca024894409dcf887 Mon Sep 17 00:00:00 2001
+From 5e55066b33d894cb7e9b84179de449e8734cb57d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
-Subject: [PATCH 02/16] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE
- core
+Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE core
 
 The DXE core logs a bunch of Properties Table and Memory Attributes Table
 related information, on the EFI_D_VERBOSE level, that I am at the moment
@@ -18,10 +17,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 7530e1a..613b390 100644
+index 7f725ab198..83e47281ed 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -639,6 +639,8 @@
+@@ -644,6 +644,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -31,10 +30,10 @@ index 7530e1a..613b390 100644
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index de8edfd..b8e39ac 100644
+index d444a84267..a2adacfbd3 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -648,6 +648,8 @@
+@@ -653,6 +653,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -44,10 +43,10 @@ index de8edfd..b8e39ac 100644
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 484b8c4..f69a5bd 100644
+index f4e072870c..b57e32f432 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -646,6 +646,8 @@
+@@ -651,6 +651,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -56,6 +55,3 @@ index 484b8c4..f69a5bd 100644
    }
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
--- 
-2.17.0
-

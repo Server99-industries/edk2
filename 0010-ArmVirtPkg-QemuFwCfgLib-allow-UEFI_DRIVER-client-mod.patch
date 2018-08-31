@@ -1,8 +1,8 @@
-From fea29c5c217f61d4169f8236711431a5d0c99f05 Mon Sep 17 00:00:00 2001
+From 92f37a3d72213d9b76bc47c4f194f2ea989a71a1 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 12 Apr 2016 20:50:25 +0200
-Subject: [PATCH 10/16] ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client
- modules (RH only)
+Subject: [PATCH] ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client modules
+ (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -22,7 +22,7 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
-index eff4a21..adf1ff6 100644
+index eff4a21650..adf1ff6c6a 100644
 --- a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 +++ b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 @@ -22,7 +22,7 @@
@@ -34,6 +34,3 @@ index eff4a21..adf1ff6 100644
  
    CONSTRUCTOR                    = QemuFwCfgInitialize
  
--- 
-2.17.0
-

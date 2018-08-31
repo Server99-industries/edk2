@@ -1,8 +1,8 @@
-From 3be34f5ba685c15e8537e4489589bf01ad7ea731 Mon Sep 17 00:00:00 2001
+From 6a27daa40698f06a34c209bd90092011d70f7795 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
-Subject: [PATCH 11/16] ArmVirtPkg: take PcdResizeXterm from the QEMU command
- line (RH only)
+Subject: [PATCH] ArmVirtPkg: take PcdResizeXterm from the QEMU command line
+ (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -31,10 +31,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 7331597..4bf94ce 100644
+index a7a3899560..86d5d5a666 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -208,6 +208,8 @@
+@@ -206,6 +206,8 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0
    gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|FALSE
  
@@ -43,7 +43,7 @@ index 7331597..4bf94ce 100644
  [PcdsDynamicHii]
    gArmVirtTokenSpaceGuid.PcdForceNoAcpi|L"ForceNoAcpi"|gArmVirtVariableGuid|0x0|FALSE|NV,BS
  
-@@ -284,7 +286,10 @@
+@@ -282,7 +284,10 @@
    MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
    MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
    MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
@@ -57,7 +57,7 @@ index 7331597..4bf94ce 100644
    MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
 diff --git a/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 new file mode 100644
-index 0000000..814ad48
+index 0000000000..814ad48199
 --- /dev/null
 +++ b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 @@ -0,0 +1,87 @@
@@ -150,7 +150,7 @@ index 0000000..814ad48
 +}
 diff --git a/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
 new file mode 100644
-index 0000000..fecb37b
+index 0000000000..fecb37bcdf
 --- /dev/null
 +++ b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
 @@ -0,0 +1,41 @@
@@ -195,6 +195,3 @@ index 0000000..fecb37b
 +
 +[Pcd]
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm
--- 
-2.17.0
-

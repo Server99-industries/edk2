@@ -1,7 +1,7 @@
-From 87e209ac5896384f3d1206fc20e149d8034c08b1 Mon Sep 17 00:00:00 2001
+From e777f7d03c8a8d56e08926ecf0b17e1338837093 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
-Subject: [PATCH 16/16] ArmVirtPkg: set early hello message (RH only)
+Subject: [PATCH] ArmVirtPkg: set early hello message (RH only)
 
 Print a friendly banner on QEMU, regardless of debug mask settings.
 
@@ -27,10 +27,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 4bf94ce..035b729 100644
+index 86d5d5a666..ffe4ba8092 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -89,6 +89,7 @@
+@@ -87,6 +87,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
  
  [PcdsFixedAtBuild.common]
@@ -38,6 +38,3 @@ index 4bf94ce..035b729 100644
    gArmPlatformTokenSpaceGuid.PcdCoreCount|1
  !if $(ARCH) == AARCH64
    gArmTokenSpaceGuid.PcdVFPEnabled|1
--- 
-2.17.0
-

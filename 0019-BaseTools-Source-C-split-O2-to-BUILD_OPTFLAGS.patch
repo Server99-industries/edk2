@@ -1,0 +1,87 @@
+From 67c8bbaf89bbb4015f0b915fed6fb2f35efd282f Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Wed, 25 Jul 2018 22:59:57 +0200
+Subject: [PATCH] BaseTools/Source/C: split "-O2" to BUILD_OPTFLAGS
+
+The option "-O2" is not a preprocessor flag, but a code generation
+(compilation) flag. Move it from BUILD_CPPFLAGS to BUILD_CFLAGS and
+BUILD_CXXFLAGS.
+
+Because "VfrCompile/GNUmakefile" uses "-O2" through BUILD_CPPFLAGS, and
+because it doesn't use BUILD_CXXFLAGS, we have to introduce BUILD_OPTFLAGS
+separately, so that "VfrCompile/GNUmakefile" can continue using just this
+flag.
+
+This patch doesn't change behavior.
+
+Cc: Liming Gao <liming.gao@intel.com>
+Cc: Yonghong Zhu <yonghong.zhu@intel.com>
+Ref: https://bugzilla.redhat.com/show_bug.cgi?id=1540244
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Liming Gao <liming.gao@intel.com>
+(cherry picked from commit b8a66170264395edeaa61e6d22930a58e576a685)
+---
+ BaseTools/Source/C/Makefiles/header.makefile |  6 +++++-
+ BaseTools/Source/C/VfrCompile/GNUmakefile    | 11 +++++++----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/BaseTools/Source/C/Makefiles/header.makefile b/BaseTools/Source/C/Makefiles/header.makefile
+index 08421ba24c..498c6cf48b 100644
+--- a/BaseTools/Source/C/Makefiles/header.makefile
++++ b/BaseTools/Source/C/Makefiles/header.makefile
+@@ -68,7 +68,8 @@ $(error Bad HOST_ARCH)
+ endif
+ 
+ INCLUDE = $(TOOL_INCLUDE) -I $(MAKEROOT) -I $(MAKEROOT)/Include/Common -I $(MAKEROOT)/Include/ -I $(MAKEROOT)/Include/IndustryStandard -I $(MAKEROOT)/Common/ -I .. -I . $(ARCH_INCLUDE) 
+-BUILD_CPPFLAGS = $(INCLUDE) -O2
++BUILD_CPPFLAGS = $(INCLUDE)
++BUILD_OPTFLAGS = -O2
+ ifeq ($(DARWIN),Darwin)
+ # assume clang or clang compatible flags on OS X
+ BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -Wno-self-assign -Wno-unused-result -nostdlib -g
+@@ -91,6 +92,9 @@ ifeq ($(DARWIN),Darwin)
+ endif
+ endif
+ 
++# keep BUILD_OPTFLAGS last
++BUILD_CFLAGS   += $(BUILD_OPTFLAGS)
++BUILD_CXXFLAGS += $(BUILD_OPTFLAGS)
+   
+ .PHONY: all
+ .PHONY: install
+diff --git a/BaseTools/Source/C/VfrCompile/GNUmakefile b/BaseTools/Source/C/VfrCompile/GNUmakefile
+index c4ec61aa6c..bbe562cbc5 100644
+--- a/BaseTools/Source/C/VfrCompile/GNUmakefile
++++ b/BaseTools/Source/C/VfrCompile/GNUmakefile
+@@ -25,6 +25,9 @@ OBJECTS = AParser.o DLexerBase.o ATokenBuffer.o EfiVfrParser.o VfrLexer.o VfrSyn
+ 
+ VFR_CPPFLAGS = -DPCCTS_USE_NAMESPACE_STD $(BUILD_CPPFLAGS)
+ 
++# keep BUILD_OPTFLAGS last
++VFR_CXXFLAGS = $(BUILD_OPTFLAGS)
++
+ LINKER = $(BUILD_CXX)
+ 
+ EXTRA_CLEAN_OBJECTS = EfiVfrParser.cpp EfiVfrParser.h VfrParser.dlg VfrTokens.h VfrLexer.cpp VfrLexer.h VfrSyntax.cpp tokens.h
+@@ -58,16 +61,16 @@ Pccts/dlg/dlg:
+ 	BIN_DIR='.' $(MAKE) -C Pccts/dlg
+ 
+ ATokenBuffer.o: Pccts/h/ATokenBuffer.cpp
+-	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $? -o $@
++	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $(VFR_CXXFLAGS) $? -o $@
+ 
+ DLexerBase.o: Pccts/h/DLexerBase.cpp
+-	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $? -o $@
++	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $(VFR_CXXFLAGS) $? -o $@
+ 
+ AParser.o: Pccts/h/AParser.cpp
+-	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $? -o $@
++	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $(VFR_CXXFLAGS) $? -o $@
+ 
+ VfrSyntax.o: VfrSyntax.cpp
+-	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $? -o $@
++	$(BUILD_CXX) -c $(VFR_CPPFLAGS) $(INC) $(VFR_CXXFLAGS) $? -o $@
+ 	
+ clean: localClean
+ 

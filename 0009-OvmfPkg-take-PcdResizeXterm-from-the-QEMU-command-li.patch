@@ -1,8 +1,8 @@
-From 7ea5e9e4f9c358fe9cc10e57e34bb5ada33f1176 Mon Sep 17 00:00:00 2001
+From 30251344cfbd25212394c377b80cd720a3b85d46 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
-Subject: [PATCH 09/16] OvmfPkg: take PcdResizeXterm from the QEMU command line
- (RH only)
+Subject: [PATCH] OvmfPkg: take PcdResizeXterm from the QEMU command line (RH
+ only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -29,33 +29,9 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  5 files changed, 5 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 889735a..571118d 100644
+index 0a49336c0d..8dc3ad2be4 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -530,6 +530,7 @@
-   #   ($(SMM_REQUIRE) == FALSE)
-   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
- 
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
-diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index af2cdf1..c0b5271 100644
---- a/OvmfPkg/OvmfPkgIa32X64.dsc
-+++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -536,6 +536,7 @@
-   #   ($(SMM_REQUIRE) == FALSE)
-   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
- 
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
-diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 3572e42..f2bb8c8 100644
---- a/OvmfPkg/OvmfPkgX64.dsc
-+++ b/OvmfPkg/OvmfPkgX64.dsc
 @@ -535,6 +535,7 @@
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
@@ -64,8 +40,32 @@ index 3572e42..f2bb8c8 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index a3d51ef0f7..d81cd865d5 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -541,6 +541,7 @@
+   #   ($(SMM_REQUIRE) == FALSE)
+   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
+ 
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index f9b4ab4dfa..85bd8d4bf6 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -540,6 +540,7 @@
+   #   ($(SMM_REQUIRE) == FALSE)
+   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
+ 
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
 diff --git a/OvmfPkg/PlatformPei/Platform.c b/OvmfPkg/PlatformPei/Platform.c
-index 5a78668..544ac54 100644
+index 5a78668126..544ac547bf 100644
 --- a/OvmfPkg/PlatformPei/Platform.c
 +++ b/OvmfPkg/PlatformPei/Platform.c
 @@ -670,6 +670,7 @@ InitializePlatform (
@@ -77,7 +77,7 @@ index 5a78668..544ac54 100644
  
    AmdSevInitialize ();
 diff --git a/OvmfPkg/PlatformPei/PlatformPei.inf b/OvmfPkg/PlatformPei/PlatformPei.inf
-index 30ceb4b..016c067 100644
+index 9c5ad9961c..31baaa0a22 100644
 --- a/OvmfPkg/PlatformPei/PlatformPei.inf
 +++ b/OvmfPkg/PlatformPei/PlatformPei.inf
 @@ -94,6 +94,7 @@
@@ -88,6 +88,3 @@ index 30ceb4b..016c067 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode
    gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable
    gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack
--- 
-2.17.0
-

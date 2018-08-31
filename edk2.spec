@@ -1,7 +1,7 @@
-%global edk2_date        20180529
-%global edk2_githash     ee3198e672e2
+%global edk2_date        20180815
+%global edk2_githash     cb5f4f45ce
 %global openssl_version  1.1.0h
-%global qosb_version     1.1.2
+%global qosb_version     1.1.3
 
 %define qosb_testing 0
 
@@ -35,12 +35,14 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        4%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
+
+# Tarball generated from git object update-tarball.sh script
 Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.xz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
@@ -67,17 +69,13 @@ Patch0013: 0013-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
-
-# upstream backports
-Patch0050: 0050-OvmfPkg-PlatformBootManagerLib-connect-consoles-unco.patch
-Patch0051: 0051-ArmVirtPkg-PlatformBootManagerLib-connect-Virtio-RNG.patch
-Patch0052: 0052-OvmfPkg-PlatformBootManagerLib-connect-Virtio-RNG-de.patch
-Patch0053: 0053-ArmVirtPkg-unify-HttpLib-resolutions-in-ArmVirt.dsc..patch
-Patch0054: 0054-ArmVirtPkg-ArmVirtQemu-enable-the-IPv6-stack.patch
-Patch0055: 0055-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-mark-Flash-me.patch
-Patch0056: 0056-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-Do-not-expose.patch
-Patch0057: 0057-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-Restore-C-bit.patch
-Patch0058: 0058-MdeModulePkg-Variable-Check-EFI_MEMORY_RUNTIME-attri.patch
+# Fix passing through RPM build flags (bz 1540244)
+Patch0017: 0017-BaseTools-footer.makefile-expand-BUILD_CFLAGS-last-f.patch
+Patch0018: 0018-BaseTools-header.makefile-remove-c-from-BUILD_CFLAGS.patch
+Patch0019: 0019-BaseTools-Source-C-split-O2-to-BUILD_OPTFLAGS.patch
+Patch0020: 0020-BaseTools-Source-C-take-EXTRA_OPTFLAGS-from-the-call.patch
+Patch0021: 0021-BaseTools-Source-C-take-EXTRA_LDFLAGS-from-the-calle.patch
+Patch0022: 0022-BaseTools-VfrCompile-honor-EXTRA_LDFLAGS.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -231,10 +229,10 @@ rm -rf EdkShellPkg
 rm -rf FatBinPkg
 rm -rf ShellBinPkg
 
+# copy whitepaper into place
 cp -a -- %{SOURCE2} .
-
-# add openssl
-(cd .. && tar -xvf %{SOURCE1})
+# extract openssl into place
+tar -xvf %{SOURCE1} --strip-components=1
 
 # Extract QOSB
 tar -xvf %{SOURCE3}
@@ -260,6 +258,7 @@ fi
 # common features
 CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
 CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
+CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
 
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
@@ -279,7 +278,9 @@ ARM_FLAGS="${CC_FLAGS}"
 ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
 unset MAKEFLAGS
-make -C BaseTools #%{?_smp_mflags}
+make -C BaseTools %{?_smp_mflags} \
+  EXTRA_OPTFLAGS="%{optflags}" \
+  EXTRA_LDFLAGS="%{__global_ldflags}"
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
 
@@ -526,6 +527,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Fri Aug 31 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-1
+- Update to edk2 git cb5f4f45ce, edk2-stable201808
+
 * Mon Jul 23 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180529gitee3198e672e2-4
 - Fixes for AMD SEV on OVMF_CODE.fd
 - Add Provides for bundled OpenSSL

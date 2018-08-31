@@ -1,0 +1,35 @@
+From c1a087a76d91665433f190d0468be2b33da443cd Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Thu, 26 Jul 2018 01:24:40 +0200
+Subject: [PATCH] BaseTools/Source/C: take EXTRA_LDFLAGS from the caller
+
+Allow the caller of the top-level makefile either to set EXTRA_LDFLAGS in
+the environment or to pass EXTRA_LDFLAGS as a macro definition on the
+command line. EXTRA_LDFLAGS extends (and potentially overrides) default
+link-editing flags set in the makefiles.
+
+Cc: Liming Gao <liming.gao@intel.com>
+Cc: Yonghong Zhu <yonghong.zhu@intel.com>
+Ref: https://bugzilla.redhat.com/show_bug.cgi?id=1540244
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Liming Gao <liming.gao@intel.com>
+(cherry picked from commit 81502cee20ac4046f08bb4aec754c7091c8808dc)
+---
+ BaseTools/Source/C/Makefiles/header.makefile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/BaseTools/Source/C/Makefiles/header.makefile b/BaseTools/Source/C/Makefiles/header.makefile
+index 1b4cad5497..7f283d6464 100644
+--- a/BaseTools/Source/C/Makefiles/header.makefile
++++ b/BaseTools/Source/C/Makefiles/header.makefile
+@@ -99,6 +99,9 @@ endif
+ BUILD_CFLAGS   += $(BUILD_OPTFLAGS)
+ BUILD_CXXFLAGS += $(BUILD_OPTFLAGS)
+   
++# keep EXTRA_LDFLAGS last
++BUILD_LFLAGS += $(EXTRA_LDFLAGS)
++
+ .PHONY: all
+ .PHONY: install
+ .PHONY: clean
