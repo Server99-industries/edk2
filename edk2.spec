@@ -69,6 +69,13 @@ Patch0013: 0013-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
+# Fix passing through RPM build flags (bz 1540244)
+Patch0017: 0017-BaseTools-footer.makefile-expand-BUILD_CFLAGS-last-f.patch
+Patch0018: 0018-BaseTools-header.makefile-remove-c-from-BUILD_CFLAGS.patch
+Patch0019: 0019-BaseTools-Source-C-split-O2-to-BUILD_OPTFLAGS.patch
+Patch0020: 0020-BaseTools-Source-C-take-EXTRA_OPTFLAGS-from-the-call.patch
+Patch0021: 0021-BaseTools-Source-C-take-EXTRA_LDFLAGS-from-the-calle.patch
+Patch0022: 0022-BaseTools-VfrCompile-honor-EXTRA_LDFLAGS.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -271,7 +278,9 @@ ARM_FLAGS="${CC_FLAGS}"
 ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
 unset MAKEFLAGS
-make -C BaseTools #%{?_smp_mflags}
+make -C BaseTools %{?_smp_mflags} \
+  EXTRA_OPTFLAGS="%{optflags}" \
+  EXTRA_LDFLAGS="%{__global_ldflags}"
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 
 
@@ -518,6 +527,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Fri Aug 31 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-2
+- Fix passing through RPM build flags (bz 1540244)
+
 * Tue Aug 21 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-1
 - Update to edk2 git cb5f4f45ce, edk2-stable201808
 - Update to qemu-ovmf-secureboot-1.1.3

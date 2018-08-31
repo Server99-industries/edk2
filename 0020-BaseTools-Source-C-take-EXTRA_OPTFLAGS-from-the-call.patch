@@ -1,0 +1,37 @@
+From 26296351f9a6b6dad0604f8ed62ce5de0f41ac2c Mon Sep 17 00:00:00 2001
+From: Laszlo Ersek <lersek@redhat.com>
+Date: Thu, 26 Jul 2018 00:04:26 +0200
+Subject: [PATCH] BaseTools/Source/C: take EXTRA_OPTFLAGS from the caller
+
+Allow the caller of the top-level makefile either to set EXTRA_OPTFLAGS in
+the environment or to pass EXTRA_OPTFLAGS as a macro definition on the
+command line. EXTRA_OPTFLAGS extends (and potentially overrides) default C
+compilation flags set in the makefiles.
+
+Cc: Liming Gao <liming.gao@intel.com>
+Cc: Yonghong Zhu <yonghong.zhu@intel.com>
+Ref: https://bugzilla.redhat.com/show_bug.cgi?id=1540244
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Liming Gao <liming.gao@intel.com>
+(cherry picked from commit b0ca5dae78ff71397a8ef568f1914da7668ff5a9)
+---
+ BaseTools/Source/C/Makefiles/header.makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/BaseTools/Source/C/Makefiles/header.makefile b/BaseTools/Source/C/Makefiles/header.makefile
+index 498c6cf48b..1b4cad5497 100644
+--- a/BaseTools/Source/C/Makefiles/header.makefile
++++ b/BaseTools/Source/C/Makefiles/header.makefile
+@@ -69,7 +69,10 @@ endif
+ 
+ INCLUDE = $(TOOL_INCLUDE) -I $(MAKEROOT) -I $(MAKEROOT)/Include/Common -I $(MAKEROOT)/Include/ -I $(MAKEROOT)/Include/IndustryStandard -I $(MAKEROOT)/Common/ -I .. -I . $(ARCH_INCLUDE) 
+ BUILD_CPPFLAGS = $(INCLUDE)
+-BUILD_OPTFLAGS = -O2
++
++# keep EXTRA_OPTFLAGS last
++BUILD_OPTFLAGS = -O2 $(EXTRA_OPTFLAGS)
++
+ ifeq ($(DARWIN),Darwin)
+ # assume clang or clang compatible flags on OS X
+ BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-deprecated-declarations -Wno-self-assign -Wno-unused-result -nostdlib -g
