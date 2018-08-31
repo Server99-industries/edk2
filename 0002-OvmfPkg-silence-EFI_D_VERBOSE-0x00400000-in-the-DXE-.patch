@@ -1,11 +1,7 @@
 From 5e55066b33d894cb7e9b84179de449e8734cb57d Mon Sep 17 00:00:00 2001
-Message-Id: <5e55066b33d894cb7e9b84179de449e8734cb57d.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
-Subject: [PATCH 02/17] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE
- core
+Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE core
 
 The DXE core logs a bunch of Properties Table and Memory Attributes Table
 related information, on the EFI_D_VERBOSE level, that I am at the moment
@@ -14,7 +10,6 @@ not interested in. Suppress said output.
 Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc    | 2 ++
  OvmfPkg/OvmfPkgIa32X64.dsc | 2 ++
@@ -60,6 +55,3 @@ index f4e072870c..b57e32f432 100644
    }
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
--- 
-2.17.1
-

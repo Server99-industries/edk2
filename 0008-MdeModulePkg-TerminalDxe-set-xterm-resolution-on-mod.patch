@@ -1,10 +1,7 @@
 From f337eb3972afcccabe86fe663202a758337d0ab8 Mon Sep 17 00:00:00 2001
-Message-Id: <f337eb3972afcccabe86fe663202a758337d0ab8.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
-Subject: [PATCH 08/17] MdeModulePkg: TerminalDxe: set xterm resolution on mode
+Subject: [PATCH] MdeModulePkg: TerminalDxe: set xterm resolution on mode
  change (RH only)
 
 The
@@ -33,7 +30,6 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 2909e025db6878723b49644a8a0cf160d07e6444)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  MdeModulePkg/MdeModulePkg.dec                 |  4 +++
  .../Console/TerminalDxe/TerminalConOut.c      | 30 +++++++++++++++++++
@@ -130,6 +126,3 @@ index 0780296798..bd2ba828a6 100644
  
  # [Event]
  # # Relative timer event set by UnicodeToEfiKey(), used to be one 2 seconds input timeout.
--- 
-2.17.1
-

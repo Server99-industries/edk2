@@ -1,10 +1,7 @@
 From b6e4c1bf03878da7bd82224d523c44fd1fa96aaa Mon Sep 17 00:00:00 2001
-Message-Id: <b6e4c1bf03878da7bd82224d523c44fd1fa96aaa.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 18:40:35 +0100
-Subject: [PATCH 07/17] MdeModulePkg: TerminalDxe: add other text resolutions
+Subject: [PATCH] MdeModulePkg: TerminalDxe: add other text resolutions
 
 When the console output is multiplexed to several devices by
 ConSplitterDxe, then ConSplitterDxe builds an intersection of text modes
@@ -74,7 +71,6 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 99dc3720ac86059f60156197328cc433603c536e)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  .../Universal/Console/TerminalDxe/Terminal.c  | 41 +++++++++++++++++--
  1 file changed, 38 insertions(+), 3 deletions(-)
@@ -131,6 +127,3 @@ index 66dd3ad550..78a198379a 100644
    //
    // New modes can be added here.
    //
--- 
-2.17.1
-

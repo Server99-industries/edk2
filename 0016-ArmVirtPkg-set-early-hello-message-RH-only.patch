@@ -1,10 +1,7 @@
 From e777f7d03c8a8d56e08926ecf0b17e1338837093 Mon Sep 17 00:00:00 2001
-Message-Id: <e777f7d03c8a8d56e08926ecf0b17e1338837093.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
-Subject: [PATCH 16/17] ArmVirtPkg: set early hello message (RH only)
+Subject: [PATCH] ArmVirtPkg: set early hello message (RH only)
 
 Print a friendly banner on QEMU, regardless of debug mask settings.
 
@@ -25,7 +22,6 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 5d4a15b9019728b2d96322bc679099da49916925)
 (cherry picked from commit 179df76dbb0d199bd905236e98775b4059c6502a)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmVirtPkg/ArmVirtQemu.dsc | 1 +
  1 file changed, 1 insertion(+)
@@ -42,6 +38,3 @@ index 86d5d5a666..ffe4ba8092 100644
    gArmPlatformTokenSpaceGuid.PcdCoreCount|1
  !if $(ARCH) == AARCH64
    gArmTokenSpaceGuid.PcdVFPEnabled|1
--- 
-2.17.1
-

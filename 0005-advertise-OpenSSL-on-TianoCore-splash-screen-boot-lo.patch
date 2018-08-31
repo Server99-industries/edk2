@@ -1,11 +1,7 @@
 From ade02daad705e1a4fd6468136de8fcb886f202a2 Mon Sep 17 00:00:00 2001
-Message-Id: <ade02daad705e1a4fd6468136de8fcb886f202a2.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 11 Jun 2014 23:33:33 +0200
-Subject: [PATCH 05/17] advertise OpenSSL on TianoCore splash screen / boot
- logo
+Subject: [PATCH] advertise OpenSSL on TianoCore splash screen / boot logo
 
 Because we may include the OpenSSL library in our OVMF and AAVMF builds
 now, we should advertise it as required by its license. This patch takes
@@ -96,7 +92,6 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 32192c62e289f261f5ce74acee48e5a94561f10b)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmVirtPkg/ArmVirtQemu.dsc             |    4 +
  ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc   |    4 +
@@ -3126,6 +3121,3 @@ index 1eb46ac9a2..c81b422517 100644
  
  #
  # Network modules
--- 
-2.17.1
-

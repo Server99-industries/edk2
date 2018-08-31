@@ -1,11 +1,7 @@
 From 84570add9731d2099c6e5be43f96aed508fd4c39 Mon Sep 17 00:00:00 2001
-Message-Id: <84570add9731d2099c6e5be43f96aed508fd4c39.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:53 +0100
-Subject: [PATCH 12/17] OvmfPkg: allow exclusion of the shell from the firmware
- image
+Subject: [PATCH] OvmfPkg: allow exclusion of the shell from the firmware image
 
 When '-D EXCLUDE_SHELL_FROM_FD' is passed to 'build', exclude the shell
 binary from the firmware image.
@@ -52,7 +48,6 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 9c391def70366cabae08e6008814299c3372fafd)
 (cherry picked from commit d9dd9ee42937b2611fe37183cc9ec7f62d946933)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.fdf    | 2 ++
  OvmfPkg/OvmfPkgIa32X64.fdf | 2 ++
@@ -116,6 +111,3 @@ index c81b422517..49ef829a3a 100644
  
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
--- 
-2.17.1
-

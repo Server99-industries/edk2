@@ -1,11 +1,8 @@
 From 6a27daa40698f06a34c209bd90092011d70f7795 Mon Sep 17 00:00:00 2001
-Message-Id: <6a27daa40698f06a34c209bd90092011d70f7795.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
-Subject: [PATCH 11/17] ArmVirtPkg: take PcdResizeXterm from the QEMU command
- line (RH only)
+Subject: [PATCH] ArmVirtPkg: take PcdResizeXterm from the QEMU command line
+ (RH only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -25,7 +22,6 @@ Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit d4564d39dfdbf74e762af43314005a2c026cb262)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmVirtPkg/ArmVirtQemu.dsc                    |  7 +-
  .../TerminalPcdProducerLib.c                  | 87 +++++++++++++++++++
@@ -199,6 +195,3 @@ index 0000000000..fecb37bcdf
 +
 +[Pcd]
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm
--- 
-2.17.1
-

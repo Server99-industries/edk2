@@ -1,9 +1,7 @@
 From 37942481c89eca732239c23fe606680e6e3faf77 Mon Sep 17 00:00:00 2001
-Message-Id: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
-Subject: [PATCH 01/17] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in
- NvmExpressDxe
+Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in NvmExpressDxe
 
 NvmExpressDxe logs all BlockIo read & write calls on the EFI_D_VERBOSE
 level.
@@ -11,7 +9,6 @@ level.
 Contributed-under: TianoCore Contribution Agreement 1.0
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc    | 5 ++++-
  OvmfPkg/OvmfPkgIa32X64.dsc | 5 ++++-
@@ -66,6 +63,3 @@ index 362eb789c7..f4e072870c 100644
    MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
--- 
-2.17.1
-

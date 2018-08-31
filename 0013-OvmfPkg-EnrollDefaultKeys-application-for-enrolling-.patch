@@ -1,11 +1,8 @@
 From 685d43b29b2ac4b19572bda1ebeb989d69d74ebb Mon Sep 17 00:00:00 2001
-Message-Id: <685d43b29b2ac4b19572bda1ebeb989d69d74ebb.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:55 +0100
-Subject: [PATCH 13/17] OvmfPkg: EnrollDefaultKeys: application for enrolling
- default keys
+Subject: [PATCH] OvmfPkg: EnrollDefaultKeys: application for enrolling default
+ keys
 
 This application is meant to be invoked by the management layer, after
 booting the UEFI shell and getting a shell prompt on the serial console.
@@ -195,7 +192,6 @@ Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit c0b2615a9c0b4a4be1bffe45681a32915449279d)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/EnrollDefaultKeys/EnrollDefaultKeys.c | 1015 +++++++++++++++++
  .../EnrollDefaultKeys/EnrollDefaultKeys.inf   |   52 +
@@ -1330,6 +1326,3 @@ index 85bd8d4bf6..a12905f882 100644
  !endif
  
    OvmfPkg/PlatformDxe/Platform.inf
--- 
-2.17.1
-

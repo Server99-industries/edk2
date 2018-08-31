@@ -1,11 +1,8 @@
 From 6f89eae9f2abe20e35058848e7cc10a69a6b05ec Mon Sep 17 00:00:00 2001
-Message-Id: <6f89eae9f2abe20e35058848e7cc10a69a6b05ec.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:49:43 +0200
-Subject: [PATCH 14/17] ArmPlatformPkg: introduce fixed PCD for early hello
- message (RH only)
+Subject: [PATCH] ArmPlatformPkg: introduce fixed PCD for early hello message
+ (RH only)
 
 Drew has proposed that ARM|AARCH64 platform firmware (especially virtual
 machine firmware) print a reasonably early, simple hello message to the
@@ -34,7 +31,6 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 7ce97b06421434c82095f01a1753a8c9c546cc30)
 (cherry picked from commit 20b1f1cbd0590aa71c6d99d35e23cf08e0707750)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmPlatformPkg/ArmPlatformPkg.dec | 7 +++++++
  1 file changed, 7 insertions(+)
@@ -57,6 +53,3 @@ index 5f67e74154..2956d3e2d8 100644
  [PcdsFixedAtBuild.common,PcdsDynamic.common]
    ## PL031 RealTimeClock
    gArmPlatformTokenSpaceGuid.PcdPL031RtcBase|0x0|UINT32|0x00000024
--- 
-2.17.1
-

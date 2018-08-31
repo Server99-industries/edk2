@@ -1,5 +1,4 @@
-From 0f72cc846878cd2acb0577f8bfa0e58b6f06b55b Mon Sep 17 00:00:00 2001
-Message-Id: <0f72cc846878cd2acb0577f8bfa0e58b6f06b55b.1534972691.git.crobinso@redhat.com>
+From 0784bdc810bcbd275a78ceb0c2cf04f2f0f68061 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Thu, 16 Aug 2018 15:45:47 -0400
 Subject: [PATCH] Tweak the tools_def to support cross-compiling.
@@ -74,6 +73,3 @@ index a22b96c0b8..8b134ca93f 100755
  
  *_GCC5_X64_ASLCC_FLAGS           = DEF(GCC_ASLCC_FLAGS) -m64 -fno-lto
  *_GCC5_X64_ASLDLINK_FLAGS        = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
--- 
-2.17.1
-

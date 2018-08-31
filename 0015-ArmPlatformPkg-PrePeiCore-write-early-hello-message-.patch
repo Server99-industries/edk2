@@ -1,11 +1,8 @@
 From e6c0f362edd5834b0d891fc44cd6873566bb0df4 Mon Sep 17 00:00:00 2001
-Message-Id: <e6c0f362edd5834b0d891fc44cd6873566bb0df4.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
-Subject: [PATCH 15/17] ArmPlatformPkg: PrePeiCore: write early hello message
- to the serial port (RH)
+Subject: [PATCH] ArmPlatformPkg: PrePeiCore: write early hello message to the
+ serial port (RH)
 
 The FixedPcdGetSize() macro expands to an integer constant, therefore an
 optimizing compiler can eliminate the new code, if the platform DSC
@@ -29,7 +26,6 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit b16c4c505ce0e27305235533eac9236aa66f132e)
 (cherry picked from commit 742e5bf6d5ce5a1e73879d6e5c0dd00feda7a9ac)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  ArmPlatformPkg/PrePeiCore/MainMPCore.c          | 5 +++++
  ArmPlatformPkg/PrePeiCore/MainUniCore.c         | 5 +++++
@@ -105,6 +101,3 @@ index ec83cec2d8..20698fcfac 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack
 +
 +  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
--- 
-2.17.1
-

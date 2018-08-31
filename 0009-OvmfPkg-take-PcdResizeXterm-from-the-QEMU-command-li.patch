@@ -1,11 +1,8 @@
 From 30251344cfbd25212394c377b80cd720a3b85d46 Mon Sep 17 00:00:00 2001
-Message-Id: <30251344cfbd25212394c377b80cd720a3b85d46.1534970217.git.crobinso@redhat.com>
-In-Reply-To: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
-References: <37942481c89eca732239c23fe606680e6e3faf77.1534970217.git.crobinso@redhat.com>
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
-Subject: [PATCH 09/17] OvmfPkg: take PcdResizeXterm from the QEMU command line
- (RH only)
+Subject: [PATCH] OvmfPkg: take PcdResizeXterm from the QEMU command line (RH
+ only)
 
 Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
 
@@ -23,7 +20,6 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 6fa0c4d67c0bb8bde2ddd6db41c19eb0c40b2721)
 (cherry picked from commit 8abc2a6ddad25af7e88dc0cf57d55dfb75fbf92d)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Cole Robinson <crobinso@redhat.com>
 ---
  OvmfPkg/OvmfPkgIa32.dsc             | 1 +
  OvmfPkg/OvmfPkgIa32X64.dsc          | 1 +
@@ -92,6 +88,3 @@ index 9c5ad9961c..31baaa0a22 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode
    gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable
    gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack
--- 
-2.17.1
-
