@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -391,6 +391,7 @@ install BaseTools/Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
 cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
+%py_byte_compile %{__python2} %{buildroot}%{_datadir}/%{name}/Python
 for i in build BPDG Ecc GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
 echo '#!/bin/sh
 export PYTHONPATH=%{_datadir}/%{name}/Python
@@ -527,6 +528,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Sep 12 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180815gitcb5f4f45ce-3
+- Explicitly compile the scripts using py_byte_compile
+
 * Fri Aug 31 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-2
 - Fix passing through RPM build flags (bz 1540244)
 
