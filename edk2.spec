@@ -104,7 +104,7 @@ ExclusiveArch:  x86_64 aarch64
 %endif
 
 BuildRequires:  gcc gcc-c++
-BuildRequires:  python
+BuildRequires:  python2 python2-devel python
 BuildRequires:  libuuid-devel
 %if 0%{?cross:1}
 BuildRequires:  gcc-aarch64-linux-gnu
