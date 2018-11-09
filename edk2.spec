@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -76,6 +76,8 @@ Patch0019: 0019-BaseTools-Source-C-split-O2-to-BUILD_OPTFLAGS.patch
 Patch0020: 0020-BaseTools-Source-C-take-EXTRA_OPTFLAGS-from-the-call.patch
 Patch0021: 0021-BaseTools-Source-C-take-EXTRA_LDFLAGS-from-the-calle.patch
 Patch0022: 0022-BaseTools-VfrCompile-honor-EXTRA_LDFLAGS.patch
+# Fix UEFI netboot
+Patch0023: 0023-NetworkPkg-UefiPxeBcDxe-Add-EXCLUSIVE-attribute-when.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
@@ -527,6 +529,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Fri Nov 9 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180815gitcb5f4f45ce-2
+- Fix network boot via grub (bz 1648476)
+
 * Fri Aug 31 2018 Cole Robinson <crobinso@redhat.com> - 20180815gitcb5f4f45ce-1
 - Update to edk2 git cb5f4f45ce, edk2-stable201808
 

@@ -1,0 +1,73 @@
+From cde5a72d365eff5b02b8330fef1c8d36fced08eb Mon Sep 17 00:00:00 2001
+From: "edk2-devel-bounces@lists.01.org" <edk2-devel-bounces@lists.01.org>
+Date: Fri, 14 Sep 2018 16:24:15 +0800
+Subject: [PATCH] NetworkPkg: UefiPxeBcDxe: Add EXCLUSIVE attribute when
+ opening SNP protocol installed by PXE.
+
+Ref: https://bugzilla.tianocore.org/show_bug.cgi?id=1152
+
+v2: Sync the same logic to Ipv6 and update code comments.
+
+The PXE driver installs a SNP and open this SNP with attribute BY_DRIVER
+to avoid it being opened by MNP driver, this SNP is also expected not to
+be opened by other drivers with EXCLUSIVE attribute. In some cases, other
+drivers may happen to do this by error, and thus cause a system crash.
+This patch adds EXCLUSIVE attribute when opening SNP in PXE driver, and
+will reject all OpenProtocol requests by EXCLUSIVE.
+
+Cc: Subramanian, Sriram <sriram-s@hpe.com>
+Cc: Ye Ting <ting.ye@intel.com>
+Cc: Fu Siyuan <siyuan.fu@intel.com>
+Cc: Wu Jiaxin <jiaxin.wu@intel.com>
+Contributed-under: TianoCore Contribution Agreement 1.1
+Signed-off-by: Wang Fan <fan.wang@intel.com>
+Reviewed-by: Sriram Subramanian <sriram-s@hpe.com>
+Reviewed-by: Fu Siyuan <siyuan.fu@intel.com>
+Reviewed-by: Wu Jiaxin <jiaxin.wu@intel.com>
+---
+ NetworkPkg/UefiPxeBcDxe/PxeBcDriver.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/NetworkPkg/UefiPxeBcDxe/PxeBcDriver.c b/NetworkPkg/UefiPxeBcDxe/PxeBcDriver.c
+index bc9dc914f3..0ab640beca 100644
+--- a/NetworkPkg/UefiPxeBcDxe/PxeBcDriver.c
++++ b/NetworkPkg/UefiPxeBcDxe/PxeBcDriver.c
+@@ -814,7 +814,7 @@ PxeBcCreateIp4Children (
+     }
+ 
+     //
+-    // Open SNP on the child handle BY_DRIVER. It will prevent any additionally
++    // Open SNP on the child handle BY_DRIVER|EXCLUSIVE. It will prevent any additionally
+     // layering to perform the experiment.
+     //
+     Status = gBS->OpenProtocol (
+@@ -823,7 +823,7 @@ PxeBcCreateIp4Children (
+                     (VOID **) &Snp,
+                     This->DriverBindingHandle,
+                     Private->Ip4Nic->Controller,
+-                    EFI_OPEN_PROTOCOL_BY_DRIVER
++                    EFI_OPEN_PROTOCOL_BY_DRIVER|EFI_OPEN_PROTOCOL_EXCLUSIVE
+                     );
+     if (EFI_ERROR (Status)) {
+       goto ON_ERROR;
+@@ -1157,7 +1157,7 @@ PxeBcCreateIp6Children (
+     }
+ 
+     //
+-    // Open SNP on the child handle BY_DRIVER. It will prevent any additionally
++    // Open SNP on the child handle BY_DRIVER|EXCLUSIVE. It will prevent any additionally
+     // layering to perform the experiment.
+     //
+     Status = gBS->OpenProtocol (
+@@ -1166,7 +1166,7 @@ PxeBcCreateIp6Children (
+                     (VOID **) &Snp,
+                     This->DriverBindingHandle,
+                     Private->Ip6Nic->Controller,
+-                    EFI_OPEN_PROTOCOL_BY_DRIVER
++                    EFI_OPEN_PROTOCOL_BY_DRIVER|EFI_OPEN_PROTOCOL_EXCLUSIVE
+                     );
+     if (EFI_ERROR (Status)) {
+       goto ON_ERROR;
+-- 
+2.17.1
+
