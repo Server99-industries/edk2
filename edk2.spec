@@ -35,7 +35,7 @@
 
 Name:           edk2
 Version:        %{edk2_date}git%{edk2_githash}
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 Group:          Applications/Emulators
@@ -163,6 +163,7 @@ build EFI executables and ROMs using the GNU tools.
 %package qosb
 Summary:        Tool to enroll secureboot
 Group:          Development/Tools
+Requires:       python3
 Buildarch:      noarch
 %description qosb
 This package contains QOSB (QEMU OVMF Secure Boot), which can enroll OVMF
@@ -532,6 +533,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Nov 14 2018 Patrick Uiterwijk <puiterwijk@redhat.com> - 20180815gitcb5f4f45ce-5
+- Add -qosb dependency on python3
+
 * Fri Nov 9 2018 Paolo Bonzini <pbonzini@redhat.com> - 20180815gitcb5f4f45ce-4
 - Fix network boot via grub (bz 1648476)
 
