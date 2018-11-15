@@ -393,7 +393,9 @@ install BaseTools/Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
 cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
+%if 0%{?fedora} >= 29
 %py_byte_compile %{__python2} %{buildroot}%{_datadir}/%{name}/Python
+%endif
 for i in build BPDG Ecc GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
 echo '#!/bin/sh
 export PYTHONPATH=%{_datadir}/%{name}/Python
