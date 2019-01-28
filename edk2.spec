@@ -38,7 +38,6 @@ Version:        %{edk2_date}git%{edk2_githash}
 Release:        5%{dist}
 Summary:        EFI Development Kit II
 
-Group:          Applications/Emulators
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
 
@@ -136,14 +135,12 @@ and firmware images.
 
 %package tools
 Summary:        EFI Development Kit II Tools
-Group:          Development/Tools
 %description tools
 This package provides tools that are needed to
 build EFI executables and ROMs using the GNU tools.
 
 %package tools-python
 Summary:        EFI Development Kit II Tools
-Group:          Development/Tools
 Requires:       python
 BuildArch:      noarch
 
@@ -154,7 +151,6 @@ you probably want to install edk2-tools only.
 
 %package tools-doc
 Summary:        Documentation for EFI Development Kit II Tools
-Group:          Development/Tools
 BuildArch:      noarch
 %description tools-doc
 This package documents the tools that are needed to
@@ -162,7 +158,6 @@ build EFI executables and ROMs using the GNU tools.
 
 %package qosb
 Summary:        Tool to enroll secureboot
-Group:          Development/Tools
 Requires:       python3
 Buildarch:      noarch
 %description qosb
