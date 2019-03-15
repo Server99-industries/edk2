@@ -1,4 +1,4 @@
-From b6e4c1bf03878da7bd82224d523c44fd1fa96aaa Mon Sep 17 00:00:00 2001
+From 07ce34a8761d89ab3d6009576f995ff48bbd7487 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 18:40:35 +0100
 Subject: [PATCH] MdeModulePkg: TerminalDxe: add other text resolutions

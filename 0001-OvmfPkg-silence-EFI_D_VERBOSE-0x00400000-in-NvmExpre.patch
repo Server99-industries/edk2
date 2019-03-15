@@ -1,4 +1,4 @@
-From 37942481c89eca732239c23fe606680e6e3faf77 Mon Sep 17 00:00:00 2001
+From 69da45eedaef8b6a02a0c77933330bcb0ec137e8 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
 Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in NvmExpressDxe
@@ -16,10 +16,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index a28b511d5c..7f725ab198 100644
+index 5b885590b2..3f77f78a68 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -738,7 +738,10 @@
+@@ -739,7 +739,10 @@
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -32,10 +32,10 @@ index a28b511d5c..7f725ab198 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 115d0c01ff..d444a84267 100644
+index bbf0853ee6..3fb003e670 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -747,7 +747,10 @@
+@@ -748,7 +748,10 @@
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -48,10 +48,10 @@ index 115d0c01ff..d444a84267 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 362eb789c7..f4e072870c 100644
+index d81460f520..26bbfecddf 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -745,7 +745,10 @@
+@@ -746,7 +746,10 @@
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf

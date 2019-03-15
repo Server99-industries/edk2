@@ -1,7 +1,18 @@
+# This package depends on automagic byte compilation
+# https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_2
+%global _python_bytecompile_extra 1
+
+# RPM doesn't detect that code in /usr/share is python3, this forces it
+# https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
+%global __python %{__python3}
+
 %global edk2_date        20180815
 %global edk2_githash     cb5f4f45ce
-%global openssl_version  1.1.0h
+%global openssl_version  1.1.0j
 %global qosb_version     1.1.3
+
+%global edk2_stable_date 201903
+%global edk2_stable_str  edk2-stable%{edk2_stable_date}
 
 %define qosb_testing 0
 
@@ -34,15 +45,17 @@
 %endif
 
 Name:           edk2
-Version:        %{edk2_date}git%{edk2_githash}
-Release:        6%{dist}
+#Version:       {edk2_date}git{edk2_githash}
+Version:        %{edk2_stable_date}stable
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD
 URL:            http://www.tianocore.org/edk2/
 
 # Tarball generated from git object update-tarball.sh script
-Source0:        edk2-%{edk2_date}-%{edk2_githash}.tar.xz
+#Source0:        edk2-{edk2_date}-{edk2_githash}.tar.xz
+Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/edk2-%{edk2_stable_str}.tar.gz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
 Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v%{qosb_version}/qemu-ovmf-secureboot-%{qosb_version}.tar.gz
@@ -68,27 +81,12 @@ Patch0013: 0013-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
 Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
-# Fix passing through RPM build flags (bz 1540244)
-Patch0017: 0017-BaseTools-footer.makefile-expand-BUILD_CFLAGS-last-f.patch
-Patch0018: 0018-BaseTools-header.makefile-remove-c-from-BUILD_CFLAGS.patch
-Patch0019: 0019-BaseTools-Source-C-split-O2-to-BUILD_OPTFLAGS.patch
-Patch0020: 0020-BaseTools-Source-C-take-EXTRA_OPTFLAGS-from-the-call.patch
-Patch0021: 0021-BaseTools-Source-C-take-EXTRA_LDFLAGS-from-the-calle.patch
-Patch0022: 0022-BaseTools-VfrCompile-honor-EXTRA_LDFLAGS.patch
-# Fix UEFI netboot
-Patch0023: 0023-NetworkPkg-UefiPxeBcDxe-Add-EXCLUSIVE-attribute-when.patch
 
 %if 0%{?cross:1}
 # Tweak the tools_def to support cross-compiling.
 # These files are meant for customization, so this is not upstream too.
 Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 %endif
-
-# openssl patches from Fedora
-Patch1021: openssl-1.1.0-issuer-hash.patch
-Patch1039: openssl-1.1.0-cc-reqs.patch
-Patch1040: openssl-1.1.0-disable-ssl3.patch
-Patch1044: openssl-1.1.0-bio-fd-preserve-nl.patch
 
 %if 0%{?fedora:1}
 #
@@ -103,7 +101,7 @@ ExclusiveArch:  x86_64 aarch64
 %endif
 
 BuildRequires:  gcc gcc-c++
-BuildRequires:  python2 python2-devel python
+BuildRequires:  python3 python3-devel
 BuildRequires:  libuuid-devel
 %if 0%{?cross:1}
 BuildRequires:  gcc-aarch64-linux-gnu
@@ -114,6 +112,7 @@ BuildRequires:  iasl
 BuildRequires:  nasm
 BuildRequires:  qemu-img
 BuildRequires:  genisoimage
+BuildRequires:  bc
 
 # These are for QOSB
 BuildRequires:  python3-requests
@@ -141,7 +140,7 @@ build EFI executables and ROMs using the GNU tools.
 
 %package tools-python
 Summary:        EFI Development Kit II Tools
-Requires:       python
+Requires:       python3
 BuildArch:      noarch
 
 %description tools-python
@@ -218,7 +217,7 @@ armv7 UEFI Firmware
 
 
 %prep
-%setup -q -n tianocore-%{name}-%{edk2_githash}
+%setup -q -n edk2-%{edk2_stable_str}
 
 
 # Ensure old shell and binary packages are not used
@@ -230,7 +229,7 @@ rm -rf ShellBinPkg
 # copy whitepaper into place
 cp -a -- %{SOURCE2} .
 # extract openssl into place
-tar -xvf %{SOURCE1} --strip-components=1
+tar -xvf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
 
 # Extract QOSB
 tar -xvf %{SOURCE3}
@@ -389,13 +388,10 @@ install BaseTools/Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
 cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
-%if 0%{?fedora} >= 29
-%py_byte_compile %{__python2} %{buildroot}%{_datadir}/%{name}/Python
-%endif
 for i in build BPDG Ecc GenDepex GenFds GenPatchPcdTable PatchPcdValue TargetTool Trim UPT; do
 echo '#!/bin/sh
 export PYTHONPATH=%{_datadir}/%{name}/Python
-exec python '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}/$i
+exec python3 '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir}/$i
   chmod +x %{buildroot}%{_bindir}/$i
 done
 
@@ -431,19 +427,14 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %files tools
 %license License.txt
 %license LICENSE.openssl
-%{_bindir}/BootSectImage
 %{_bindir}/Brotli
 %{_bindir}/DevicePath
-%{_bindir}/EfiLdrImage
 %{_bindir}/EfiRom
 %{_bindir}/GenCrc32
 %{_bindir}/GenFfs
 %{_bindir}/GenFv
 %{_bindir}/GenFw
-%{_bindir}/GenPage
 %{_bindir}/GenSec
-%{_bindir}/GenVtf
-%{_bindir}/GnuGenBootSector
 %{_bindir}/LzmaCompress
 %{_bindir}/LzmaF86Compress
 %{_bindir}/Split
@@ -528,6 +519,11 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Fri Mar 15 2019 Cole Robinson <aintdiscole@gmail.com> - 201903stable-1
+- Update to stable-201903
+- Update to openssl-1.1.0j
+- Move to python3 deps
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 20180815gitcb5f4f45ce-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 

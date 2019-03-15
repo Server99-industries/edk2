@@ -1,4 +1,4 @@
-From f337eb3972afcccabe86fe663202a758337d0ab8 Mon Sep 17 00:00:00 2001
+From 84e29eaec51ad2365674fbbaa6556c456b983367 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
 Subject: [PATCH] MdeModulePkg: TerminalDxe: set xterm resolution on mode
@@ -37,10 +37,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 36 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index 6a6d9660ed..2dc1cf94e2 100644
+index a2130bc439..dcd118ba62 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -1936,6 +1936,10 @@
+@@ -1968,6 +1968,10 @@
    # @Prompt The address mask when memory encryption is enabled.
    gEfiMdeModulePkgTokenSpaceGuid.PcdPteMemoryEncryptionAddressOrMask|0x0|UINT64|0x30001047
  
@@ -107,7 +107,7 @@ index 4d7218e415..295e7641a5 100644
  
    Status            = This->ClearScreen (This);
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-index 0780296798..bd2ba828a6 100644
+index 15b4ac1c33..a704bc17e5 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 @@ -60,6 +60,7 @@

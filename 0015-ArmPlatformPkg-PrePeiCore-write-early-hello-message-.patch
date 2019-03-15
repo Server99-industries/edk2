@@ -1,4 +1,4 @@
-From e6c0f362edd5834b0d891fc44cd6873566bb0df4 Mon Sep 17 00:00:00 2001
+From b317a290531118f54808ebe015ee1957262fdced Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
 Subject: [PATCH] ArmPlatformPkg: PrePeiCore: write early hello message to the

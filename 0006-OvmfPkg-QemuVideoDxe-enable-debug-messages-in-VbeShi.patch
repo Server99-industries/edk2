@@ -1,4 +1,4 @@
-From e4021f592da913f7f2b841ce6d4272fb8410ac7f Mon Sep 17 00:00:00 2001
+From 17be7ae189a51fa09d2ccf9bedefb481c5ed22ea Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 12 Jun 2014 00:17:59 +0200
 Subject: [PATCH] OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim

@@ -1,4 +1,4 @@
-From e777f7d03c8a8d56e08926ecf0b17e1338837093 Mon Sep 17 00:00:00 2001
+From 48efc8ca8b083936939d679e8b489dea97bcf695 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
 Subject: [PATCH] ArmVirtPkg: set early hello message (RH only)
@@ -27,14 +27,14 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 86d5d5a666..ffe4ba8092 100644
+index 9a2b861fae..dd644b181e 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -87,6 +87,7 @@
-   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE
+@@ -94,6 +94,7 @@
+   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
  
  [PcdsFixedAtBuild.common]
 +  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage|"UEFI firmware starting.\r\n"
-   gArmPlatformTokenSpaceGuid.PcdCoreCount|1
  !if $(ARCH) == AARCH64
    gArmTokenSpaceGuid.PcdVFPEnabled|1
+ !endif

@@ -1,4 +1,4 @@
-From 0784bdc810bcbd275a78ceb0c2cf04f2f0f68061 Mon Sep 17 00:00:00 2001
+From 70e4530eefdb2cecc37fff91235e716ed76f2da2 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Thu, 16 Aug 2018 15:45:47 -0400
 Subject: [PATCH] Tweak the tools_def to support cross-compiling.
@@ -12,10 +12,10 @@ Signed-off-by: Cole Robinson <crobinso@redhat.com>
  1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
-index a22b96c0b8..8b134ca93f 100755
+index 7bf682ffa9..ad1bbcbdc6 100755
 --- a/BaseTools/Conf/tools_def.template
 +++ b/BaseTools/Conf/tools_def.template
-@@ -5068,17 +5068,17 @@ RELEASE_GCC49_AARCH64_DLINK_FLAGS  = DEF(GCC49_AARCH64_DLINK_FLAGS)
+@@ -3517,17 +3517,17 @@ RELEASE_GCC49_AARCH64_DLINK_XIPFLAGS = -z common-page-size=0x20
  ##################
  # GCC5 IA32 definitions
  ##################
@@ -42,9 +42,9 @@ index a22b96c0b8..8b134ca93f 100755
 +*_GCC5_IA32_ASLPP_PATH           = ENV(GCC5_IA32_PREFIX)gcc
 +*_GCC5_IA32_RC_PATH              = ENV(GCC5_IA32_PREFIX)objcopy
  
- *_GCC5_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32 -fno-lto
+ *_GCC5_IA32_ASLCC_FLAGS          = DEF(GCC5_ASLCC_FLAGS) -m32
  *_GCC5_IA32_ASLDLINK_FLAGS       = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_i386 -no-pie
-@@ -5100,17 +5100,17 @@ RELEASE_GCC5_IA32_DLINK_FLAGS    = DEF(GCC5_IA32_X64_DLINK_FLAGS) -flto -Os -Wl,
+@@ -3549,17 +3549,17 @@ RELEASE_GCC5_IA32_DLINK_FLAGS    = DEF(GCC5_IA32_X64_DLINK_FLAGS) -flto -Os -Wl,
  ##################
  # GCC5 X64 definitions
  ##################
@@ -71,5 +71,5 @@ index a22b96c0b8..8b134ca93f 100755
 +*_GCC5_X64_ASLPP_PATH            = ENV(GCC5_X64_PREFIX)gcc
 +*_GCC5_X64_RC_PATH               = ENV(GCC5_X64_PREFIX)objcopy
  
- *_GCC5_X64_ASLCC_FLAGS           = DEF(GCC_ASLCC_FLAGS) -m64 -fno-lto
+ *_GCC5_X64_ASLCC_FLAGS           = DEF(GCC5_ASLCC_FLAGS) -m64
  *_GCC5_X64_ASLDLINK_FLAGS        = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64

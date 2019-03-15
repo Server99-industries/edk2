@@ -1,4 +1,4 @@
-From 6f89eae9f2abe20e35058848e7cc10a69a6b05ec Mon Sep 17 00:00:00 2001
+From ddb3084986db65a9006d28d5e9b6f0f7969cf2c0 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:49:43 +0200
 Subject: [PATCH] ArmPlatformPkg: introduce fixed PCD for early hello message
@@ -36,10 +36,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/ArmPlatformPkg/ArmPlatformPkg.dec b/ArmPlatformPkg/ArmPlatformPkg.dec
-index 5f67e74154..2956d3e2d8 100644
+index 44c00bd0c1..40c8ec3251 100644
 --- a/ArmPlatformPkg/ArmPlatformPkg.dec
 +++ b/ArmPlatformPkg/ArmPlatformPkg.dec
-@@ -113,6 +113,13 @@
+@@ -114,6 +114,13 @@
    ## If set, this will swap settings for HDLCD RED_SELECT and BLUE_SELECT registers
    gArmPlatformTokenSpaceGuid.PcdArmHdLcdSwapBlueRedSelect|FALSE|BOOLEAN|0x00000045
  

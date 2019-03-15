@@ -1,4 +1,4 @@
-From 685d43b29b2ac4b19572bda1ebeb989d69d74ebb Mon Sep 17 00:00:00 2001
+From deeaddfb366703c157668588947e5f1767a1193a Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:55 +0100
 Subject: [PATCH] OvmfPkg: EnrollDefaultKeys: application for enrolling default
@@ -1282,10 +1282,10 @@ index 0000000000..0ad86a2843
 +  UefiLib
 +  UefiRuntimeServicesTableLib
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 8dc3ad2be4..518f6db2c6 100644
+index 702d3a86c4..877f0fc83c 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -876,6 +876,10 @@
+@@ -873,6 +873,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1297,10 +1297,10 @@ index 8dc3ad2be4..518f6db2c6 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index d81cd865d5..ed2f876e7e 100644
+index 46bc3a0b77..6ff2121122 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -885,6 +885,10 @@
+@@ -882,6 +882,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
@@ -1312,10 +1312,10 @@ index d81cd865d5..ed2f876e7e 100644
  
    OvmfPkg/PlatformDxe/Platform.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 85bd8d4bf6..a12905f882 100644
+index 31c5933016..12676f5ba6 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -883,6 +883,10 @@
+@@ -880,6 +880,10 @@
  
  !if $(SECURE_BOOT_ENABLE) == TRUE
    SecurityPkg/VariableAuthenticated/SecureBootConfigDxe/SecureBootConfigDxe.inf
