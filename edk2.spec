@@ -522,7 +522,10 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
-* Fri Mar 15 2019 Cole Robinson <aintdiscole@gmail.com> - 20190308stable-1
+* Mon Mar 18 2019 Cole Robinson <aintdiscole@gmail.com> - 20190308stable-1
+- Use YYYYMMDD versioning to fix upgrade path
+
+* Fri Mar 15 2019 Cole Robinson <aintdiscole@gmail.com> - 201903stable-1
 - Update to stable-201903
 - Update to openssl-1.1.0j
 - Move to python3 deps
