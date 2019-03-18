@@ -11,8 +11,11 @@
 %global openssl_version  1.1.0j
 %global qosb_version     1.1.3
 
-%global edk2_stable_date 201903
-%global edk2_stable_str  edk2-stable%{edk2_stable_date}
+# Even though edk2 stable releases are YYYYMM, we need
+# to use YYYMMDD to avoid needing to bump package epoch
+# due to previous 'git' Version:
+%global edk2_stable_date 20190308
+%global edk2_stable_str  edk2-stable201903
 
 %define qosb_testing 0
 
@@ -519,7 +522,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
-* Fri Mar 15 2019 Cole Robinson <aintdiscole@gmail.com> - 201903stable-1
+* Fri Mar 15 2019 Cole Robinson <aintdiscole@gmail.com> - 20190308stable-1
 - Update to stable-201903
 - Update to openssl-1.1.0j
 - Move to python3 deps
