@@ -1,4 +1,4 @@
-From 4baed0985163d9b34a55e97905da77660f6dc118 Mon Sep 17 00:00:00 2001
+From 4f43c23c001910836cbf76644daad38ec7ceb240 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 20 Feb 2014 22:54:45 +0100
 Subject: [PATCH] OvmfPkg: increase max debug message length to 512
@@ -16,15 +16,15 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
-index 36cde54976..c0c4eaee0f 100644
+index 3dfa3126c3..9451c50c70 100644
 --- a/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
 +++ b/OvmfPkg/Library/PlatformDebugLibIoPort/DebugLib.c
-@@ -27,7 +27,7 @@
+@@ -21,7 +21,7 @@
  //
  // Define the maximum debug and assert message length that this library supports
  //
 -#define MAX_DEBUG_MESSAGE_LENGTH  0x100
 +#define MAX_DEBUG_MESSAGE_LENGTH  0x200
  
- /**
-   Prints a debug message to the debug output device if the specified error level is enabled.
+ //
+ // VA_LIST can not initialize to NULL for all compiler, so we use this to

@@ -1,4 +1,4 @@
-From 17be7ae189a51fa09d2ccf9bedefb481c5ed22ea Mon Sep 17 00:00:00 2001
+From fcd392ab40bcc478d5136959781e37ed629e03ac Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 12 Jun 2014 00:17:59 +0200
 Subject: [PATCH] OvmfPkg: QemuVideoDxe: enable debug messages in VbeShim
@@ -29,10 +29,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  2 files changed, 308 insertions(+), 175 deletions(-)
 
 diff --git a/OvmfPkg/QemuVideoDxe/VbeShim.asm b/OvmfPkg/QemuVideoDxe/VbeShim.asm
-index 18fa9209d4..f87ed5cf30 100644
+index cb2a60d827..26fe1bcc32 100644
 --- a/OvmfPkg/QemuVideoDxe/VbeShim.asm
 +++ b/OvmfPkg/QemuVideoDxe/VbeShim.asm
-@@ -18,7 +18,7 @@
+@@ -12,7 +12,7 @@
  ;------------------------------------------------------------------------------
  
  ; enable this macro for debug messages

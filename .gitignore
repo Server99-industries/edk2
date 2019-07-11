@@ -1,4 +1,5 @@
 /openssl-*-hobbled.tar.xz
 /edk2-*.tar.xz
 /qemu-ovmf-secureboot-*.tar.gz
-/edk2-edk2-stable201903.tar.gz
+/edk2-*.tar.gz
+/softfloat-20180726-gitb64af41.tar.xz

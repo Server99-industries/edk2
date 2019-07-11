@@ -1,4 +1,4 @@
-From 2f0378ed75fd17e9ddd4e15b475197f6c6147b6c Mon Sep 17 00:00:00 2001
+From 07b59d495afdcf98ffbc6dc2dbaa0978690bf3c0 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 11 Jun 2014 23:33:33 +0200
 Subject: [PATCH] advertise OpenSSL on TianoCore splash screen / boot logo
@@ -113,10 +113,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  create mode 100644 MdeModulePkg/Logo/LogoOpenSSLDxe.uni
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index a77d71bcea..319254f0db 100644
+index cf28478977..bd64ea610d 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -347,7 +347,11 @@
+@@ -360,7 +360,11 @@
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -129,10 +129,10 @@ index a77d71bcea..319254f0db 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
-index 098d40b61b..514759a637 100644
+index 31f615a9d0..764954c84a 100644
 --- a/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
 +++ b/ArmVirtPkg/ArmVirtQemuFvMain.fdf.inc
-@@ -203,7 +203,11 @@ READ_LOCK_STATUS   = TRUE
+@@ -176,7 +176,11 @@ READ_LOCK_STATUS   = TRUE
    #
    # TianoCore logo (splash screen)
    #
@@ -145,10 +145,10 @@ index 098d40b61b..514759a637 100644
    #
    # Ramdisk support
 diff --git a/ArmVirtPkg/ArmVirtQemuKernel.dsc b/ArmVirtPkg/ArmVirtQemuKernel.dsc
-index 1e5388ae70..daa8ee7009 100644
+index 596e59739c..eea9ccaebb 100644
 --- a/ArmVirtPkg/ArmVirtQemuKernel.dsc
 +++ b/ArmVirtPkg/ArmVirtQemuKernel.dsc
-@@ -331,7 +331,11 @@
+@@ -344,7 +344,11 @@
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
    MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -3026,10 +3026,10 @@ index 0000000000..7227ac3910
 +#string STR_MODULE_DESCRIPTION          #language en-US "This module provides the logo bitmap picture (with OpenSSL advertisment) shown on setup screen, through EDKII Platform Logo protocol."
 +
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 453b3563ab..5dd44bceb7 100644
+index 6b1bf39246..5ef48d2410 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -695,7 +695,11 @@
+@@ -691,7 +691,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3042,10 +3042,10 @@ index 453b3563ab..5dd44bceb7 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index 4999403ad7..77d0d3f131 100644
+index e428334702..87e008e6fe 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -293,7 +293,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+@@ -292,7 +292,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
  
@@ -3058,10 +3058,10 @@ index 4999403ad7..77d0d3f131 100644
  #
  # Network modules
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 41ff89c3db..9a14a26845 100644
+index a1c083ec7b..b55a88d1c4 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -704,7 +704,11 @@
+@@ -700,7 +700,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3074,10 +3074,10 @@ index 41ff89c3db..9a14a26845 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index d0cc107928..da68440ddb 100644
+index 6ddffe7547..7dd8940c5f 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -294,7 +294,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+@@ -293,7 +293,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
  
@@ -3090,10 +3090,10 @@ index d0cc107928..da68440ddb 100644
  #
  # Network modules
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index c12a90a83c..0f888b0373 100644
+index 7ee9d2b359..80ba78628e 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -702,7 +702,11 @@
+@@ -698,7 +698,11 @@
        NULL|IntelFrameworkModulePkg/Library/LegacyBootManagerLib/LegacyBootManagerLib.inf
  !endif
    }
@@ -3106,10 +3106,10 @@ index c12a90a83c..0f888b0373 100644
      <LibraryClasses>
        NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index d0cc107928..da68440ddb 100644
+index 6ddffe7547..7dd8940c5f 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -294,7 +294,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+@@ -293,7 +293,11 @@ INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
  

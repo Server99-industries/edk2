@@ -1,4 +1,4 @@
-From 1931e213b6185c87f95f8ce6aec005272dba2621 Mon Sep 17 00:00:00 2001
+From a5249c3f4b359fde1bd6b526239ad2805012e97d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 12 Apr 2016 20:50:25 +0200
 Subject: [PATCH] ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client modules
@@ -22,10 +22,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
-index eff4a21650..adf1ff6c6a 100644
+index 4d27d7d30b..feceed5f93 100644
 --- a/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 +++ b/ArmVirtPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
-@@ -22,7 +22,7 @@
+@@ -15,7 +15,7 @@
    FILE_GUID                      = B271F41F-B841-48A9-BA8D-545B4BC2E2BF
    MODULE_TYPE                    = BASE
    VERSION_STRING                 = 1.0

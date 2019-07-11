@@ -1,4 +1,4 @@
-From b317a290531118f54808ebe015ee1957262fdced Mon Sep 17 00:00:00 2001
+From d0d66aef08ebf250a33f2ef431dc86e5ba4390cd Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
 Subject: [PATCH] ArmPlatformPkg: PrePeiCore: write early hello message to the
@@ -35,10 +35,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  5 files changed, 15 insertions(+)
 
 diff --git a/ArmPlatformPkg/PrePeiCore/MainMPCore.c b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
-index dc47adbaff..cbd72232c7 100644
+index d379ad8b7a..ff1672f94d 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainMPCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
-@@ -117,6 +117,11 @@ PrimaryMain (
+@@ -111,6 +111,11 @@ PrimaryMain (
    UINTN                       TemporaryRamBase;
    UINTN                       TemporaryRamSize;
  
@@ -51,10 +51,10 @@ index dc47adbaff..cbd72232c7 100644
  
    // Enable the GIC Distributor
 diff --git a/ArmPlatformPkg/PrePeiCore/MainUniCore.c b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
-index 134a469427..af39fc017c 100644
+index 1500d2bd51..5b0790beac 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainUniCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
-@@ -35,6 +35,11 @@ PrimaryMain (
+@@ -29,6 +29,11 @@ PrimaryMain (
    UINTN                       TemporaryRamBase;
    UINTN                       TemporaryRamSize;
  
@@ -67,10 +67,10 @@ index 134a469427..af39fc017c 100644
  
    // Adjust the Temporary Ram as the new Ppi List (Common + Platform Ppi Lists) is created at
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-index 160894620c..bf843d7768 100644
+index 7140c7f5b5..1d69a2b468 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-@@ -21,6 +21,7 @@
+@@ -15,6 +15,7 @@
  #include <Library/DebugLib.h>
  #include <Library/IoLib.h>
  #include <Library/PcdLib.h>
@@ -79,10 +79,10 @@ index 160894620c..bf843d7768 100644
  #include <PiPei.h>
  #include <Ppi/TemporaryRamSupport.h>
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-index e3a31fa7c6..1bc0c45420 100644
+index 0e112710dc..9a5ba1adcb 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-@@ -72,6 +72,8 @@
+@@ -66,6 +66,8 @@
    gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
@@ -92,10 +92,10 @@ index e3a31fa7c6..1bc0c45420 100644
    gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
    gArmTokenSpaceGuid.PcdGicSgiIntId
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-index ec83cec2d8..20698fcfac 100644
+index c163a818c4..652260e6ab 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-@@ -71,3 +71,5 @@
+@@ -65,3 +65,5 @@
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
    gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack

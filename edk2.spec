@@ -6,17 +6,18 @@
 # https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
 %global __python %{__python3}
 
-%global edk2_date        20180815
-%global edk2_githash     cb5f4f45ce
-%global openssl_version  1.1.0j
+
+# global edk2_date        20180815
+# global edk2_githash     cb5f4f45ce
+
+%global edk2_stable_date 201905
+%global edk2_stable_str  edk2-stable%{edk2_stable_date}
+%global openssl_version  1.1.1b
 %global qosb_version     1.1.3
+%global softfloat_version 20180726-gitb64af41
 
-# Even though edk2 stable releases are YYYYMM, we need
-# to use YYYMMDD to avoid needing to bump package epoch
-# due to previous 'git' Version:
-%global edk2_stable_date 20190308
-%global edk2_stable_str  edk2-stable201903
 
+%global skip_enroll 1
 %define qosb_testing 0
 
 %ifarch x86_64
@@ -49,7 +50,10 @@
 
 Name:           edk2
 #Version:       {edk2_date}git{edk2_githash}
-Version:        %{edk2_stable_date}stable
+# Even though edk2 stable releases are YYYYMM, we need
+# to use YYYMMDD to avoid needing to bump package epoch
+# due to previous 'git' Version:
+Version:        %{edk2_stable_date}01stable
 Release:        1%{dist}
 Summary:        EFI Development Kit II
 
@@ -62,6 +66,7 @@ Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
 Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v%{qosb_version}/qemu-ovmf-secureboot-%{qosb_version}.tar.gz
+Source4:        softfloat-%{softfloat_version}.tar.xz
 Source10:       hobble-openssl
 Source11:       build-iso.sh
 Source12:       update-tarball.sh
@@ -80,15 +85,13 @@ Patch0009: 0009-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
 Patch0010: 0010-ArmVirtPkg-QemuFwCfgLib-allow-UEFI_DRIVER-client-mod.patch
 Patch0011: 0011-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
 Patch0012: 0012-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
-Patch0013: 0013-OvmfPkg-EnrollDefaultKeys-application-for-enrolling-.patch
-Patch0014: 0014-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
-Patch0015: 0015-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
-Patch0016: 0016-ArmVirtPkg-set-early-hello-message-RH-only.patch
+Patch0013: 0013-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
+Patch0014: 0014-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
+Patch0015: 0015-ArmVirtPkg-set-early-hello-message-RH-only.patch
+Patch0016: 0016-Tweak-the-tools_def-to-support-cross-compiling.patch
+
 
 %if 0%{?cross:1}
-# Tweak the tools_def to support cross-compiling.
-# These files are meant for customization, so this is not upstream too.
-Patch0099: 0099-Tweak-the-tools_def-to-support-cross-compiling.patch
 %endif
 
 %if 0%{?fedora:1}
@@ -222,7 +225,6 @@ armv7 UEFI Firmware
 %prep
 %setup -q -n edk2-%{edk2_stable_str}
 
-
 # Ensure old shell and binary packages are not used
 rm -rf EdkShellBinPkg
 rm -rf EdkShellPkg
@@ -233,6 +235,8 @@ rm -rf ShellBinPkg
 cp -a -- %{SOURCE2} .
 # extract openssl into place
 tar -xvf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
+# extract softfloat into place
+tar -xvf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
 # Extract QOSB
 tar -xvf %{SOURCE3}
@@ -241,6 +245,8 @@ mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
 
 %autopatch -p1
 base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
+
+
 
 %build
 source ./edksetup.sh
@@ -256,7 +262,7 @@ if test "$JOBS" != ""; then
 fi
 
 # common features
-CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
+CC_FLAGS="$CC_FLAGS --cmd-len=65536 -b DEBUG --hash"
 CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
 CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
 
@@ -307,14 +313,15 @@ cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{_sourcedir}/build-iso.sh ovmf/
 
-# Build enrolled VARS file
+%if !%{skip_enroll}
 python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
-	--qemu-binary /usr/bin/qemu-system-x86_64 \
-	--skip-testing \
-	--ovmf-binary ovmf/OVMF_CODE.secboot.fd \
-	--ovmf-template-vars ovmf/OVMF_VARS.fd \
-	--uefi-shell-iso ovmf/UefiShell.iso \
-	ovmf/OVMF_VARS.secboot.fd
+    --qemu-binary /usr/bin/qemu-system-x86_64 \
+    --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
+    --ovmf-template-vars ovmf/OVMF_VARS.fd \
+    --uefi-shell-iso ovmf/UefiShell.iso \
+    --skip-testing \
+    ovmf/OVMF_VARS.secboot.fd
+%endif
 %endif
 
 
@@ -357,22 +364,27 @@ dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
 dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 %endif
 
+
+
 %check
 %if 0%{?build_ovmf_x64:1}
 %if 0%{?qosb_testing}
-# Verify enrolled VARS file
+%if !%{skip_enroll}
 python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
-	--qemu-binary /usr/bin/qemu-system-x86_64 \
-	--skip-enrollment \
-	--print-output \
-	--ovmf-binary ovmf/OVMF_CODE.secboot.fd \
-	--ovmf-template-vars ovmf/OVMF_VARS.fd \
-	--uefi-shell-iso ovmf/UefiShell.iso \
-	--no-download \
-	--kernel-path `rpm -ql kernel-core | grep "\/vmlinuz$" -m 1` \
-	ovmf/OVMF_VARS.secboot.fd
+    --qemu-binary /usr/bin/qemu-system-x86_64 \
+    --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
+    --ovmf-template-vars ovmf/OVMF_VARS.fd \
+    --uefi-shell-iso ovmf/UefiShell.iso \
+    --skip-enrollment \
+    --print-output \
+    --no-download \
+    --kernel-path `rpm -ql kernel-core | grep "\/vmlinuz$" -m 1` \
+    ovmf/OVMF_VARS.secboot.fd
 %endif
 %endif
+%endif
+
+
 
 %install
 cp CryptoPkg/Library/OpensslLib/openssl/LICENSE LICENSE.openssl
@@ -522,6 +534,10 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Thu Jul 11 2019 Cole Robinson <crobinso@redhat.com> - 20190501stable-1
+- Update to stable-201905
+- Update to openssl-1.1.1b
+
 * Mon Mar 18 2019 Cole Robinson <aintdiscole@gmail.com> - 20190308stable-1
 - Use YYYYMMDD versioning to fix upgrade path
 
