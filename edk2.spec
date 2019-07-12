@@ -343,7 +343,9 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
 %if 0%{?build_ovmf_ia32:1}
 mkdir -p ovmf-ia32
 build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
-cp Build/OvmfIa32/*/FV/OVMF_*.fd ovmf-ia32/
+cp Build/OvmfIa32/*/FV/OVMF_CODE*.fd ovmf-ia32/
+# cp VARS files from from ovmf/, which are all we need
+cp ovmf/OVMF_VARS*.fd ovmf-ia32/
 rm -rf Build/OvmfIa32
 
 # build ovmf-ia32 with secure boot
