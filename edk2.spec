@@ -17,7 +17,11 @@
 %global softfloat_version 20180726-gitb64af41
 
 
+# enrollment is hanging with stable 201905,
+# so temporarily disable it
 %global skip_enroll 1
+
+
 %define qosb_testing 0
 
 %ifarch x86_64
