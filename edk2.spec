@@ -333,7 +333,7 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
 %if 0%{?build_ovmf_ia32:1}
 mkdir -p ovmf-ia32
 build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
-cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/
+cp Build/OvmfIa32/*/FV/OVMF_*.fd ovmf-ia32/
 rm -rf Build/OvmfIa32
 
 # build ovmf-ia32 with secure boot
@@ -541,6 +541,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 * Thu Jul 11 2019 Cole Robinson <crobinso@redhat.com> - 20190501stable-1
 - Update to stable-201905
 - Update to openssl-1.1.1b
+- Ship VARS file for ovmf-ia32 (bug 1688596)
 
 * Mon Mar 18 2019 Cole Robinson <aintdiscole@gmail.com> - 20190308stable-1
 - Use YYYYMMDD versioning to fix upgrade path
