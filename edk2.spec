@@ -77,14 +77,14 @@ Source12:       update-tarball.sh
 Source13:       openssl-patch-to-tarball.sh
 
 # Fedora-specific JSON "descriptor files"
-Source14: 	40-edk2-ovmf-sb-enrolled.json
-Source15: 	50-edk2-ovmf-sb.json
-Source16: 	60-edk2-ovmf.json
-Source17: 	40-edk2-ovmf-ia32-sb-enrolled.json
-Source18: 	50-edk2-ovmf-ia32-sb.json
-Source19: 	60-edk2-ovmf-ia32.json
-Source20: 	70-edk2-aarch64-verbose.json
-Source21: 	70-edk2-arm-verbose.json
+Source14:       40-edk2-ovmf-x64-sb-enrolled.json
+Source15:       50-edk2-ovmf-x64-sb.json
+Source16:       60-edk2-ovmf-x64.json
+Source17:       40-edk2-ovmf-ia32-sb-enrolled.json
+Source18:       50-edk2-ovmf-ia32-sb.json
+Source19:       60-edk2-ovmf-ia32.json
+Source20:       70-edk2-aarch64-verbose.json
+Source21:       70-edk2-arm-verbose.json
 
 # non-upstream patches
 Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
@@ -335,6 +335,10 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
     --uefi-shell-iso ovmf/UefiShell.iso \
     --skip-testing \
     ovmf/OVMF_VARS.secboot.fd
+%else
+# This isn't going to actually give secureboot, but makes json files happy
+# if we need to test disabling ovmf-vars-generator
+cp ovmf/OVMF_VARS.fd ovmf/OVMF_VARS.secboot.fd
 %endif
 %endif
 
@@ -426,6 +430,12 @@ exec python3 '%{_datadir}/%{name}/Python/$i/$i.py' "$@"' > %{buildroot}%{_bindir
   chmod +x %{buildroot}%{_bindir}/$i
 done
 
+# For distro-provided firmware packages, the specification
+# (https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/firmware.json)
+# says the JSON "descriptor files" to be searched in this directory:
+# `/usr/share/firmware/`.  Create it.
+mkdir -p %{buildroot}/%{_datadir}/qemu/firmware
+
 mkdir -p %{buildroot}/usr/share/%{name}
 %if 0%{?build_ovmf_x64:1}
 cp -a ovmf %{buildroot}/usr/share/%{name}
@@ -437,27 +447,21 @@ ln -sf ../%{name}/ovmf/OVMF_VARS.fd                %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/OVMF_VARS.secboot.fd        %{buildroot}/usr/share/OVMF
 ln -sf ../%{name}/ovmf/UefiShell.iso               %{buildroot}/usr/share/OVMF
 
-# For distro-provided firmware packages, the specification
-# (https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/firmware.json)
-# says the JSON "descriptor files" to be searched in this directory:
-# `/usr/share/firmware/`.  Create it.
-mkdir -p %{buildroot}/%{_datadir}/qemu/firmware
-
-# Install the two variants of the x86_64 firmware descriptor files
-# (50-edk2-x86_64-secure.json and 60-edk2-x86_64.json)
-install -pm 644 %{SOURCE14} %{buildroot}/%{_datadir}/qemu/firmware
-install -pm 644 %{SOURCE15} %{buildroot}/%{_datadir}/qemu/firmware
-install -pm 644 %{SOURCE16} %{buildroot}/%{_datadir}/qemu/firmware
+for f in %{_sourcedir}/*edk2-ovmf-x64*.json; do
+    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
+done
 %endif
+
+
 %if 0%{?build_ovmf_ia32:1}
 cp -a ovmf-ia32 %{buildroot}/usr/share/%{name}
 
-# Install the two variants of the ia32 firmware descriptor files
-# (50-edk2-i386-secure.json and 60-edk2-i386.json)
-install -pm 644 %{SOURCE17} %{buildroot}/%{_datadir}/qemu/firmware
-install -pm 644 %{SOURCE18} %{buildroot}/%{_datadir}/qemu/firmware
-install -pm 644 %{SOURCE19} %{buildroot}/%{_datadir}/qemu/firmware
+for f in %{_sourcedir}/*edk2-ovmf-ia32*.json; do
+    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
+done
 %endif
+
+
 %if 0%{?build_aavmf_aarch64:1}
 cp -a aarch64 %{buildroot}/usr/share/%{name}
 # Libvirt hardcodes this directory name
@@ -465,15 +469,21 @@ mkdir %{buildroot}/usr/share/AAVMF
 ln -sf ../%{name}/aarch64/QEMU_EFI-pflash.raw      %{buildroot}/usr/share/AAVMF/AAVMF_CODE.fd
 ln -sf ../%{name}/aarch64/vars-template-pflash.raw %{buildroot}/usr/share/AAVMF/AAVMF_VARS.fd
 
-# Install the AArch64 firmware descriptor file (60-edk2-aarch64.json)
-install -pm 644 %{SOURCE20} %{buildroot}/%{_datadir}/qemu/firmware
+for f in %{_sourcedir}/*edk2-aarch64*.json; do
+    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
+done
 %endif
+
+
 %if 0%{?build_aavmf_arm:1}
 cp -a arm %{buildroot}/usr/share/%{name}
 ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}/usr/share/AAVMF/AAVMF32_CODE.fd
-# Install the ARM firmware descriptor file (60-edk2-arm.json)
-install -pm 644 %{SOURCE21} %{buildroot}/%{_datadir}/qemu/firmware
+
+for f in %{_sourcedir}/*edk2-arm*.json; do
+    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
+done
 %endif
+
 
 install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_bindir}
 
@@ -534,7 +544,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 /usr/share/%{name}/ovmf/OVMF*.fd
 /usr/share/%{name}/ovmf/*.efi
 /usr/share/%{name}/ovmf/*.iso
-/usr/share/qemu/firmware/*.json
+/usr/share/qemu/firmware/*edk2-ovmf-x64*.json
 /usr/share/OVMF
 %endif
 
@@ -550,7 +560,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 /usr/share/%{name}/ovmf-ia32/OVMF*.fd
 /usr/share/%{name}/ovmf-ia32/*.efi
 /usr/share/%{name}/ovmf-ia32/*.iso
-/usr/share/qemu/firmware/*.json
+/usr/share/qemu/firmware/*edk2-ovmf-ia32*.json
 %endif
 
 %if 0%{?build_aavmf_aarch64:1}
@@ -562,7 +572,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %dir /usr/share/qemu/firmware
 /usr/share/%{name}/aarch64/QEMU*.fd
 /usr/share/%{name}/aarch64/*.raw
-/usr/share/qemu/firmware/*.json
+/usr/share/qemu/firmware/*edk2-aarch64*.json
 /usr/share/AAVMF/AAVMF_*
 %endif
 
@@ -575,7 +585,7 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %dir /usr/share/qemu/firmware
 /usr/share/%{name}/arm/QEMU*.fd
 /usr/share/%{name}/arm/*.raw
-/usr/share/qemu/firmware/*.json
+/usr/share/qemu/firmware/*edk2-arm*.json
 /usr/share/AAVMF/AAVMF32_*
 %endif
 
