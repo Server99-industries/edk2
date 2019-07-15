@@ -13,13 +13,11 @@
 %global edk2_stable_date 201905
 %global edk2_stable_str  edk2-stable%{edk2_stable_date}
 %global openssl_version  1.1.1b
-%global qosb_version     1.1.3
+%global qosb_version     20190521-gitf158f12
 %global softfloat_version 20180726-gitb64af41
 
-
-# enrollment is hanging with stable 201905,
-# so temporarily disable it
-%global skip_enroll 1
+# Enable this to skip secureboot enrollment, if problems pop up
+%global skip_enroll 0
 
 
 %define qosb_testing 0
@@ -58,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -69,8 +67,10 @@ URL:            http://www.tianocore.org/edk2/
 Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/edk2-%{edk2_stable_str}.tar.gz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
-Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v%{qosb_version}/qemu-ovmf-secureboot-%{qosb_version}.tar.gz
+#Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v{qosb_version}/qemu-ovmf-secureboot-{qosb_version}.tar.gz
+Source3:        qemu-ovmf-secureboot-%{qosb_version}.tar.xz
 Source4:        softfloat-%{softfloat_version}.tar.xz
+Source5:        RedHatSecureBootPkKek1.pem
 Source10:       hobble-openssl
 Source11:       build-iso.sh
 Source12:       update-tarball.sh
@@ -133,6 +133,7 @@ BuildRequires:  nasm
 BuildRequires:  qemu-img
 BuildRequires:  genisoimage
 BuildRequires:  bc
+BuildRequires:  sed
 
 # These are for QOSB
 BuildRequires:  python3-requests
@@ -260,6 +261,14 @@ mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
 %autopatch -p1
 base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
 
+# Extract OEM string from the RH cert, as described here
+# https://bugzilla.tianocore.org/show_bug.cgi?id=1747#c2
+sed \
+  -e 's/^-----BEGIN CERTIFICATE-----$/4e32566d-8e9e-4f52-81d3-5bb9715f9727:/' \
+  -e '/^-----END CERTIFICATE-----$/d' \
+  %{_sourcedir}/RedHatSecureBootPkKek1.pem \
+| tr -d '\n' \
+> PkKek1.oemstr
 
 
 %build
@@ -333,6 +342,7 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
     --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
     --ovmf-template-vars ovmf/OVMF_VARS.fd \
     --uefi-shell-iso ovmf/UefiShell.iso \
+    --oem-string "$(< PkKek1.oemstr)" \
     --skip-testing \
     ovmf/OVMF_VARS.secboot.fd
 %else
@@ -591,6 +601,11 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Mon Jul 15 2019 Cole Robinson <aintdiscole@gmail.com> - 20190501stable-2
+- License is now BSD-2-Clause-Patent
+- Re-enable secureboot enrollment
+- Use qemu-ovmf-secureboot from git
+
 * Thu Jul 11 2019 Cole Robinson <crobinso@redhat.com> - 20190501stable-1
 - Update to stable-201905
 - Update to openssl-1.1.1b
