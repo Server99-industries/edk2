@@ -61,7 +61,7 @@ Version:        %{edk2_stable_date}01stable
 Release:        1%{dist}
 Summary:        EFI Development Kit II
 
-License:        BSD
+License:        BSD-2-Clause-Patent
 URL:            http://www.tianocore.org/edk2/
 
 # Tarball generated from git object update-tarball.sh script
@@ -189,7 +189,7 @@ variable files to enforce Secure Boot.
 Summary:        Open Virtual Machine Firmware
 # OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
 # library.
-License:        BSD and OpenSSL
+License:        BSD-2-Clause-Patent and OpenSSL
 Provides:       bundled(openssl)
 Provides:       OVMF = %{version}-%{release}
 Obsoletes:      OVMF < %{version}-%{release}
@@ -204,7 +204,7 @@ Open Virtual Machine Firmware (x64)
 Summary:        Open Virtual Machine Firmware
 # OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
 # library.
-License:        BSD and OpenSSL
+License:        BSD-2-Clause-Patent and OpenSSL
 Provides:       bundled(openssl)
 BuildArch:      noarch
 %description ovmf-ia32
@@ -219,7 +219,7 @@ Provides:       AAVMF = %{version}-%{release}
 Obsoletes:      AAVMF < %{version}-%{release}
 BuildArch:      noarch
 # No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6 stack.
-License:        BSD and OpenSSL
+License:        BSD-2-Clause-Patent and OpenSSL
 Provides:       bundled(openssl)
 %description aarch64
 EFI Development Kit II
