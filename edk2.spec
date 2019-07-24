@@ -56,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        2%{dist}
+Release:        3%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -601,6 +601,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 20190501stable-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Mon Jul 15 2019 Cole Robinson <aintdiscole@gmail.com> - 20190501stable-2
 - License is now BSD-2-Clause-Patent
 - Re-enable secureboot enrollment
