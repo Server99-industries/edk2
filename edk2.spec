@@ -56,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -292,7 +292,7 @@ CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
 OVMF_FLAGS="${OVMF_FLAGS} -D TLS_ENABLE"
-OVMF_FLAGS="${OVMF_FLAGS} -D HTTP_BOOT_ENABLE"
+OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_HTTP_BOOT_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_IP6_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D FD_SIZE_2MB"
 
@@ -601,6 +601,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Fri Sep 06 2019 Patrick Uiterwijk <puiterwijk@redhat.com> - 20190501stable-4
+- Updated HTTP_BOOT option to new upstream value
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 20190501stable-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
