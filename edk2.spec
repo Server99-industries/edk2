@@ -56,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -601,6 +601,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 20190501stable-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Sep 06 2019 Patrick Uiterwijk <puiterwijk@redhat.com> - 20190501stable-4
 - Updated HTTP_BOOT option to new upstream value
 
