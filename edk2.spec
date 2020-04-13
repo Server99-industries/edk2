@@ -10,9 +10,9 @@
 # global edk2_date        20180815
 # global edk2_githash     cb5f4f45ce
 
-%global edk2_stable_date 201905
+%global edk2_stable_date 202002
 %global edk2_stable_str  edk2-stable%{edk2_stable_date}
-%global openssl_version  1.1.1b
+%global openssl_version  1.1.1d
 %global qosb_version     20190521-gitf158f12
 %global softfloat_version 20180726-gitb64af41
 
@@ -56,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        5%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -103,7 +103,8 @@ Patch0013: 0013-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0014: 0014-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0015: 0015-ArmVirtPkg-set-early-hello-message-RH-only.patch
 Patch0016: 0016-Tweak-the-tools_def-to-support-cross-compiling.patch
-
+# openssl compiation fix
+Patch0017: 0017-fix-openssl-compilation.patch
 
 %if 0%{?cross:1}
 %endif
@@ -272,6 +273,7 @@ sed \
 
 
 %build
+export PYTHON_COMMAND=%{__python3}
 source ./edksetup.sh
 
 # compiler
@@ -601,6 +603,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Mon Apr 13 2020 Cole Robinson <aintdiscole@gmail.com> - 20200201stable-1
+- Update to stable-202002
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 20190501stable-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 

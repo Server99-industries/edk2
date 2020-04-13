@@ -1,4 +1,4 @@
-From 01046984f4e68e7f0ef8649c0bf30803f4059b66 Mon Sep 17 00:00:00 2001
+From 9295c4bd7b8aefed7ba49e05bdbd8326da7cc6f3 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:49:43 +0200
 Subject: [PATCH] ArmPlatformPkg: introduce fixed PCD for early hello message

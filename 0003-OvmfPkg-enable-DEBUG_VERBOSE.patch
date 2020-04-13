@@ -1,4 +1,4 @@
-From e69ceee47877b92dca587592b477dee7aba8e4cd Mon Sep 17 00:00:00 2001
+From 7d6541e838ef2a136a3facbeba88f0a92a8be738 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 8 Jul 2012 14:26:07 +0200
 Subject: [PATCH] OvmfPkg: enable DEBUG_VERBOSE
@@ -14,41 +14,41 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 5cd51062a7..6b1bf39246 100644
+index 84ce2f8971..ad3277b2be 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -479,7 +479,7 @@
+@@ -486,7 +486,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
 -  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
 +  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
  
- !ifdef $(SOURCE_DEBUG_ENABLE)
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 05fe5661dc..a1c083ec7b 100644
+index f84004b7c5..be6e367b76 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -484,7 +484,7 @@
+@@ -491,7 +491,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
 -  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
 +  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
  
- !ifdef $(SOURCE_DEBUG_ENABLE)
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 4f3566cd14..7ee9d2b359 100644
+index 8dc20425f0..6e061a9f08 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -484,7 +484,7 @@
+@@ -491,7 +491,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
 -  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
 +  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
  
- !ifdef $(SOURCE_DEBUG_ENABLE)
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17

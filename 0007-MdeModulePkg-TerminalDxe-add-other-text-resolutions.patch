@@ -1,4 +1,4 @@
-From 1506edb0d4cd40517e557354d517c1f762725b4b Mon Sep 17 00:00:00 2001
+From d510c6956d8dab5745a34d91e692b9311c1ad7d7 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 18:40:35 +0100
 Subject: [PATCH] MdeModulePkg: TerminalDxe: add other text resolutions
@@ -76,10 +76,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 38 insertions(+), 3 deletions(-)
 
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c b/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
-index c76b2c5100..eff9d9787f 100644
+index a98b690c8b..ded5513c74 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/Terminal.c
-@@ -107,9 +107,44 @@ TERMINAL_DEV  mTerminalDevTemplate = {
+@@ -115,9 +115,44 @@ TERMINAL_DEV  mTerminalDevTemplate = {
  };
  
  TERMINAL_CONSOLE_MODE_DATA mTerminalConsoleModeData[] = {

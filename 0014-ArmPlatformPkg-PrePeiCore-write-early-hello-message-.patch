@@ -1,4 +1,4 @@
-From d0d66aef08ebf250a33f2ef431dc86e5ba4390cd Mon Sep 17 00:00:00 2001
+From a1a8063454f467d4e3c696ea476ed4ba42a6fbed Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
 Subject: [PATCH] ArmPlatformPkg: PrePeiCore: write early hello message to the
@@ -79,10 +79,10 @@ index 7140c7f5b5..1d69a2b468 100644
  #include <PiPei.h>
  #include <Ppi/TemporaryRamSupport.h>
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-index 0e112710dc..9a5ba1adcb 100644
+index 104c7da533..13955372ba 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-@@ -66,6 +66,8 @@
+@@ -68,6 +68,8 @@
    gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
@@ -92,10 +92,10 @@ index 0e112710dc..9a5ba1adcb 100644
    gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
    gArmTokenSpaceGuid.PcdGicSgiIntId
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-index c163a818c4..652260e6ab 100644
+index ceb173d34f..330a32f09a 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-@@ -65,3 +65,5 @@
+@@ -67,3 +67,5 @@
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
    gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack

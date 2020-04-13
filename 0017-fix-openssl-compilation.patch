@@ -1,0 +1,12 @@
+diff -rup edk2-edk2-stable202002/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c new/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c
+--- edk2-edk2-stable202002/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c	2019-09-10 09:13:07.000000000 -0400
++++ new/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c	2020-04-13 18:48:29.666030580 -0400
+@@ -143,7 +143,7 @@ int openssl_get_fork_id(void)
+ # if defined(OPENSSL_SYS_UNIX)
+     return getpid();
+ # else
+-    return return 0;
++    return 0;
+ # endif
+ }
+ #endif

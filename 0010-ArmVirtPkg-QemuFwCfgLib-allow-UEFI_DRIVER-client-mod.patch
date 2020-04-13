@@ -1,4 +1,4 @@
-From a5249c3f4b359fde1bd6b526239ad2805012e97d Mon Sep 17 00:00:00 2001
+From a293732aa186580861c855045104c626f0a91412 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 12 Apr 2016 20:50:25 +0200
 Subject: [PATCH] ArmVirtPkg: QemuFwCfgLib: allow UEFI_DRIVER client modules

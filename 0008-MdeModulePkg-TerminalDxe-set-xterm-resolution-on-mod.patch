@@ -1,4 +1,4 @@
-From 21285bd60350b5f6e7c6a90889a59d169db5b32f Mon Sep 17 00:00:00 2001
+From 819bac260661159fb0423eaf549cddc567ef2b8c Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
 Subject: [PATCH] MdeModulePkg: TerminalDxe: set xterm resolution on mode
@@ -37,12 +37,12 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 36 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index 6cba729982..e2d59349c9 100644
+index 91a3c60823..0929560b65 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -1945,6 +1945,10 @@
-   # @Prompt The address mask when memory encryption is enabled.
-   gEfiMdeModulePkgTokenSpaceGuid.PcdPteMemoryEncryptionAddressOrMask|0x0|UINT64|0x30001047
+@@ -2021,6 +2021,10 @@
+   # @Prompt TCG Platform Firmware Profile revision.
+   gEfiMdeModulePkgTokenSpaceGuid.PcdTcgPfpMeasurementRevision|0|UINT32|0x00010077
  
 +  ## Controls whether TerminalDxe outputs an XTerm resize sequence on terminal
 +  #  mode change.
@@ -52,7 +52,7 @@ index 6cba729982..e2d59349c9 100644
    ## Specify memory size with page number for PEI code when
    #  Loading Module at Fixed Address feature is enabled.
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-index 7ef655cca5..1113252df2 100644
+index aae470e956..26156857aa 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 @@ -7,6 +7,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -81,7 +81,7 @@ index 7ef655cca5..1113252df2 100644
  //
  // Body of the ConOut functions
  //
-@@ -502,6 +514,24 @@ TerminalConOutSetMode (
+@@ -506,6 +518,24 @@ TerminalConOutSetMode (
      return EFI_DEVICE_ERROR;
    }
  
@@ -107,7 +107,7 @@ index 7ef655cca5..1113252df2 100644
  
    Status            = This->ClearScreen (This);
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-index 24e164ef4d..d1160ed1c7 100644
+index b2a8aeba85..eff6253465 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 @@ -55,6 +55,7 @@
@@ -118,7 +118,7 @@ index 24e164ef4d..d1160ed1c7 100644
  
  [Guids]
    ## SOMETIMES_PRODUCES ## Variable:L"ConInDev"
-@@ -83,6 +84,7 @@
+@@ -87,6 +88,7 @@
  [Pcd]
    gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType           ## SOMETIMES_CONSUMES
    gEfiMdeModulePkgTokenSpaceGuid.PcdErrorCodeSetVariable    ## CONSUMES

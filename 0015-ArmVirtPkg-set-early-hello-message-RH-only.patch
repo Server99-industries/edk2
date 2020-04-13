@@ -1,4 +1,4 @@
-From 127d7ebe3107a6d0846c19f9c4587098ef96864d Mon Sep 17 00:00:00 2001
+From 80fb7eccb7dffa6104ec650ba40e0d6c690b1bb8 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
 Subject: [PATCH] ArmVirtPkg: set early hello message (RH only)
@@ -27,10 +27,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index ccbadffd65..6254900644 100644
+index 311ceb865a..ab1bf8f3ac 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -105,6 +105,7 @@
+@@ -101,6 +101,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
  
  [PcdsFixedAtBuild.common]

@@ -1,4 +1,4 @@
-From 4a3f9b9691c88b316f45a163470c255a393d2dc9 Mon Sep 17 00:00:00 2001
+From d30824cf8d93114fd1e3880f116ba2fbda01ec88 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
 Subject: [PATCH] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in the DXE core
@@ -17,10 +17,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index ef8bd35153..5cd51062a7 100644
+index ce22cc1ae3..84ce2f8971 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -641,6 +641,8 @@
+@@ -651,6 +651,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -30,10 +30,10 @@ index ef8bd35153..5cd51062a7 100644
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index dfd47378e7..05fe5661dc 100644
+index 74d2536237..f84004b7c5 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -650,6 +650,8 @@
+@@ -664,6 +664,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
@@ -43,10 +43,10 @@ index dfd47378e7..05fe5661dc 100644
  
    MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index fdccae3976..4f3566cd14 100644
+index 723bd37ca0..8dc20425f0 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -648,6 +648,8 @@
+@@ -662,6 +662,8 @@
      <LibraryClasses>
        NULL|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
        DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf

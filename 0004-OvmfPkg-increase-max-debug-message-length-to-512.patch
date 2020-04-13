@@ -1,4 +1,4 @@
-From 4f43c23c001910836cbf76644daad38ec7ceb240 Mon Sep 17 00:00:00 2001
+From a8ab276ab86f1e855adc8668e1abe6c85afb8364 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 20 Feb 2014 22:54:45 +0100
 Subject: [PATCH] OvmfPkg: increase max debug message length to 512
