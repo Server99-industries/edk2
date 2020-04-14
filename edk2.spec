@@ -103,7 +103,7 @@ Patch0013: 0013-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0014: 0014-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0015: 0015-ArmVirtPkg-set-early-hello-message-RH-only.patch
 Patch0016: 0016-Tweak-the-tools_def-to-support-cross-compiling.patch
-# openssl compiation fix
+# openssl compilation fix
 Patch0017: 0017-fix-openssl-compilation.patch
 
 %if 0%{?cross:1}
