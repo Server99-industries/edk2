@@ -56,7 +56,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -309,7 +309,7 @@ ARM_FLAGS="${CC_FLAGS}"
 ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
 unset MAKEFLAGS
-make -C BaseTools %{?_smp_mflags} \
+%make_build -C BaseTools \
   EXTRA_OPTFLAGS="%{optflags}" \
   EXTRA_LDFLAGS="%{__global_ldflags}"
 sed -i -e 's/-Werror//' Conf/tools_def.txt
@@ -603,6 +603,10 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Mon Jul 13 2020 Tom Stellard <tstellar@redhat.com> - 20200201stable-2
+- Use make macros
+- https://fedoraproject.org/wiki/Changes/UseMakeBuildInstallMacro
+
 * Mon Apr 13 2020 Cole Robinson <aintdiscole@gmail.com> - 20200201stable-1
 - Update to stable-202002
 
