@@ -1,7 +1,3 @@
-# This package depends on automagic byte compilation
-# https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_2
-%global _python_bytecompile_extra 1
-
 # RPM doesn't detect that code in /usr/share is python3, this forces it
 # https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
 %global __python %{__python3}
@@ -56,7 +52,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -105,6 +101,9 @@ Patch0015: 0015-ArmVirtPkg-set-early-hello-message-RH-only.patch
 Patch0016: 0016-Tweak-the-tools_def-to-support-cross-compiling.patch
 # openssl compilation fix
 Patch0017: 0017-fix-openssl-compilation.patch
+# py39 build fixes
+Patch0018: 0001-BaseTools-fix-ucs-2-lookup-on-python-3.9.patch
+Patch0019: 0002-BaseTools-Work-around-array.array.tostring-removal-i.patch
 
 %if 0%{?cross:1}
 %endif
@@ -496,6 +495,11 @@ for f in %{_sourcedir}/*edk2-arm*.json; do
 done
 %endif
 
+%if 0%{?py_byte_compile:1}
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Python_Appendix/#manual-bytecompilation
+%py_byte_compile %{python3} %{buildroot}%{_datadir}/edk2/Python
+%endif
+
 
 install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_bindir}
 
@@ -603,6 +607,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Tue Aug 04 2020 Cole Robinson <aintdiscole@gmail.com> - 20200201stable-5
+- Fix build failures on rawhide
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 20200201stable-4
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
