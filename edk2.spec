@@ -2,10 +2,6 @@
 # https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
 %global __python %{__python3}
 
-
-# global edk2_date        20180815
-# global edk2_githash     cb5f4f45ce
-
 %global edk2_stable_date 202002
 %global edk2_stable_str  edk2-stable%{edk2_stable_date}
 %global openssl_version  1.1.1d
@@ -14,7 +10,6 @@
 
 # Enable this to skip secureboot enrollment, if problems pop up
 %global skip_enroll 0
-
 
 %define qosb_testing 0
 
@@ -47,19 +42,16 @@
 %endif
 
 Name:           edk2
-#Version:       {edk2_date}git{edk2_githash}
 # Even though edk2 stable releases are YYYYMM, we need
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        5%{dist}
+Release:        6%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
 URL:            http://www.tianocore.org/edk2/
 
-# Tarball generated from git object update-tarball.sh script
-#Source0:        edk2-{edk2_date}-{edk2_githash}.tar.xz
 Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/edk2-%{edk2_stable_str}.tar.gz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
@@ -219,7 +211,7 @@ Summary:        AARCH64 Virtual Machine Firmware
 Provides:       AAVMF = %{version}-%{release}
 Obsoletes:      AAVMF < %{version}-%{release}
 BuildArch:      noarch
-# No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6 stack.
+# No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6/HTTP boot stack.
 License:        BSD-2-Clause-Patent and OpenSSL
 Provides:       bundled(openssl)
 %description aarch64
@@ -231,9 +223,11 @@ AARCH64 UEFI Firmware
 %package arm
 Summary:        ARM Virtual Machine Firmware
 BuildArch:      noarch
+# No Secure Boot for ARMv7, but we include OpenSSL for the IPv6/HTTP boot stack.
+License:        BSD-2-Clause-Patent and OpenSSL
 %description arm
 EFI Development Kit II
-armv7 UEFI Firmware
+ARMv7 UEFI Firmware
 %endif
 
 
@@ -249,12 +243,12 @@ rm -rf ShellBinPkg
 # copy whitepaper into place
 cp -a -- %{SOURCE2} .
 # extract openssl into place
-tar -xvf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
+tar -xf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
 # extract softfloat into place
-tar -xvf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
+tar -xf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
 # Extract QOSB
-tar -xvf %{SOURCE3}
+tar -xf %{SOURCE3}
 mv qemu-ovmf-secureboot-%{qosb_version}/README.md README.qosb
 mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
 
@@ -288,13 +282,12 @@ fi
 # common features
 CC_FLAGS="$CC_FLAGS --cmd-len=65536 -b DEBUG --hash"
 CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
+CC_FLAGS="$CC_FLAGS -D NETWORK_TLS_ENABLE"
+CC_FLAGS="$CC_FLAGS -D NETWORK_HTTP_BOOT_ENABLE"
 CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
 
 # ovmf features
 OVMF_FLAGS="${CC_FLAGS}"
-OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_TLS_ENABLE"
-OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_HTTP_BOOT_ENABLE"
-OVMF_FLAGS="${OVMF_FLAGS} -D NETWORK_IP6_ENABLE"
 OVMF_FLAGS="${OVMF_FLAGS} -D FD_SIZE_2MB"
 
 # ovmf + secure boot features
@@ -305,7 +298,6 @@ OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
 
 # arm firmware features
 ARM_FLAGS="${CC_FLAGS}"
-ARM_FLAGS="${ARM_FLAGS} -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F"
 
 unset MAKEFLAGS
 %make_build -C BaseTools \
@@ -385,7 +377,7 @@ dd of="aarch64/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 %endif
 
 
-# build aarch64 firmware
+# build ARMv7 firmware
 %if 0%{?build_aavmf_arm:1}
 mkdir -p arm
 build $ARM_FLAGS -a ARM -p ArmVirtPkg/ArmVirtQemu.dsc
@@ -607,6 +599,10 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Sat Sep 12 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 20200201stable-6
+- Tweaks for aarch64/ARMv7 builds
+- Minor cleanups
+
 * Tue Aug 04 2020 Cole Robinson <aintdiscole@gmail.com> - 20200201stable-5
 - Fix build failures on rawhide
 
