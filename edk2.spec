@@ -2,9 +2,9 @@
 # https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
 %global __python %{__python3}
 
-%global edk2_stable_date 202002
+%global edk2_stable_date 202008
 %global edk2_stable_str  edk2-stable%{edk2_stable_date}
-%global openssl_version  1.1.1d
+%global openssl_version  1.1.1g
 %global qosb_version     20190521-gitf158f12
 %global softfloat_version 20180726-gitb64af41
 
@@ -46,13 +46,13 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        6%{dist}
+Release:        1%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
 URL:            http://www.tianocore.org/edk2/
 
-Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/edk2-%{edk2_stable_str}.tar.gz
+Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/%{edk2_stable_str}.tar.gz
 Source1:        openssl-%{openssl_version}-hobbled.tar.xz
 Source2:        ovmf-whitepaper-c770f8c.txt
 #Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v{qosb_version}/qemu-ovmf-secureboot-{qosb_version}.tar.gz
@@ -84,18 +84,13 @@ Patch0006: 0006-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
 Patch0007: 0007-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
 Patch0008: 0008-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
 Patch0009: 0009-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
-Patch0010: 0010-ArmVirtPkg-QemuFwCfgLib-allow-UEFI_DRIVER-client-mod.patch
-Patch0011: 0011-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
-Patch0012: 0012-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
-Patch0013: 0013-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
-Patch0014: 0014-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
-Patch0015: 0015-ArmVirtPkg-set-early-hello-message-RH-only.patch
-Patch0016: 0016-Tweak-the-tools_def-to-support-cross-compiling.patch
-# openssl compilation fix
-Patch0017: 0017-fix-openssl-compilation.patch
-# py39 build fixes
-Patch0018: 0001-BaseTools-fix-ucs-2-lookup-on-python-3.9.patch
-Patch0019: 0002-BaseTools-Work-around-array.array.tostring-removal-i.patch
+Patch0010: 0010-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0011: 0011-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
+Patch0012: 0012-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
+Patch0013: 0013-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
+Patch0014: 0014-ArmVirtPkg-set-early-hello-message-RH-only.patch
+Patch0015: 0015-Tweak-the-tools_def-to-support-cross-compiling.patch
+Patch0016: 0016-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 
 %if 0%{?cross:1}
 %endif
@@ -499,7 +494,6 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %files tools
 %license License.txt
 %license LICENSE.openssl
-%{_bindir}/Brotli
 %{_bindir}/DevicePath
 %{_bindir}/EfiRom
 %{_bindir}/GenCrc32
@@ -599,6 +593,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Wed Sep 16 2020 Cole Robinson <crobinso@redhat.com> - 20200801stable-1
+- Update to edk2 stable 202008
+
 * Sat Sep 12 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 20200201stable-6
 - Tweaks for aarch64/ARMv7 builds
 - Minor cleanups

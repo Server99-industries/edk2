@@ -1,4 +1,4 @@
-From 7d6541e838ef2a136a3facbeba88f0a92a8be738 Mon Sep 17 00:00:00 2001
+From 5b0813e1885c0234deafcb828f1747c766287c51 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 8 Jul 2012 14:26:07 +0200
 Subject: [PATCH] OvmfPkg: enable DEBUG_VERBOSE
@@ -14,10 +14,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 84ce2f8971..ad3277b2be 100644
+index 146e429126..fce6051e47 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -486,7 +486,7 @@
+@@ -514,7 +514,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -27,10 +27,10 @@ index 84ce2f8971..ad3277b2be 100644
  !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index f84004b7c5..be6e367b76 100644
+index cdf5abba99..983eebfaa7 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -491,7 +491,7 @@
+@@ -518,7 +518,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -40,10 +40,10 @@ index f84004b7c5..be6e367b76 100644
  !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 8dc20425f0..6e061a9f08 100644
+index 7d59d768fa..ea62b82ff7 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -491,7 +491,7 @@
+@@ -518,7 +518,7 @@
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error

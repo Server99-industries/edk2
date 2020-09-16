@@ -1,4 +1,4 @@
-From 6c5f6dfcbac8a9eb6db10352d4d2f20166bab27c Mon Sep 17 00:00:00 2001
+From 4de2ee915d9f3eea6d32cd010ab856ac176f3983 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
 Subject: [PATCH] ArmVirtPkg: take PcdResizeXterm from the QEMU command line
@@ -23,27 +23,26 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit d4564d39dfdbf74e762af43314005a2c026cb262)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- ArmVirtPkg/ArmVirtQemu.dsc                    |  7 +-
+ ArmVirtPkg/ArmVirtQemu.dsc                    |  6 +-
  .../TerminalPcdProducerLib.c                  | 87 +++++++++++++++++++
  .../TerminalPcdProducerLib.inf                | 41 +++++++++
- 3 files changed, 134 insertions(+), 1 deletion(-)
+ 3 files changed, 133 insertions(+), 1 deletion(-)
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 00412a3afb..311ceb865a 100644
+index 2405636af6..24c6ea2e64 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -237,6 +237,8 @@
-   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0
-   gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|FALSE
- 
+@@ -249,6 +249,7 @@
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
+   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|640
+   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|480
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-+
- [PcdsDynamicHii]
-   gArmVirtTokenSpaceGuid.PcdForceNoAcpi|L"ForceNoAcpi"|gArmVirtVariableGuid|0x0|FALSE|NV,BS
  
-@@ -314,7 +316,10 @@
+   #
+   # SMBIOS entry point version
+@@ -374,7 +375,10 @@
    MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
    MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
    MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf

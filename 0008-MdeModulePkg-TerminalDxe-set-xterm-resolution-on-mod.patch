@@ -1,4 +1,4 @@
-From 819bac260661159fb0423eaf549cddc567ef2b8c Mon Sep 17 00:00:00 2001
+From 50b53194f7caea602e04df663358617c280f299c Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
 Subject: [PATCH] MdeModulePkg: TerminalDxe: set xterm resolution on mode
@@ -37,12 +37,12 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 36 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index 91a3c60823..0929560b65 100644
+index cb30a79758..e562bed57e 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -2021,6 +2021,10 @@
-   # @Prompt TCG Platform Firmware Profile revision.
-   gEfiMdeModulePkgTokenSpaceGuid.PcdTcgPfpMeasurementRevision|0|UINT32|0x00010077
+@@ -2013,6 +2013,10 @@
+   # @Prompt Enable StatusCode via memory.
+   gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeUseMemory|FALSE|BOOLEAN|0x00010023
  
 +  ## Controls whether TerminalDxe outputs an XTerm resize sequence on terminal
 +  #  mode change.

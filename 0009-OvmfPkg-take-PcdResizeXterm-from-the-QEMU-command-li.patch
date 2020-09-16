@@ -1,4 +1,4 @@
-From 12910bd170a4f8add22c526c9eabe33fa0840da4 Mon Sep 17 00:00:00 2001
+From 0616c1d69ef552bd35700992fae37263ddd8c4ce Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
 Subject: [PATCH] OvmfPkg: take PcdResizeXterm from the QEMU command line (RH
@@ -29,47 +29,47 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  5 files changed, 5 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 83d0736c19..7bb0edfbbf 100644
+index 2886c10b1b..b974740e2f 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -532,6 +532,7 @@
-   #   ($(SMM_REQUIRE) == FALSE)
-   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
- 
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
+@@ -577,6 +577,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+ !endif
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 6c04944f4c..6aa79d8d58 100644
+index 5a9e9a707a..65a8c6764c 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -538,6 +538,7 @@
-   #   ($(SMM_REQUIRE) == FALSE)
-   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
- 
+@@ -586,6 +586,7 @@
+   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiS3Enable|FALSE
+   gUefiOvmfPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId|0
+   gUefiOvmfPkgTokenSpaceGuid.PcdPciIoBase|0x0
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 4de6518b95..f698319c04 100644
+index 70c2c3e3b9..72bc289f26 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -537,6 +537,7 @@
-   #   ($(SMM_REQUIRE) == FALSE)
-   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
- 
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+@@ -582,6 +582,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+ !endif
+   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|FALSE
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|800
+   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|600
+   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiS3Enable|FALSE
 diff --git a/OvmfPkg/PlatformPei/Platform.c b/OvmfPkg/PlatformPei/Platform.c
-index 473af10278..ad6791ce72 100644
+index 96468701e3..14efbabe39 100644
 --- a/OvmfPkg/PlatformPei/Platform.c
 +++ b/OvmfPkg/PlatformPei/Platform.c
-@@ -813,6 +813,7 @@ InitializePlatform (
-     PeiFvInitialization ();
+@@ -748,6 +748,7 @@ InitializePlatform (
+     MemTypeInfoInitialization ();
      MemMapInitialization ();
      NoexecDxeInitialization ();
 +    UPDATE_BOOLEAN_PCD_FROM_FW_CFG (PcdResizeXterm);
@@ -77,10 +77,10 @@ index 473af10278..ad6791ce72 100644
  
    InstallClearCacheCallback ();
 diff --git a/OvmfPkg/PlatformPei/PlatformPei.inf b/OvmfPkg/PlatformPei/PlatformPei.inf
-index c51a6176aa..295822b7e0 100644
+index c53be2f492..e5744ed818 100644
 --- a/OvmfPkg/PlatformPei/PlatformPei.inf
 +++ b/OvmfPkg/PlatformPei/PlatformPei.inf
-@@ -90,6 +90,7 @@
+@@ -97,6 +97,7 @@
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved
    gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration

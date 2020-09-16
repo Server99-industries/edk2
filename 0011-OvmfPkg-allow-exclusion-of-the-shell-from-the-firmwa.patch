@@ -1,4 +1,4 @@
-From 6292a7d0a32ef7de13ee507640407f29f325ebcf Mon Sep 17 00:00:00 2001
+From c1d277217b6d4115277cac4de26943fde3b7f170 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:53 +0100
 Subject: [PATCH] OvmfPkg: allow exclusion of the shell from the firmware image
@@ -55,16 +55,17 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  3 files changed, 8 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index ad127a5e95..603099e072 100644
+index 6e1e7f5f44..07c1cdbe81 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -278,10 +278,12 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -291,11 +291,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !if $(TOOL_CHAIN_TAG) != "XCODE5"
  INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
 +!endif
@@ -72,16 +73,17 @@ index ad127a5e95..603099e072 100644
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index 5acddaacf1..9aa7c91885 100644
+index 1fab3d5014..b1560d6218 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -279,10 +279,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -292,11 +292,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !if $(TOOL_CHAIN_TAG) != "XCODE5"
  INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
 +!endif
@@ -90,16 +92,17 @@ index 5acddaacf1..9aa7c91885 100644
  !if ($(SECURE_BOOT_ENABLE) == TRUE) || ($(NETWORK_IP6_ENABLE) == TRUE) || ($(TLS_ENABLE) == TRUE)
  INF MdeModulePkg/Logo/LogoOpenSSLDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index 5acddaacf1..9aa7c91885 100644
+index 6dc48977a0..34cd97aac4 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -279,10 +279,13 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
+@@ -301,11 +301,14 @@ INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResour
  INF  FatPkg/EnhancedFatDxe/Fat.inf
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  
 +!ifndef $(EXCLUDE_SHELL_FROM_FD)
  !if $(TOOL_CHAIN_TAG) != "XCODE5"
  INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
+ INF  OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.inf
  !endif
  INF  ShellPkg/Application/Shell/Shell.inf
 +!endif
