@@ -46,7 +46,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        1%{dist}
+Release:        2%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -121,6 +121,7 @@ BuildRequires:  qemu-img
 BuildRequires:  genisoimage
 BuildRequires:  bc
 BuildRequires:  sed
+BuildRequires:  perl
 
 # These are for QOSB
 BuildRequires:  python3-requests
@@ -239,6 +240,7 @@ rm -rf ShellBinPkg
 cp -a -- %{SOURCE2} .
 # extract openssl into place
 tar -xf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
+(cd CryptoPkg/Library/OpensslLib && perl process_files.pl)
 # extract softfloat into place
 tar -xf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
@@ -593,6 +595,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Tue Nov 24 2020 Cole Robinson <aintdiscole@gmail.com> - 20200801stable-2
+- Fix openssl usage, unbreak TPM (bz 1897367)
+
 * Wed Sep 16 2020 Cole Robinson <crobinso@redhat.com> - 20200801stable-1
 - Update to edk2 stable 202008
 
