@@ -5,7 +5,7 @@
 %global edk2_stable_date 202008
 %global edk2_stable_str  edk2-stable%{edk2_stable_date}
 %global openssl_version  1.1.1g
-%global qosb_version     20190521-gitf158f12
+%global qosb_version     20200228-gitc3e16b3
 %global softfloat_version 20180726-gitb64af41
 
 # Enable this to skip secureboot enrollment, if problems pop up
