@@ -122,6 +122,7 @@ BuildRequires:  genisoimage
 BuildRequires:  bc
 BuildRequires:  sed
 BuildRequires:  perl
+BuildRequires:  findutils
 
 # These are for QOSB
 BuildRequires:  python3-requests
@@ -390,6 +391,7 @@ dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 %if 0%{?build_ovmf_x64:1}
 %if 0%{?qosb_testing}
 %if !%{skip_enroll}
+KERNELPATH="$(find /lib/modules -name vmlinuz | head -1)"
 python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
     --qemu-binary /usr/bin/qemu-system-x86_64 \
     --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
@@ -398,7 +400,7 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
     --skip-enrollment \
     --print-output \
     --no-download \
-    --kernel-path `rpm -ql kernel-core | grep "\/vmlinuz$" -m 1` \
+    --kernel-path "$KERNELPATH" \
     ovmf/OVMF_VARS.secboot.fd
 %endif
 %endif
