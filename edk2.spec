@@ -400,6 +400,7 @@ python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
     --skip-enrollment \
     --print-output \
     --no-download \
+    -vv \
     --kernel-path "$KERNELPATH" \
     ovmf/OVMF_VARS.secboot.fd
 %endif
