@@ -137,6 +137,7 @@ BuildRequires:  qemu-system-x86
 # for the actual RPM.
 BuildRequires:  kernel-core
 %endif
+BuildRequires: make
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
