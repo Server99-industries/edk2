@@ -46,7 +46,7 @@ Name:           edk2
 # to use YYYMMDD to avoid needing to bump package epoch
 # due to previous 'git' Version:
 Version:        %{edk2_stable_date}01stable
-Release:        4%{dist}
+Release:        5%{dist}
 Summary:        EFI Development Kit II
 
 License:        BSD-2-Clause-Patent
@@ -118,7 +118,7 @@ BuildRequires:  gcc-x86_64-linux-gnu
 BuildRequires:  iasl
 BuildRequires:  nasm
 BuildRequires:  qemu-img
-BuildRequires:  genisoimage
+BuildRequires:  xorriso
 BuildRequires:  bc
 BuildRequires:  sed
 BuildRequires:  perl
@@ -599,6 +599,9 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 
 %changelog
+* Mon Jun 14 2021 Jiri Kucera <jkucera@redhat.com> - 20200801stable-5
+- Replace genisoimage with xorriso
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 20200801stable-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 

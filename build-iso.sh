@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -ex
+
 # args
 dir="$1"
 
@@ -21,6 +23,6 @@ qemu-img convert --image-opts \
 	$vfat
 
 # build ISO with FAT image file as El Torito EFI boot image
-genisoimage -input-charset ASCII -J -rational-rock \
-	-efi-boot "${vfat##*/}" -no-emul-boot -o "$iso" -- "$vfat"
+mkisofs -input-charset ASCII -J -rational-rock \
+	-e "${vfat##*/}" -no-emul-boot -o "$iso" "$vfat"
 rm -rf "$root/" "$vfat"
