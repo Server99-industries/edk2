@@ -2,9 +2,11 @@
 # https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
 %global __python %{__python3}
 
-%global edk2_stable_date 202008
-%global edk2_stable_str  edk2-stable%{edk2_stable_date}
-%global openssl_version  1.1.1g
+%define GITDATE        20210527
+%define GITCOMMIT      e1999b264f1f
+%define TOOLCHAIN      GCC5
+%define OPENSSL_VER    1.1.1g
+
 %global qosb_version     20200228-gitc3e16b3
 %global softfloat_version 20180726-gitb64af41
 
@@ -41,28 +43,25 @@
 %define build_aavmf_arm 1
 %endif
 
-Name:           edk2
-# Even though edk2 stable releases are YYYYMM, we need
-# to use YYYMMDD to avoid needing to bump package epoch
-# due to previous 'git' Version:
-Version:        %{edk2_stable_date}01stable
-Release:        5%{dist}
-Summary:        EFI Development Kit II
+Name:       edk2
+Version:    %{GITDATE}git%{GITCOMMIT}
+Release:    1%{?dist}
+Summary:    UEFI firmware for 64-bit virtual machines
+License:    BSD-2-Clause-Patent and OpenSSL and MIT
+URL:        http://www.tianocore.org
 
-License:        BSD-2-Clause-Patent
-URL:            http://www.tianocore.org/edk2/
-
-Source0:        https://github.com/tianocore/edk2/archive/%{edk2_stable_str}.tar.gz#/%{edk2_stable_str}.tar.gz
-Source1:        openssl-%{openssl_version}-hobbled.tar.xz
-Source2:        ovmf-whitepaper-c770f8c.txt
+# The source tarball is created using following commands:
+# COMMIT=e1999b264f1f
+# git archive --format=tar --prefix=edk2-$COMMIT/ $COMMIT \
+# | xz -9ev >/tmp/edk2-$COMMIT.tar.xz
+Source0: edk2-%{GITCOMMIT}.tar.xz
+Source1: ovmf-whitepaper-c770f8c.txt
+Source2: openssl-rhel-bdd048e929dcfcf2f046d74e812e0e3d5fc58504.tar.xz
 #Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v{qosb_version}/qemu-ovmf-secureboot-{qosb_version}.tar.gz
 Source3:        qemu-ovmf-secureboot-%{qosb_version}.tar.xz
 Source4:        softfloat-%{softfloat_version}.tar.xz
 Source5:        RedHatSecureBootPkKek1.pem
-Source10:       hobble-openssl
 Source11:       build-iso.sh
-Source12:       update-tarball.sh
-Source13:       openssl-patch-to-tarball.sh
 
 # Fedora-specific JSON "descriptor files"
 Source14:       40-edk2-ovmf-x64-sb-enrolled.json
@@ -75,22 +74,26 @@ Source20:       70-edk2-aarch64-verbose.json
 Source21:       70-edk2-arm-verbose.json
 
 # non-upstream patches
-Patch0001: 0001-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
-Patch0002: 0002-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-the-DXE-.patch
-Patch0003: 0003-OvmfPkg-enable-DEBUG_VERBOSE.patch
-Patch0004: 0004-OvmfPkg-increase-max-debug-message-length-to-512.patch
-Patch0005: 0005-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
-Patch0006: 0006-OvmfPkg-QemuVideoDxe-enable-debug-messages-in-VbeShi.patch
-Patch0007: 0007-MdeModulePkg-TerminalDxe-add-other-text-resolutions.patch
-Patch0008: 0008-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
-Patch0009: 0009-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
-Patch0010: 0010-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
-Patch0011: 0011-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
-Patch0012: 0012-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
-Patch0013: 0013-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
-Patch0014: 0014-ArmVirtPkg-set-early-hello-message-RH-only.patch
-Patch0015: 0015-Tweak-the-tools_def-to-support-cross-compiling.patch
-Patch0016: 0016-BaseTools-do-not-build-BrotliCompress-RH-only.patch
+Patch0008: 0008-BaseTools-do-not-build-BrotliCompress-RH-only.patch
+Patch0009: 0009-MdeModulePkg-remove-package-private-Brotli-include-p.patch
+Patch0010: 0010-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
+Patch0011: 0011-OvmfPkg-increase-max-debug-message-length-to-512-RHE.patch
+Patch0012: 0012-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
+Patch0013: 0013-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
+Patch0014: 0014-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
+Patch0015: 0015-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0016: 0016-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
+Patch0017: 0017-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
+Patch0018: 0018-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
+Patch0019: 0019-ArmVirtPkg-set-early-hello-message-RH-only.patch
+Patch0020: 0020-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
+Patch0021: 0021-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
+Patch0022: 0022-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
+Patch0023: 0023-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
+Patch0024: 0024-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
+Patch0025: 0025-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
+Patch0026: 0026-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
+Patch0027: 0027-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 
 %if 0%{?cross:1}
 %endif
@@ -107,7 +110,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 ExclusiveArch:  x86_64 aarch64
 %endif
 
-BuildRequires:  gcc gcc-c++
+BuildRequires:  gcc gcc-c++ git
 BuildRequires:  python3 python3-devel
 BuildRequires:  libuuid-devel
 %if 0%{?cross:1}
@@ -230,19 +233,20 @@ ARMv7 UEFI Firmware
 
 
 %prep
-%setup -q -n edk2-%{edk2_stable_str}
-
-# Ensure old shell and binary packages are not used
-rm -rf EdkShellBinPkg
-rm -rf EdkShellPkg
-rm -rf FatBinPkg
-rm -rf ShellBinPkg
+# We needs some special git config options that %%autosetup won't give us.
+# We init the git dir ourselves, then tell %%autosetup not to blow it away.
+%setup -q -n edk2-%{GITCOMMIT}
+git init -q
+git config core.whitespace cr-at-eol
+git config am.keepcr true
+# -T is passed to %%setup to not re-extract the archive
+# -D is passed to %%setup to not delete the existing archive dir
+%autosetup -T -D -n edk2-%{GITCOMMIT} -S git_am
 
 # copy whitepaper into place
-cp -a -- %{SOURCE2} .
+cp -a -- %{SOURCE1} .
 # extract openssl into place
-tar -xf %{SOURCE1} --strip-components=1 --directory CryptoPkg/Library/OpensslLib/openssl
-(cd CryptoPkg/Library/OpensslLib && perl process_files.pl)
+tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 # extract softfloat into place
 tar -xf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
@@ -250,9 +254,6 @@ tar -xf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatL
 tar -xf %{SOURCE3}
 mv qemu-ovmf-secureboot-%{qosb_version}/README.md README.qosb
 mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
-
-%autopatch -p1
-base64 --decode < MdeModulePkg/Logo/Logo-OpenSSL.bmp.b64 > MdeModulePkg/Logo/Logo-OpenSSL.bmp
 
 # Extract OEM string from the RH cert, as described here
 # https://bugzilla.tianocore.org/show_bug.cgi?id=1747#c2
@@ -509,7 +510,6 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 %{_bindir}/GenSec
 %{_bindir}/LzmaCompress
 %{_bindir}/LzmaF86Compress
-%{_bindir}/Split
 %{_bindir}/TianoCompress
 %{_bindir}/VfrCompile
 %{_bindir}/VolInfo

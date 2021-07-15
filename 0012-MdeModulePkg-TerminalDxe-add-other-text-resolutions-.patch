@@ -1,7 +1,49 @@
-From 3b413c99f3a5087710f4932b4ba61c2646ae84b9 Mon Sep 17 00:00:00 2001
+From 6901201d2cd1d943ebd41f3d65102f787540d3c4 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 18:40:35 +0100
-Subject: [PATCH] MdeModulePkg: TerminalDxe: add other text resolutions
+Subject: MdeModulePkg: TerminalDxe: add other text resolutions (RHEL only)
+
+Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
+RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
+
+- no change
+
+Notes about the RHEL-8.2/20190904-37eef91017ad [edk2-stable201908] ->
+RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] rebase:
+
+- no changes
+
+Notes about the RHEL-8.1/20190308-89910a39dcfd [edk2-stable201903] ->
+RHEL-8.2/20190904-37eef91017ad [edk2-stable201908] rebase:
+
+- no changes
+
+Notes about the RHEL-8.0/20180508-ee3198e672e2 ->
+RHEL-8.1/20190308-89910a39dcfd rebase:
+
+- no change
+
+Notes about the RHEL-7.6/ovmf-20180508-2.gitee3198e672e2.el7 ->
+RHEL-8.0/20180508-ee3198e672e2 rebase:
+
+- reorder the rebase changelog in the commit message so that it reads like
+  a blog: place more recent entries near the top
+- no changes to the patch body
+
+Notes about the 20171011-92d07e48907f -> 20180508-ee3198e672e2 rebase:
+
+- update commit message as requested in
+  <https://bugzilla.redhat.com/show_bug.cgi?id=1503316#c0>
+
+Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
+
+- no changes
+
+Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
+
+- adapt commit 0bc77c63de03 (code and commit message) to upstream commit
+  390b95a49c14 ("MdeModulePkg/TerminalDxe: Refine
+  InitializeTerminalConsoleTextMode", 2017-01-10).
 
 When the console output is multiplexed to several devices by
 ConSplitterDxe, then ConSplitterDxe builds an intersection of text modes
@@ -54,23 +96,17 @@ the most frequent (1d) values from the intersection, and eg. the MODE
 command in the UEFI shell will offer the "best" (ie. full screen)
 resolution too.
 
-Upstream status: three calendar months (with on-and-off discussion and
-patches) have not been enough to find a solution to this problem that
-would please all stakeholders.
-
-Notes about the 20160608b-988715a -> 20170228-c325e41585e3 rebase:
-
-- adapt commit 0bc77c63de03 (code and commit message) to upstream commit
-  390b95a49c14 ("MdeModulePkg/TerminalDxe: Refine
-  InitializeTerminalConsoleTextMode", 2017-01-10).
-
-Notes about the 20170228-c325e41585e3 -> 20171011-92d07e48907f rebase:
-
-- no changes
+Upstreaming efforts for this patch have been discontinued; it was clear
+from the off-list thread that consensus was impossible to reach.
 
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 99dc3720ac86059f60156197328cc433603c536e)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+(cherry picked from commit d2066c1748f885043026c51dec1bc8d6d406ae8f)
+(cherry picked from commit 1facdd58e946c584a3dc1e5be8f2f837b5a7c621)
+(cherry picked from commit 28faeb5f94b4866b9da16cf2a1e4e0fc09a26e37)
+(cherry picked from commit 4e4e15b80a5b2103eadd495ef4a830d46dd4ed51)
+(cherry picked from commit 12cb13a1da913912bd9148ce8f2353a75be77f18)
+(cherry picked from commit 82b9edc5fef3a07227a45059bbe821af7b9abd69)
 ---
  .../Universal/Console/TerminalDxe/Terminal.c  | 41 +++++++++++++++++--
  1 file changed, 38 insertions(+), 3 deletions(-)
@@ -127,3 +163,6 @@ index a98b690c8b..ded5513c74 100644
    //
    // New modes can be added here.
    //
+-- 
+2.27.0
+

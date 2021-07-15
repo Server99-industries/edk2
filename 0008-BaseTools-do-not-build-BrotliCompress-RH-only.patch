@@ -1,7 +1,12 @@
-From cab35d13e43ef37e746befaa1f3c8200edf4e420 Mon Sep 17 00:00:00 2001
+From dca56cf4d28bbbb1d3be029ce9a6710cb3f6cd2f Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 4 Jun 2020 13:34:12 +0200
-Subject: [PATCH] BaseTools: do not build BrotliCompress (RH only)
+Subject: BaseTools: do not build BrotliCompress (RH only)
+
+Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
+RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
+
+- no change
 
 Notes about the RHEL-8.2/20190904-37eef91017ad [edk2-stable201908] ->
 RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] rebase:
@@ -16,16 +21,16 @@ submodules (RH only").
 Do not attempt to build BrotliCompress.
 
 Signed-off-by: Laszlo Ersek <lersek@redhat.com>
+(cherry picked from commit db8ccca337e2c5722c1d408d2541cf653d3371a2)
 ---
  BaseTools/Source/C/GNUmakefile | 1 -
- MdeModulePkg/MdeModulePkg.dec  | 1 -
- 2 files changed, 2 deletions(-)
+ 1 file changed, 1 deletion(-)
 
 diff --git a/BaseTools/Source/C/GNUmakefile b/BaseTools/Source/C/GNUmakefile
-index df4eb64ea9..52777eaff1 100644
+index 8c191e0c38..3eae824a1c 100644
 --- a/BaseTools/Source/C/GNUmakefile
 +++ b/BaseTools/Source/C/GNUmakefile
-@@ -45,7 +45,6 @@ all: makerootdir subdirs
+@@ -48,7 +48,6 @@ all: makerootdir subdirs
  LIBRARIES = Common
  VFRAUTOGEN = VfrCompile/VfrLexer.h
  APPLICATIONS = \
@@ -33,15 +38,6 @@ index df4eb64ea9..52777eaff1 100644
    VfrCompile \
    EfiRom \
    GenFfs \
-diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index e562bed57e..7367adbaa3 100644
---- a/MdeModulePkg/MdeModulePkg.dec
-+++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -25,7 +25,6 @@
-   Include
- 
- [Includes.Common.Private]
--  Library/BrotliCustomDecompressLib/brotli/c/include
- 
- [LibraryClasses]
-   ##  @libraryclass  Defines a set of methods to reset whole system.
+-- 
+2.27.0
+
