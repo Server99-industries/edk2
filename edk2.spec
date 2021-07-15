@@ -1,7 +1,3 @@
-# RPM doesn't detect that code in /usr/share is python3, this forces it
-# https://fedoraproject.org/wiki/Changes/Avoid_usr_bin_python_in_RPM_Build#Python_bytecompilation
-%global __python %{__python3}
-
 %define GITDATE        20210527
 %define GITCOMMIT      e1999b264f1f
 %define TOOLCHAIN      GCC5
