@@ -56,7 +56,6 @@ Source5: RedHatSecureBootPkKek1.pem
 
 # Fedora specific sources
 Source50: softfloat-%{softfloat_version}.tar.xz
-Source51: build-iso.sh
 Source52: 40-edk2-ovmf-x64-sb-enrolled.json
 Source53: 50-edk2-ovmf-x64-sb.json
 Source54: 60-edk2-ovmf-x64.json
@@ -113,12 +112,13 @@ BuildRequires:  gcc-x86_64-linux-gnu
 %endif
 BuildRequires:  iasl
 BuildRequires:  nasm
-BuildRequires:  qemu-img
 BuildRequires:  xorriso
 BuildRequires:  bc
 BuildRequires:  sed
 BuildRequires:  perl
 BuildRequires:  findutils
+BuildRequires:  dosfstools
+BuildRequires:  mtools
 
 # These are for QOSB
 BuildRequires:  python3-requests
@@ -303,6 +303,41 @@ export GCC5_AARCH64_PREFIX="aarch64-linux-gnu-"
 export GCC5_ARM_PREFIX="arm-linux-gnu-"
 %endif
 
+build_iso() {
+  # Prepare an ISO image that boots the UEFI shell.
+  dir="$1"
+  UEFI_SHELL_BINARY=${dir}/Shell.efi
+  ENROLLER_BINARY=${dir}/EnrollDefaultKeys.efi
+  UEFI_SHELL_IMAGE=uefi_shell.img
+  ISO_IMAGE=UefiShell.iso
+
+  UEFI_SHELL_BINARY_BNAME=$(basename -- "$UEFI_SHELL_BINARY")
+  UEFI_SHELL_SIZE=$(stat --format=%s -- "$UEFI_SHELL_BINARY")
+  ENROLLER_SIZE=$(stat --format=%s -- "$ENROLLER_BINARY")
+
+  # add 1MB then 10% for metadata
+  UEFI_SHELL_IMAGE_KB=$((
+    (UEFI_SHELL_SIZE + ENROLLER_SIZE + 1 * 1024 * 1024) * 11 / 10 / 1024
+  ))
+
+  # create non-partitioned FAT image
+  rm -f -- "$UEFI_SHELL_IMAGE"
+  mkdosfs -C "$UEFI_SHELL_IMAGE" -n UEFI_SHELL -- "$UEFI_SHELL_IMAGE_KB"
+
+  # copy the shell binary into the FAT image
+  export MTOOLS_SKIP_CHECK=1
+  mmd   -i "$UEFI_SHELL_IMAGE"                       ::efi
+  mmd   -i "$UEFI_SHELL_IMAGE"                       ::efi/boot
+  mcopy -i "$UEFI_SHELL_IMAGE"  "$UEFI_SHELL_BINARY" ::efi/boot/bootx64.efi
+  mcopy -i "$UEFI_SHELL_IMAGE"  "$ENROLLER_BINARY"   ::
+  mdir  -i "$UEFI_SHELL_IMAGE"  -/                   ::
+
+  # build ISO with FAT image file as El Torito EFI boot image
+  mkisofs -input-charset ASCII -J -rational-rock \
+    -e "$UEFI_SHELL_IMAGE" -no-emul-boot \
+    -o "$ISO_IMAGE" "$UEFI_SHELL_IMAGE"
+}
+
 # build ovmf (x64)
 %if 0%{?build_ovmf_x64:1}
 mkdir -p ovmf
@@ -316,8 +351,9 @@ cp Build/Ovmf3264/*/FV/OVMF_CODE.fd ovmf/OVMF_CODE.secboot.fd
 
 # build ovmf (x64) shell iso with EnrollDefaultKeys
 cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
-cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
-sh %{_sourcedir}/build-iso.sh ovmf/
+cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf/
+build_iso ovmf/
+mv UefiShell.iso ovmf
 
 # Enroll the default certificates in a separate variable store template.
 %{__python3} ovmf-vars-generator --verbose --verbose \
@@ -345,9 +381,8 @@ build ${OVMF_SB_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
 cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/OVMF_CODE.secboot.fd
 
 # build ovmf-ia32 shell iso with EnrollDefaultKeys
-cp Build/OvmfIa32/*/IA32/Shell.efi ovmf-ia32/Shell.efi
-cp Build/OvmfIa32/*/IA32/EnrollDefaultKeys.efi ovmf-ia32/EnrollDefaultKeys.efi
-sh %{_sourcedir}/build-iso.sh ovmf-ia32/
+build_iso Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32
+mv UefiShell.iso ovmf-ia32
 %endif
 
 
