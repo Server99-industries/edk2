@@ -1,12 +1,12 @@
 {
-    "description": "UEFI firmware for aarch64, verbose logs",
+    "description": "UEFI firmware for ARM64 virtual machines",
     "interface-types": [
         "uefi"
     ],
     "mapping": {
         "device": "flash",
         "executable": {
-            "filename": "/usr/share/edk2/aarch64/QEMU_EFI-pflash.raw",
+            "filename": "/usr/share/edk2/aarch64/QEMU_EFI-silent-pflash.raw",
             "format": "raw"
         },
         "nvram-template": {
@@ -23,7 +23,7 @@
         }
     ],
     "features": [
-        "verbose-static"
+
     ],
     "tags": [
 

@@ -1,5 +1,5 @@
 {
-    "description": "OVMF for x86_64, with SB+SMM, empty varstore",
+    "description": "OVMF with SB+SMM, SB enabled, MS certs enrolled",
     "interface-types": [
         "uefi"
     ],
@@ -10,7 +10,7 @@
             "format": "raw"
         },
         "nvram-template": {
-            "filename": "/usr/share/edk2/ovmf/OVMF_VARS.fd",
+            "filename": "/usr/share/edk2/ovmf/OVMF_VARS.secboot.fd",
             "format": "raw"
         }
     },
@@ -25,6 +25,7 @@
     "features": [
         "acpi-s3",
         "amd-sev",
+        "enrolled-keys",
         "requires-smm",
         "secure-boot",
         "verbose-dynamic"
