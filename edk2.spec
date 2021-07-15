@@ -3,17 +3,14 @@
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1g
 
-%global qosb_version     20200228-gitc3e16b3
 %global softfloat_version 20180726-gitb64af41
 
-# Enable this to skip secureboot enrollment, if problems pop up
-%global skip_enroll 0
-
 %define qosb_testing 0
-
 %ifarch x86_64
 %define qosb_testing 1
 %endif
+%define qemu_binary /usr/bin/qemu-system-x86_64
+
 %if 0%{?fedora:1}
 %define cross 1
 %endif
@@ -53,21 +50,21 @@ URL:        http://www.tianocore.org
 Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-bdd048e929dcfcf2f046d74e812e0e3d5fc58504.tar.xz
-#Source3:        https://github.com/puiterwijk/qemu-ovmf-secureboot/archive/v{qosb_version}/qemu-ovmf-secureboot-{qosb_version}.tar.gz
-Source3:        qemu-ovmf-secureboot-%{qosb_version}.tar.xz
-Source4:        softfloat-%{softfloat_version}.tar.xz
-Source5:        RedHatSecureBootPkKek1.pem
-Source11:       build-iso.sh
+Source3: ovmf-vars-generator
+Source4: LICENSE.qosb
+Source5: RedHatSecureBootPkKek1.pem
 
-# Fedora-specific JSON "descriptor files"
-Source14:       40-edk2-ovmf-x64-sb-enrolled.json
-Source15:       50-edk2-ovmf-x64-sb.json
-Source16:       60-edk2-ovmf-x64.json
-Source17:       40-edk2-ovmf-ia32-sb-enrolled.json
-Source18:       50-edk2-ovmf-ia32-sb.json
-Source19:       60-edk2-ovmf-ia32.json
-Source20:       70-edk2-aarch64-verbose.json
-Source21:       70-edk2-arm-verbose.json
+# Fedora specific sources
+Source50: softfloat-%{softfloat_version}.tar.xz
+Source51: build-iso.sh
+Source52: 40-edk2-ovmf-x64-sb-enrolled.json
+Source53: 50-edk2-ovmf-x64-sb.json
+Source54: 60-edk2-ovmf-x64.json
+Source55: 40-edk2-ovmf-ia32-sb-enrolled.json
+Source56: 50-edk2-ovmf-ia32-sb.json
+Source57: 60-edk2-ovmf-ia32.json
+Source58: 70-edk2-aarch64-verbose.json
+Source59: 70-edk2-arm-verbose.json
 
 # non-upstream patches
 Patch0008: 0008-BaseTools-do-not-build-BrotliCompress-RH-only.patch
@@ -126,17 +123,15 @@ BuildRequires:  findutils
 # These are for QOSB
 BuildRequires:  python3-requests
 BuildRequires:  qemu-system-x86
-%if %{?qosb_testing}
-# This is used for testing the enrollment: builds are run in a chroot, lacking
-# a kernel. The testing is only performed on x86_64 for now, but we can't make
-# the BuildRequires only on a specific arch, as that'd come through in the SRPM
-# NOTE: The actual enrollment needs to happen in all builds for all architectures,
-# because OVMF is built as noarch, which means that koji enforces that the build
-# results don't actually differ per arch, and then it picks a random arches' build
-# for the actual RPM.
-BuildRequires:  kernel-core
-%endif
 BuildRequires: make
+
+%if %{qosb_testing}
+# For verifying SB enablement in the above variable store template, we need a
+# guest kernel that prints "Secure boot enabled".
+BuildRequires: kernel-core >= 4.18.0-161
+BuildRequires: rpmdevtools
+%endif
+
 
 %description
 EDK II is a development code base for creating UEFI drivers, applications
@@ -239,26 +234,25 @@ git config am.keepcr true
 # -D is passed to %%setup to not delete the existing archive dir
 %autosetup -T -D -n edk2-%{GITCOMMIT} -S git_am
 
-# copy whitepaper into place
-cp -a -- %{SOURCE1} .
+cp -a -- %{SOURCE1} %{SOURCE3} .
 # extract openssl into place
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 # extract softfloat into place
-tar -xf %{SOURCE4} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
+tar -xf %{SOURCE50} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
-# Extract QOSB
-tar -xf %{SOURCE3}
-mv qemu-ovmf-secureboot-%{qosb_version}/README.md README.qosb
-mv qemu-ovmf-secureboot-%{qosb_version}/LICENSE LICENSE.qosb
-
-# Extract OEM string from the RH cert, as described here
-# https://bugzilla.tianocore.org/show_bug.cgi?id=1747#c2
+# Format the Red Hat-issued certificate that is to be enrolled as both Platform
+# Key and first Key Exchange Key, as an SMBIOS OEM String. This means stripping
+# the PEM header and footer, and prepending the textual representation of the
+# GUID that identifies this particular OEM String to "EnrollDefaultKeys.efi",
+# plus the separator ":". For details, see
+# <https://bugzilla.tianocore.org/show_bug.cgi?id=1747> comments 2, 7, 14.
 sed \
   -e 's/^-----BEGIN CERTIFICATE-----$/4e32566d-8e9e-4f52-81d3-5bb9715f9727:/' \
   -e '/^-----END CERTIFICATE-----$/d' \
-  %{_sourcedir}/RedHatSecureBootPkKek1.pem \
-| tr -d '\n' \
-> PkKek1.oemstr
+  %{SOURCE5} \
+  > PkKek1.oemstr
+
+cp -a -- %{SOURCE4} .
 
 
 %build
@@ -325,20 +319,15 @@ cp Build/Ovmf3264/*/X64/Shell.efi ovmf/
 cp Build/Ovmf3264/*/X64/EnrollDefaultKeys.efi ovmf
 sh %{_sourcedir}/build-iso.sh ovmf/
 
-%if !%{skip_enroll}
-python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
-    --qemu-binary /usr/bin/qemu-system-x86_64 \
-    --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
+# Enroll the default certificates in a separate variable store template.
+%{__python3} ovmf-vars-generator --verbose --verbose \
+    --qemu-binary        %{qemu_binary} \
+    --ovmf-binary        ovmf/OVMF_CODE.secboot.fd \
     --ovmf-template-vars ovmf/OVMF_VARS.fd \
-    --uefi-shell-iso ovmf/UefiShell.iso \
-    --oem-string "$(< PkKek1.oemstr)" \
+    --uefi-shell-iso     ovmf/UefiShell.iso \
+    --oem-string         "$(< PkKek1.oemstr)" \
     --skip-testing \
     ovmf/OVMF_VARS.secboot.fd
-%else
-# This isn't going to actually give secureboot, but makes json files happy
-# if we need to test disabling ovmf-vars-generator
-cp ovmf/OVMF_VARS.fd ovmf/OVMF_VARS.secboot.fd
-%endif
 %endif
 
 
@@ -386,25 +375,25 @@ dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
 
 
 %check
-%if 0%{?build_ovmf_x64:1}
-%if 0%{?qosb_testing}
-%if !%{skip_enroll}
-KERNELPATH="$(find /lib/modules -name vmlinuz | head -1)"
-python3 qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator \
-    --qemu-binary /usr/bin/qemu-system-x86_64 \
-    --ovmf-binary ovmf/OVMF_CODE.secboot.fd \
-    --ovmf-template-vars ovmf/OVMF_VARS.fd \
-    --uefi-shell-iso ovmf/UefiShell.iso \
-    --skip-enrollment \
-    --print-output \
-    --no-download \
-    -vv \
-    --kernel-path "$KERNELPATH" \
-    ovmf/OVMF_VARS.secboot.fd
-%endif
-%endif
-%endif
 
+%if %{qosb_testing}
+# Of the installed host kernels, boot the one with the highest Version-Release
+# under OVMF, and check if it prints "Secure boot enabled".
+KERNEL_PKG=$(rpm -q kernel-core | rpmdev-sort | tail -n 1)
+KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
+
+%{__python3} ovmf-vars-generator --verbose --verbose \
+  --qemu-binary        %{qemu_binary} \
+  --ovmf-binary        ovmf/OVMF_CODE.secboot.fd \
+  --ovmf-template-vars ovmf/OVMF_VARS.fd \
+  --uefi-shell-iso     ovmf/UefiShell.iso \
+  --kernel-path        $KERNEL_IMG \
+  --skip-enrollment \
+  --no-download \
+  ovmf/OVMF_VARS.secboot.fd
+
+# endif qosb_testing
+%endif
 
 
 %install
@@ -490,8 +479,7 @@ done
 %py_byte_compile %{python3} %{buildroot}%{_datadir}/edk2/Python
 %endif
 
-
-install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_bindir}
+install -p ovmf-vars-generator %{buildroot}%{_bindir}
 
 
 %files tools
@@ -533,7 +521,6 @@ install qemu-ovmf-secureboot-%{qosb_version}/ovmf-vars-generator %{buildroot}%{_
 
 %files qosb
 %license LICENSE.qosb
-%doc README.qosb
 %{_bindir}/ovmf-vars-generator
 
 %if 0%{?build_ovmf_x64:1}
