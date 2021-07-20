@@ -39,6 +39,7 @@ ExclusiveArch: x86_64 aarch64
 
 %global softfloat_version 20180726-gitb64af41
 %define cross %{defined fedora}
+%define disable_werror %{defined fedora}
 
 
 Name:       edk2
@@ -305,7 +306,9 @@ OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SECURE_BOOT_ENABLE"
 OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SMM_REQUIRE"
 OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
 
+%if %{disable_werror}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
+%endif
 
 
 %if %{cross}
