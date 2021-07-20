@@ -541,7 +541,7 @@ install -m 0644 edk2-aarch64-verbose.json \
 
 %if %{defined fedora}
 # Install extra x86_64 json files
-install -p -m 0644 edk2-ovmf-nosb.json \
+install -p -m 0644 %{_sourcedir}/edk2-ovmf-nosb.json \
   %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
 
 
