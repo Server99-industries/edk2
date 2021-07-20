@@ -70,6 +70,7 @@ Source50: softfloat-%{softfloat_version}.tar.xz
 Source55: 40-edk2-ovmf-ia32-sb-enrolled.json
 Source56: 50-edk2-ovmf-ia32-sb.json
 Source57: 60-edk2-ovmf-ia32.json
+Source58: edk2-ovmf-nosb.json
 Source59: 70-edk2-arm-verbose.json
 
 Patch0008: 0008-BaseTools-do-not-build-BrotliCompress-RH-only.patch
@@ -536,6 +537,11 @@ install -m 0644 edk2-aarch64-verbose.json \
 
 
 %if %{defined fedora}
+# Install extra x86_64 json files
+install -p -m 0644 edk2-ovmf-nosb.json \
+  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
+
+
 # install ia32
 cp -a ovmf-ia32 %{buildroot}%{_datadir}/%{name}
 
@@ -626,6 +632,9 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 %{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf.json
+%if %{defined fedora}
+%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
+%endif
 # endif build_ovmf
 %endif
 
