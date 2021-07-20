@@ -740,6 +740,10 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Tue Jul 20 2021 Cole Robinson <crobinso@redhat.com> - 20210527gite1999b264f1f-1
+- Update to git snapshot
+- Sync with c9s packaging
+
 * Mon Jun 14 2021 Jiri Kucera <jkucera@redhat.com> - 20200801stable-5
 - Replace genisoimage with xorriso
 
