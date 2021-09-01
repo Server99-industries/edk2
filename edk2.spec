@@ -18,10 +18,15 @@ ExclusiveArch: x86_64 aarch64
 %define qosb_testing 1
 %endif
 
-%if %{defined rhel}
+%if %{defined fedora} || %{defined eln}
+%define qemu_package qemu-system-x86-core
+%define qemu_binary /usr/bin/qemu-system-x86_64
+%else
 %define qemu_package qemu-kvm-core >= 2.12.0-89
 %define qemu_binary /usr/libexec/qemu-kvm
+%endif
 
+%if %{defined rhel}
 %define build_ovmf 0
 %define build_aarch64 0
 %ifarch x86_64
@@ -31,8 +36,6 @@ ExclusiveArch: x86_64 aarch64
   %define build_aarch64 1
 %endif
 %else
-%define qemu_package qemu-system-x86-core
-%define qemu_binary /usr/bin/qemu-system-x86_64
 %define build_ovmf 1
 %define build_aarch64 1
 %endif
@@ -44,7 +47,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -740,6 +743,9 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Wed Sep  1 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-3
+- Fix qemu packaging conditionals for ELN builds
+
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 20210527gite1999b264f1f-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
