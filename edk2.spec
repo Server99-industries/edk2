@@ -47,7 +47,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -79,7 +79,6 @@ Source59: 70-edk2-arm-verbose.json
 
 Patch0008: 0008-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0009: 0009-MdeModulePkg-remove-package-private-Brotli-include-p.patch
-Patch0010: 0010-advertise-OpenSSL-on-TianoCore-splash-screen-boot-lo.patch
 Patch0011: 0011-OvmfPkg-increase-max-debug-message-length-to-512-RHE.patch
 Patch0012: 0012-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
 Patch0013: 0013-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
@@ -743,6 +742,9 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Mon Nov 29 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-4
+- Drop customized splash screen boot logo
+
 * Wed Sep  1 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-3
 - Fix qemu packaging conditionals for ELN builds
 
