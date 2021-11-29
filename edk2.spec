@@ -8,8 +8,9 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64
 ExclusiveArch: x86_64 aarch64
 %endif
 
-%define GITDATE        20210527
-%define GITCOMMIT      e1999b264f1f
+# edk2-stable202111
+%define GITDATE        20211126
+%define GITCOMMIT      bb1bba3d7767
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
@@ -47,13 +48,13 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    5%{?dist}
+Release:    1%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
 
 # The source tarball is created using following commands:
-# COMMIT=e1999b264f1f
+# COMMIT=bb1bba3d7767
 # git archive --format=tar --prefix=edk2-$COMMIT/ $COMMIT \
 # | xz -9ev >/tmp/edk2-$COMMIT.tar.xz
 Source0: edk2-%{GITCOMMIT}.tar.xz
@@ -742,6 +743,11 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Mon Dec 6 2021 Gerd Hoffmann <kraxel@redhat.com> - 20211126gitbb1bba3d7767-1
+- Update to edk2-stable202111
+- Resolves rhbz#1978966
+- Resolves rhbz#2026744
+
 * Mon Dec  6 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-5
 - Drop glibc strcmp workaround
 
