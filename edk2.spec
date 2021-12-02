@@ -77,6 +77,7 @@ Source56: 50-edk2-ovmf-ia32-sb.json
 Source57: 60-edk2-ovmf-ia32.json
 Source58: edk2-ovmf-nosb.json
 Source59: 70-edk2-arm-verbose.json
+Source60: edk2-microvm.json
 
 Patch0008: 0008-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0009: 0009-MdeModulePkg-remove-package-private-Brotli-include-p.patch
@@ -98,6 +99,7 @@ Patch0025: 0025-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
 Patch0026: 0026-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0027: 0027-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 Patch0028: 0028-OvmfPkg-MemEncryptSevLib-Check-the-guest-type-before.patch
+Patch0029: 0029-OvmfPkg-Microvm-take-PcdResizeXterm-from-the-QEMU-co.patch
 
 # Fedora specific
 Patch1000: fedora-Tweak-the-tools_def-to-support-cross-compiling.patch
@@ -406,6 +408,9 @@ build ${CC_FLAGS} -a AARCH64 \
 
 
 %if %{defined fedora}
+# build microvm
+build ${OVMF_FLAGS} -a X64 -p OvmfPkg/Microvm/MicrovmX64.dsc
+
 # build ovmf-ia32
 mkdir -p ovmf-ia32
 build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
@@ -547,6 +552,12 @@ install -m 0644 edk2-aarch64-verbose.json \
 
 
 %if %{defined fedora}
+# install microvm
+install -m 0644 Build/MicrovmX64/DEBUG_%{TOOLCHAIN}/FV/MICROVM.fd \
+  %{buildroot}%{_datadir}/%{name}/ovmf/MICROVM.fd
+install -p -m 0644 %{_sourcedir}/edk2-microvm.json \
+  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
+
 # Install extra x86_64 json files
 install -p -m 0644 %{_sourcedir}/edk2-ovmf-nosb.json \
   %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
@@ -643,7 +654,9 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 %{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf.json
 %if %{defined fedora}
+%{_datadir}/%{name}/ovmf/MICROVM.fd
 %{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
+%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
 %endif
 # endif build_ovmf
 %endif
