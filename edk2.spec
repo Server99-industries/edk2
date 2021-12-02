@@ -97,6 +97,7 @@ Patch0024: 0024-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0025: 0025-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
 Patch0026: 0026-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0027: 0027-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
+Patch0028: 0028-OvmfPkg-MemEncryptSevLib-Check-the-guest-type-before.patch
 
 # Fedora specific
 Patch1000: fedora-Tweak-the-tools_def-to-support-cross-compiling.patch
