@@ -280,6 +280,16 @@ tar -xf %{SOURCE50} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloat
 
 
 %build
+
+# Workaround brokenness triggered by glibc >= 2.34.9000-17.fc36.x86_64
+# Suspected EVEX strcmp impl is not working, and hiding
+# this CPU flag prevents IFunc choosing the EVEX impl
+#
+# Remove once there is resolution to
+#
+#   https://bugzilla.redhat.com/show_bug.cgi?id=2026399
+export GLIBC_TUNABLES=glibc.cpu.hwcaps=-AVX512VL
+
 export PYTHON_COMMAND=%{__python3}
 source ./edksetup.sh
 %make_build -C "$EDK_TOOLS_PATH" \
@@ -744,6 +754,7 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 %changelog
 * Mon Nov 29 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-4
 - Drop customized splash screen boot logo
+- Temporary workaround for suspected glibc strcmp bug breaking builds in koji
 
 * Wed Sep  1 2021 Daniel P. Berrangé <berrange@redhat.com> - 20210527gite1999b264f1f-3
 - Fix qemu packaging conditionals for ELN builds
