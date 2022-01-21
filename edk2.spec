@@ -1,3 +1,7 @@
+# https://fedoraproject.org/wiki/Changes/SetBuildFlagsBuildCheck
+# breaks cross-building
+%undefine _auto_set_build_flags
+
 %if %{defined fedora}
 # actual firmware builds support cross-compiling.  edk2-tools
 # in theory should build everywhere without much trouble, but
