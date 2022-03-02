@@ -508,10 +508,9 @@ install -m 0644 edk2-ovmf-cc.json \
 # endif build_ovmf
 %endif
 
+mkdir -p %{buildroot}%{_datadir}/AAVMF
 %if %{build_aarch64}
-mkdir -p \
-  %{buildroot}%{_datadir}/AAVMF \
-  %{buildroot}%{_datadir}/%{name}/aarch64
+mkdir -p %{buildroot}%{_datadir}/%{name}/aarch64
 
 # Pad and install the verbose binary.
 cat Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.verbose.fd \
