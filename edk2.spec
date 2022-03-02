@@ -412,6 +412,7 @@ build ${CC_FLAGS} -a AARCH64 \
 
 
 %if %{defined fedora}
+%if %{build_ovmf}
 # build microvm
 build ${OVMF_FLAGS} -a X64 -p OvmfPkg/Microvm/MicrovmX64.dsc
 
@@ -432,7 +433,8 @@ build_iso Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32
 mv Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/UefiShell.iso ovmf-ia32
 cp -a Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/Shell.efi ovmf-ia32
 cp -a Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/EnrollDefaultKeys.efi ovmf-ia32
-
+# endif build_ovmf
+%endif
 
 # build ARMv7 firmware
 mkdir -p arm
@@ -555,6 +557,7 @@ install -m 0644 edk2-aarch64-verbose.json \
 
 
 %if %{defined fedora}
+%if %{build_ovmf}
 # install microvm
 install -m 0644 Build/MicrovmX64/DEBUG_%{TOOLCHAIN}/FV/MICROVM.fd \
   %{buildroot}%{_datadir}/%{name}/ovmf/MICROVM.fd
@@ -572,7 +575,8 @@ cp -a ovmf-ia32 %{buildroot}%{_datadir}/%{name}
 for f in %{_sourcedir}/*edk2-ovmf-ia32*.json; do
     install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
 done
-
+# endif build_ovmf
+%endif
 
 # install arm32
 cp -a arm %{buildroot}%{_datadir}/%{name}
@@ -708,6 +712,7 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %if %{defined fedora}
+%if %{build_ovmf}
 %files ovmf-ia32
 %common_files
 %dir %{_datadir}/%{name}/ovmf-ia32
@@ -722,7 +727,7 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 %{_datadir}/qemu/firmware/40-edk2-ovmf-ia32-sb-enrolled.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-ia32-sb.json
 %{_datadir}/qemu/firmware/60-edk2-ovmf-ia32.json
-
+%endif
 
 %files arm
 %common_files
