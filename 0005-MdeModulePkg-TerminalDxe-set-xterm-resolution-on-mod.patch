@@ -1,8 +1,8 @@
-From 9485b38e5dbfd2e23ea6ad0585e773d7842a1903 Mon Sep 17 00:00:00 2001
+From 7d89e95bad10d53c0b58f96606d076fe73a648cb Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
-Subject: MdeModulePkg: TerminalDxe: set xterm resolution on mode change (RH
- only)
+Subject: [PATCH 05/21] MdeModulePkg: TerminalDxe: set xterm resolution on mode
+ change (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -82,15 +82,15 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit bc2266f20de5db1636e09a07e4a72c8dbf505f5a)
 ---
  MdeModulePkg/MdeModulePkg.dec                 |  4 +++
- .../Console/TerminalDxe/TerminalConOut.c      | 30 +++++++++++++++++++
  .../Console/TerminalDxe/TerminalDxe.inf       |  2 ++
- 3 files changed, 36 insertions(+)
+ .../Console/TerminalDxe/TerminalConOut.c      | 29 +++++++++++++++++++
+ 3 files changed, 35 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index ba2d0290e7..ff70d6e6eb 100644
+index 56138abbe407..8a2bc9e4f80b 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -2046,6 +2046,10 @@
+@@ -2080,6 +2080,10 @@ [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
    # @Prompt Enable PCIe Resizable BAR Capability support.
    gEfiMdeModulePkgTokenSpaceGuid.PcdPcieResizableBarSupport|FALSE|BOOLEAN|0x10000024
  
@@ -101,8 +101,28 @@ index ba2d0290e7..ff70d6e6eb 100644
  [PcdsPatchableInModule]
    ## Specify memory size with page number for PEI code when
    #  Loading Module at Fixed Address feature is enabled.
+diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+index b2a8aeba8510..eff625346539 100644
+--- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
++++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+@@ -55,6 +55,7 @@ [LibraryClasses]
+   DebugLib
+   PcdLib
+   BaseLib
++  PrintLib
+ 
+ [Guids]
+   ## SOMETIMES_PRODUCES ## Variable:L"ConInDev"
+@@ -87,6 +88,7 @@ [Protocols]
+ [Pcd]
+   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType           ## SOMETIMES_CONSUMES
+   gEfiMdeModulePkgTokenSpaceGuid.PcdErrorCodeSetVariable    ## CONSUMES
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm             ## CONSUMES
+ 
+ # [Event]
+ # # Relative timer event set by UnicodeToEfiKey(), used to be one 2 seconds input timeout.
 diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
-index aae470e956..26156857aa 100644
+index 7809869e7d49..496849458db4 100644
 --- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 +++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConOut.c
 @@ -7,6 +7,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -114,9 +134,9 @@ index aae470e956..26156857aa 100644
  #include "Terminal.h"
  
  //
-@@ -80,6 +82,16 @@ CHAR16 mSetCursorPositionString[]  = { ESC, '[', '0', '0', ';', '0', '0', 'H', 0
- CHAR16 mCursorForwardString[]      = { ESC, '[', '0', '0', 'C', 0 };
- CHAR16 mCursorBackwardString[]     = { ESC, '[', '0', '0', 'D', 0 };
+@@ -80,6 +82,15 @@ CHAR16  mSetCursorPositionString[] = { ESC, '[', '0', '0', ';', '0', '0', 'H', 0
+ CHAR16  mCursorForwardString[]     = { ESC, '[', '0', '0', 'C', 0 };
+ CHAR16  mCursorBackwardString[]    = { ESC, '[', '0', '0', 'D', 0 };
  
 +//
 +// Note that this is an ASCII format string, taking two INT32 arguments:
@@ -124,26 +144,25 @@ index aae470e956..26156857aa 100644
 +//
 +// A %d (INT32) format specification can expand to at most 11 characters.
 +//
-+CHAR8 mResizeTextAreaFormatString[] = "\x1B[8;%d;%dt";
-+#define RESIZE_SEQ_SIZE (sizeof mResizeTextAreaFormatString + 2 * (11 - 2))
-+
++CHAR8  mResizeTextAreaFormatString[] = "\x1B[8;%d;%dt";
++#define RESIZE_SEQ_SIZE  (sizeof mResizeTextAreaFormatString + 2 * (11 - 2))
 +
  //
  // Body of the ConOut functions
  //
-@@ -506,6 +518,24 @@ TerminalConOutSetMode (
+@@ -498,6 +509,24 @@ TerminalConOutSetMode (
      return EFI_DEVICE_ERROR;
    }
  
 +  if (PcdGetBool (PcdResizeXterm)) {
-+    CHAR16 ResizeSequence[RESIZE_SEQ_SIZE];
++    CHAR16  ResizeSequence[RESIZE_SEQ_SIZE];
 +
 +    UnicodeSPrintAsciiFormat (
 +      ResizeSequence,
 +      sizeof ResizeSequence,
 +      mResizeTextAreaFormatString,
-+      (INT32) TerminalDevice->TerminalConsoleModeData[ModeNumber].Rows,
-+      (INT32) TerminalDevice->TerminalConsoleModeData[ModeNumber].Columns
++      (INT32)TerminalDevice->TerminalConsoleModeData[ModeNumber].Rows,
++      (INT32)TerminalDevice->TerminalConsoleModeData[ModeNumber].Columns
 +      );
 +    TerminalDevice->OutputEscChar = TRUE;
 +    Status                        = This->OutputString (This, ResizeSequence);
@@ -153,29 +172,9 @@ index aae470e956..26156857aa 100644
 +    }
 +  }
 +
-   This->Mode->Mode  = (INT32) ModeNumber;
+   This->Mode->Mode = (INT32)ModeNumber;
  
-   Status            = This->ClearScreen (This);
-diff --git a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-index b2a8aeba85..eff6253465 100644
---- a/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-+++ b/MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
-@@ -55,6 +55,7 @@
-   DebugLib
-   PcdLib
-   BaseLib
-+  PrintLib
- 
- [Guids]
-   ## SOMETIMES_PRODUCES ## Variable:L"ConInDev"
-@@ -87,6 +88,7 @@
- [Pcd]
-   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType           ## SOMETIMES_CONSUMES
-   gEfiMdeModulePkgTokenSpaceGuid.PcdErrorCodeSetVariable    ## CONSUMES
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm             ## CONSUMES
- 
- # [Event]
- # # Relative timer event set by UnicodeToEfiKey(), used to be one 2 seconds input timeout.
+   Status = This->ClearScreen (This);
 -- 
-2.27.0
+2.35.1
 

@@ -1,7 +1,8 @@
-From 6d968342cbfa40a8192cee7c685e1c794e6053df Mon Sep 17 00:00:00 2001
+From da4731a05cd2279c5ba504ad117ccd6256d75305 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:49:43 +0200
-Subject: ArmPlatformPkg: introduce fixed PCD for early hello message (RH only)
+Subject: [PATCH 09/21] ArmPlatformPkg: introduce fixed PCD for early hello
+ message (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -71,10 +72,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/ArmPlatformPkg/ArmPlatformPkg.dec b/ArmPlatformPkg/ArmPlatformPkg.dec
-index 3a25ddcdc8..b2b58553c7 100644
+index 3a25ddcdc8ca..b2b58553c7a6 100644
 --- a/ArmPlatformPkg/ArmPlatformPkg.dec
 +++ b/ArmPlatformPkg/ArmPlatformPkg.dec
-@@ -121,6 +121,13 @@
+@@ -121,6 +121,13 @@ [PcdsFixedAtBuild.common]
    ## If set, this will swap settings for HDLCD RED_SELECT and BLUE_SELECT registers
    gArmPlatformTokenSpaceGuid.PcdArmHdLcdSwapBlueRedSelect|FALSE|BOOLEAN|0x00000045
  
@@ -89,5 +90,5 @@ index 3a25ddcdc8..b2b58553c7 100644
    ## PL031 RealTimeClock
    gArmPlatformTokenSpaceGuid.PcdPL031RtcBase|0x0|UINT32|0x00000024
 -- 
-2.27.0
+2.35.1
 

@@ -1,8 +1,8 @@
-From e46d1e3f4c9b301acfa15fa4089661947e8742a4 Mon Sep 17 00:00:00 2001
+From 2ac5fede049429237cb2a698a9f927f21fd22c6e Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
-Subject: ArmPlatformPkg: PrePeiCore: write early hello message to the serial
- port (RH)
+Subject: [PATCH 10/21] ArmPlatformPkg: PrePeiCore: write early hello message
+ to the serial port (RH)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -65,20 +65,56 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit 8d5a8827aabc67cb2a046697e1a750ca8d9cc453)
 (cherry picked from commit 49fe5596cd79c94d903c4d506c563d642ccd69aa)
 ---
- ArmPlatformPkg/PrePeiCore/MainMPCore.c          | 5 +++++
- ArmPlatformPkg/PrePeiCore/MainUniCore.c         | 5 +++++
- ArmPlatformPkg/PrePeiCore/PrePeiCore.h          | 1 +
  ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf  | 2 ++
  ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf | 2 ++
+ ArmPlatformPkg/PrePeiCore/PrePeiCore.h          | 1 +
+ ArmPlatformPkg/PrePeiCore/MainMPCore.c          | 5 +++++
+ ArmPlatformPkg/PrePeiCore/MainUniCore.c         | 5 +++++
  5 files changed, 15 insertions(+)
 
+diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
+index fb01dd1a113e..a6681c103297 100644
+--- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
++++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
+@@ -69,6 +69,8 @@ [FixedPcd]
+   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
+   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
+ 
++  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
++
+   gArmTokenSpaceGuid.PcdGicDistributorBase
+   gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
+   gArmTokenSpaceGuid.PcdGicSgiIntId
+diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
+index e9eb092d3ac9..c98dc82f0c66 100644
+--- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
++++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
+@@ -67,4 +67,6 @@ [FixedPcd]
+   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
+   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
+ 
++  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
++
+   gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack
+diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
+index 0345dd7bdd2a..ae8302becda2 100644
+--- a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
++++ b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
+@@ -16,6 +16,7 @@
+ #include <Library/DebugLib.h>
+ #include <Library/IoLib.h>
+ #include <Library/PcdLib.h>
++#include <Library/SerialPortLib.h>
+ 
+ #include <PiPei.h>
+ #include <Ppi/TemporaryRamSupport.h>
 diff --git a/ArmPlatformPkg/PrePeiCore/MainMPCore.c b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
-index 859f1adf20..cf9e65bb7c 100644
+index b5d0d3a6442f..5126a6dfb0b1 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainMPCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainMPCore.c
-@@ -111,6 +111,11 @@ PrimaryMain (
-   UINTN                       TemporaryRamBase;
-   UINTN                       TemporaryRamSize;
+@@ -116,6 +116,11 @@ PrimaryMain (
+   UINTN                   TemporaryRamBase;
+   UINTN                   TemporaryRamSize;
  
 +  if (FixedPcdGetSize (PcdEarlyHelloMessage) > 1) {
 +    SerialPortWrite (FixedPcdGetPtr (PcdEarlyHelloMessage),
@@ -89,12 +125,12 @@ index 859f1adf20..cf9e65bb7c 100644
  
    // Enable the GIC Distributor
 diff --git a/ArmPlatformPkg/PrePeiCore/MainUniCore.c b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
-index 220f9b5680..158cc34c77 100644
+index 1c2580eb923b..2a7580dbb405 100644
 --- a/ArmPlatformPkg/PrePeiCore/MainUniCore.c
 +++ b/ArmPlatformPkg/PrePeiCore/MainUniCore.c
 @@ -29,6 +29,11 @@ PrimaryMain (
-   UINTN                       TemporaryRamBase;
-   UINTN                       TemporaryRamSize;
+   UINTN                   TemporaryRamBase;
+   UINTN                   TemporaryRamSize;
  
 +  if (FixedPcdGetSize (PcdEarlyHelloMessage) > 1) {
 +    SerialPortWrite (FixedPcdGetPtr (PcdEarlyHelloMessage),
@@ -104,42 +140,6 @@ index 220f9b5680..158cc34c77 100644
    CreatePpiList (&PpiListSize, &PpiList);
  
    // Adjust the Temporary Ram as the new Ppi List (Common + Platform Ppi Lists) is created at
-diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-index 7b155a8a61..e9e283f9ec 100644
---- a/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-+++ b/ArmPlatformPkg/PrePeiCore/PrePeiCore.h
-@@ -15,6 +15,7 @@
- #include <Library/DebugLib.h>
- #include <Library/IoLib.h>
- #include <Library/PcdLib.h>
-+#include <Library/SerialPortLib.h>
- 
- #include <PiPei.h>
- #include <Ppi/TemporaryRamSupport.h>
-diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-index fb01dd1a11..a6681c1032 100644
---- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-+++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-@@ -69,6 +69,8 @@
-   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
-   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
- 
-+  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
-+
-   gArmTokenSpaceGuid.PcdGicDistributorBase
-   gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
-   gArmTokenSpaceGuid.PcdGicSgiIntId
-diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-index e9eb092d3a..c98dc82f0c 100644
---- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-+++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-@@ -67,4 +67,6 @@
-   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
-   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
- 
-+  gArmPlatformTokenSpaceGuid.PcdEarlyHelloMessage
-+
-   gEfiMdeModulePkgTokenSpaceGuid.PcdInitValueInTempStack
 -- 
-2.27.0
+2.35.1
 

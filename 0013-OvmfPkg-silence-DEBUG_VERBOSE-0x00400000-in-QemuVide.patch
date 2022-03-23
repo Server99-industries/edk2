@@ -1,7 +1,7 @@
-From 4b2a35ab1d659068d47baaf1dd5b2918ba8a2573 Mon Sep 17 00:00:00 2001
+From 4a93ff1fcac08c28bd3f70e9f5bb0e402c27cb43 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Tue, 21 Nov 2017 00:57:46 +0100
-Subject: OvmfPkg: silence DEBUG_VERBOSE (0x00400000) in
+Subject: [PATCH 13/21] OvmfPkg: silence DEBUG_VERBOSE (0x00400000) in
  QemuVideoDxe/QemuRamfbDxe (RH)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
@@ -82,10 +82,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  4 files changed, 32 insertions(+), 8 deletions(-)
 
 diff --git a/OvmfPkg/AmdSev/AmdSevX64.dsc b/OvmfPkg/AmdSev/AmdSevX64.dsc
-index 6e8defe5c7..568ca369e6 100644
+index 538a0c77f671..ea4070eedbde 100644
 --- a/OvmfPkg/AmdSev/AmdSevX64.dsc
 +++ b/OvmfPkg/AmdSev/AmdSevX64.dsc
-@@ -747,8 +747,14 @@
+@@ -715,8 +715,14 @@ [Components]
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
@@ -103,10 +103,10 @@ index 6e8defe5c7..568ca369e6 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 52cd87f698..52fd057c90 100644
+index 91a3c8f9dda6..37d1d4b9a5e0 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -842,9 +842,15 @@
+@@ -812,9 +812,15 @@ [Components]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -125,10 +125,10 @@ index 52cd87f698..52fd057c90 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 214195a594..653849cc7a 100644
+index 1a7ba6e6eac5..948e1a5ba59c 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -856,9 +856,15 @@
+@@ -826,9 +826,15 @@ [Components.X64]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -147,10 +147,10 @@ index 214195a594..653849cc7a 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 02aad65b00..5275f2502b 100644
+index 1a7afc764607..46799406b613 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -854,9 +854,15 @@
+@@ -823,9 +823,15 @@ [Components]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -169,5 +169,5 @@ index 02aad65b00..5275f2502b 100644
  
    #
 -- 
-2.27.0
+2.35.1
 

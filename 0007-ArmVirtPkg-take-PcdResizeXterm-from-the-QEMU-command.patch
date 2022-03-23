@@ -1,7 +1,8 @@
-From 3f9662c435278564640be672f0c4e17e535f1765 Mon Sep 17 00:00:00 2001
+From 39b83b28b9239d2c55226f4861c469f38fd967d1 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
-Subject: ArmVirtPkg: take PcdResizeXterm from the QEMU command line (RH only)
+Subject: [PATCH 07/21] ArmVirtPkg: take PcdResizeXterm from the QEMU command
+ line (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -88,17 +89,17 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit a5f7a57bf390f1f340ff1d1f1884a73716817ef1)
 ---
  ArmVirtPkg/ArmVirtQemu.dsc                    |  7 +++-
- .../TerminalPcdProducerLib.c                  | 34 +++++++++++++++++++
  .../TerminalPcdProducerLib.inf                | 33 ++++++++++++++++++
+ .../TerminalPcdProducerLib.c                  | 34 +++++++++++++++++++
  3 files changed, 73 insertions(+), 1 deletion(-)
- create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
+ create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 54d637163c..41a26c8d18 100644
+index b2b0d304d335..6960df62b082 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -280,6 +280,8 @@
+@@ -282,6 +282,8 @@ [PcdsDynamicDefault.common]
    gEfiSecurityPkgTokenSpaceGuid.PcdTpm2HashMask|0
  !endif
  
@@ -107,7 +108,7 @@ index 54d637163c..41a26c8d18 100644
  [PcdsDynamicHii]
    gArmVirtTokenSpaceGuid.PcdForceNoAcpi|L"ForceNoAcpi"|gArmVirtVariableGuid|0x0|FALSE|NV,BS
  
-@@ -382,7 +384,10 @@
+@@ -384,7 +386,10 @@ [Components.common]
    MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
    MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
    MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
@@ -119,9 +120,48 @@ index 54d637163c..41a26c8d18 100644
    MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
  
    MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+diff --git a/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
+new file mode 100644
+index 000000000000..a51dbd1670a8
+--- /dev/null
++++ b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
+@@ -0,0 +1,33 @@
++## @file
++#  Plugin library for setting up dynamic PCDs for TerminalDxe, from fw_cfg
++#
++#  Copyright (C) 2015-2020, Red Hat, Inc.
++#  Copyright (c) 2014, Linaro Ltd. All rights reserved.<BR>
++#
++#  SPDX-License-Identifier: BSD-2-Clause-Patent
++##
++
++[Defines]
++  INF_VERSION                    = 0x00010005
++  BASE_NAME                      = TerminalPcdProducerLib
++  FILE_GUID                      = 4a0c5ed7-8c42-4c01-8f4c-7bf258316a96
++  MODULE_TYPE                    = BASE
++  VERSION_STRING                 = 1.0
++  LIBRARY_CLASS                  = NULL
++  CONSTRUCTOR                    = TerminalPcdProducerLibConstructor
++
++[Sources]
++  TerminalPcdProducerLib.c
++
++[Packages]
++  MdeModulePkg/MdeModulePkg.dec
++  MdePkg/MdePkg.dec
++  OvmfPkg/OvmfPkg.dec
++
++[LibraryClasses]
++  DebugLib
++  PcdLib
++  QemuFwCfgSimpleParserLib
++
++[Pcd]
++  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm ## SOMETIMES_PRODUCES
 diff --git a/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 new file mode 100644
-index 0000000000..bfd3a6a535
+index 000000000000..bfd3a6a535f9
 --- /dev/null
 +++ b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 @@ -0,0 +1,34 @@
@@ -159,45 +199,6 @@ index 0000000000..bfd3a6a535
 +  UPDATE_BOOLEAN_PCD_FROM_FW_CFG (PcdResizeXterm);
 +  return RETURN_SUCCESS;
 +}
-diff --git a/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
-new file mode 100644
-index 0000000000..a51dbd1670
---- /dev/null
-+++ b/ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.inf
-@@ -0,0 +1,33 @@
-+## @file
-+#  Plugin library for setting up dynamic PCDs for TerminalDxe, from fw_cfg
-+#
-+#  Copyright (C) 2015-2020, Red Hat, Inc.
-+#  Copyright (c) 2014, Linaro Ltd. All rights reserved.<BR>
-+#
-+#  SPDX-License-Identifier: BSD-2-Clause-Patent
-+##
-+
-+[Defines]
-+  INF_VERSION                    = 0x00010005
-+  BASE_NAME                      = TerminalPcdProducerLib
-+  FILE_GUID                      = 4a0c5ed7-8c42-4c01-8f4c-7bf258316a96
-+  MODULE_TYPE                    = BASE
-+  VERSION_STRING                 = 1.0
-+  LIBRARY_CLASS                  = NULL
-+  CONSTRUCTOR                    = TerminalPcdProducerLibConstructor
-+
-+[Sources]
-+  TerminalPcdProducerLib.c
-+
-+[Packages]
-+  MdeModulePkg/MdeModulePkg.dec
-+  MdePkg/MdePkg.dec
-+  OvmfPkg/OvmfPkg.dec
-+
-+[LibraryClasses]
-+  DebugLib
-+  PcdLib
-+  QemuFwCfgSimpleParserLib
-+
-+[Pcd]
-+  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm ## SOMETIMES_PRODUCES
 -- 
-2.27.0
+2.35.1
 

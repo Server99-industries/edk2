@@ -1,7 +1,7 @@
-From dca56cf4d28bbbb1d3be029ce9a6710cb3f6cd2f Mon Sep 17 00:00:00 2001
+From 61e29798c9c4e6b89a8e5c50939c6ab2f9ba3478 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 4 Jun 2020 13:34:12 +0200
-Subject: BaseTools: do not build BrotliCompress (RH only)
+Subject: [PATCH 01/21] BaseTools: do not build BrotliCompress (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -27,7 +27,7 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 1 deletion(-)
 
 diff --git a/BaseTools/Source/C/GNUmakefile b/BaseTools/Source/C/GNUmakefile
-index 8c191e0c38..3eae824a1c 100644
+index 8c191e0c3817..3eae824a1c31 100644
 --- a/BaseTools/Source/C/GNUmakefile
 +++ b/BaseTools/Source/C/GNUmakefile
 @@ -48,7 +48,6 @@ all: makerootdir subdirs
@@ -39,5 +39,5 @@ index 8c191e0c38..3eae824a1c 100644
    EfiRom \
    GenFfs \
 -- 
-2.27.0
+2.35.1
 

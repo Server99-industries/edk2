@@ -1,8 +1,8 @@
-From dc27035d2a8ca09dc5b0113c97a643341f286c08 Mon Sep 17 00:00:00 2001
+From bee2e929ef342eafbe44f0471154da4270cac91d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 24 Jun 2020 11:40:09 +0200
-Subject: SecurityPkg/Tcg2Dxe: suppress error on no swtpm in silent aa64 build
- (RH)
+Subject: [PATCH 19/21] SecurityPkg/Tcg2Dxe: suppress error on no swtpm in
+ silent aa64 build (RH)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -26,12 +26,24 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
 (cherry picked from commit cbce29f7749477e271f9764fed82de94724af5df)
 ---
- SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c   | 17 +++++++++++++++++
  SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf |  1 +
+ SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c   | 17 +++++++++++++++++
  2 files changed, 18 insertions(+)
 
+diff --git a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
+index 7dc7a2683d71..3bc88339311e 100644
+--- a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
++++ b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
+@@ -55,6 +55,7 @@ [LibraryClasses]
+   UefiRuntimeServicesTableLib
+   BaseMemoryLib
+   DebugLib
++  DebugPrintErrorLevelLib
+   Tpm2CommandLib
+   PrintLib
+   UefiLib
 diff --git a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c
-index 6d17616c1c..f1a97d4b2d 100644
+index f6ea8b2bbf18..681eb7e08b98 100644
 --- a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c
 +++ b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.c
 @@ -28,6 +28,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -42,9 +54,9 @@ index 6d17616c1c..f1a97d4b2d 100644
  #include <Library/BaseMemoryLib.h>
  #include <Library/UefiRuntimeServicesTableLib.h>
  #include <Library/UefiDriverEntryPoint.h>
-@@ -2642,6 +2643,22 @@ DriverEntry (
-   if (CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceNoneGuid) ||
-       CompareGuid (PcdGetPtr(PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid)){
+@@ -2691,6 +2692,22 @@ DriverEntry (
+       CompareGuid (PcdGetPtr (PcdTpmInstanceGuid), &gEfiTpmDeviceInstanceTpm12Guid))
+   {
      DEBUG ((DEBUG_INFO, "No TPM2 instance required!\n"));
 +#if defined (MDE_CPU_AARCH64)
 +    //
@@ -65,18 +77,6 @@ index 6d17616c1c..f1a97d4b2d 100644
      return EFI_UNSUPPORTED;
    }
  
-diff --git a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
-index 7dc7a2683d..3bc8833931 100644
---- a/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
-+++ b/SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
-@@ -55,6 +55,7 @@
-   UefiRuntimeServicesTableLib
-   BaseMemoryLib
-   DebugLib
-+  DebugPrintErrorLevelLib
-   Tpm2CommandLib
-   PrintLib
-   UefiLib
 -- 
-2.27.0
+2.35.1
 

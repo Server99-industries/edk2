@@ -1,7 +1,7 @@
-From 11a79ac24d7411c8ad9d8a6779b324c5164e06d0 Mon Sep 17 00:00:00 2001
+From c36a16dad384129382088ef783d8e672ead2752a Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 24 Jun 2020 11:31:36 +0200
-Subject: [PATCH 19/20] OvmfPkg/QemuKernelLoaderFsDxe: suppress error on no
+Subject: [PATCH 18/21] OvmfPkg/QemuKernelLoaderFsDxe: suppress error on no
  "-kernel" in silent aa64 build (RH)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
@@ -27,9 +27,9 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 Signed-off-by: Miroslav Rezanina <mrezanin@redhat.com>
 (cherry picked from commit 9adcdf493ebbd11efb74e2905ab5f6c8996e096d)
 ---
- .../QemuKernelLoaderFsDxe.inf                   |  1 +
- .../QemuKernelLoaderFsDxe.c                     | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
+ .../QemuKernelLoaderFsDxe.inf                  |  1 +
+ .../QemuKernelLoaderFsDxe.c                    | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
 diff --git a/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.inf b/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.inf
 index 7b35adb8e034..e0331c6e2cbc 100644
@@ -44,7 +44,7 @@ index 7b35adb8e034..e0331c6e2cbc 100644
    MemoryAllocationLib
    QemuFwCfgLib
 diff --git a/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.c b/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.c
-index 6832d563bcb0..08ed67f5ffea 100644
+index d4f3cd92255f..f007f8a6c233 100644
 --- a/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.c
 +++ b/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.c
 @@ -19,6 +19,7 @@
@@ -55,11 +55,11 @@ index 6832d563bcb0..08ed67f5ffea 100644
  #include <Library/DevicePathLib.h>
  #include <Library/MemoryAllocationLib.h>
  #include <Library/QemuFwCfgLib.h>
-@@ -1054,6 +1055,22 @@ QemuKernelLoaderFsDxeEntrypoint (
+@@ -1081,6 +1082,23 @@ QemuKernelLoaderFsDxeEntrypoint (
  
    if (KernelBlob->Data == NULL) {
      Status = EFI_NOT_FOUND;
-+#if defined (MDE_CPU_AARCH64)
++ #if defined (MDE_CPU_AARCH64)
 +    //
 +    // RHBZ#1844682
 +    //
@@ -74,10 +74,11 @@ index 6832d563bcb0..08ed67f5ffea 100644
 +    if (GetDebugPrintErrorLevel () == DEBUG_ERROR) {
 +      Status = EFI_SUCCESS;
 +    }
-+#endif
++
++ #endif
      goto FreeBlobs;
    }
  
 -- 
-2.33.1
+2.35.1
 

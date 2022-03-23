@@ -1,8 +1,8 @@
-From e9d9e73c317b256c0bdc6530b82a6a625d7d54db Mon Sep 17 00:00:00 2001
+From 2d7c77e17a3461d53521b42221e468fb234d5893 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:53 +0100
-Subject: OvmfPkg: allow exclusion of the shell from the firmware image (RH
- only)
+Subject: [PATCH 08/21] OvmfPkg: allow exclusion of the shell from the firmware
+ image (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -111,10 +111,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index e3b1d74ce2..969524cf3b 100644
+index a6b2142ccd0c..b5bc8407e7d7 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -293,12 +293,14 @@ INF  FatPkg/EnhancedFatDxe/Fat.inf
+@@ -283,12 +283,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -130,10 +130,10 @@ index e3b1d74ce2..969524cf3b 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index f7732382d4..36f078556f 100644
+index 49266dd46768..f4fa19bb013c 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -294,12 +294,14 @@ INF  FatPkg/EnhancedFatDxe/Fat.inf
+@@ -287,12 +287,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -149,10 +149,10 @@ index f7732382d4..36f078556f 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index 137ed6bceb..a5900d8377 100644
+index ba7f26d01dc4..dfd17804c2a2 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -306,12 +306,14 @@ INF  FatPkg/EnhancedFatDxe/Fat.inf
+@@ -309,12 +309,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -168,5 +168,5 @@ index 137ed6bceb..a5900d8377 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 -- 
-2.27.0
+2.35.1
 

@@ -1,8 +1,8 @@
-From bacf42ebf768aebb8c2b36fb52d154daf19c0c74 Mon Sep 17 00:00:00 2001
+From 9ee0430cff8d62256904063205d6c874cf949adf Mon Sep 17 00:00:00 2001
 From: Philippe Mathieu-Daude <philmd@redhat.com>
 Date: Thu, 1 Aug 2019 20:43:48 +0200
-Subject: OvmfPkg: QemuRamfbDxe: Do not report DXE failure on Aarch64 silent
- builds (RH only)
+Subject: [PATCH 15/21] OvmfPkg: QemuRamfbDxe: Do not report DXE failure on
+ Aarch64 silent builds (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -42,12 +42,24 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
 (cherry picked from commit aa2b66b18a62d652bdbefae7b5732297294306ca)
 (cherry picked from commit deb3451034326b75fd760aba47a5171493ff055e)
 ---
- OvmfPkg/QemuRamfbDxe/QemuRamfb.c      | 14 ++++++++++++++
  OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf |  1 +
- 2 files changed, 15 insertions(+)
+ OvmfPkg/QemuRamfbDxe/QemuRamfb.c      | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
 
+diff --git a/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf b/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
+index e3890b8c202f..6ffee5acb24c 100644
+--- a/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
++++ b/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
+@@ -29,6 +29,7 @@ [LibraryClasses]
+   BaseLib
+   BaseMemoryLib
+   DebugLib
++  DebugPrintErrorLevelLib
+   DevicePathLib
+   FrameBufferBltLib
+   MemoryAllocationLib
 diff --git a/OvmfPkg/QemuRamfbDxe/QemuRamfb.c b/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
-index 0d49d8bbab..dbf9bcbe16 100644
+index f5113fbc78a6..0295986fe0f1 100644
 --- a/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
 +++ b/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
 @@ -13,6 +13,7 @@
@@ -58,11 +70,11 @@ index 0d49d8bbab..dbf9bcbe16 100644
  #include <Library/DevicePathLib.h>
  #include <Library/FrameBufferBltLib.h>
  #include <Library/MemoryAllocationLib.h>
-@@ -242,6 +243,19 @@ InitializeQemuRamfb (
+@@ -259,6 +260,20 @@ InitializeQemuRamfb (
  
    Status = QemuFwCfgFindFile ("etc/ramfb", &mRamfbFwCfgItem, &FwCfgSize);
    if (EFI_ERROR (Status)) {
-+#if defined (MDE_CPU_AARCH64)
++ #if defined (MDE_CPU_AARCH64)
 +    //
 +    // RHBZ#1714446
 +    // If no ramfb device was configured, this platform DXE driver should
@@ -74,22 +86,11 @@ index 0d49d8bbab..dbf9bcbe16 100644
 +    if (GetDebugPrintErrorLevel () == DEBUG_ERROR) {
 +      return EFI_SUCCESS;
 +    }
-+#endif
++
++ #endif
      return EFI_NOT_FOUND;
    }
-   if (FwCfgSize != sizeof (RAMFB_CONFIG)) {
-diff --git a/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf b/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
-index e3890b8c20..6ffee5acb2 100644
---- a/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
-+++ b/OvmfPkg/QemuRamfbDxe/QemuRamfbDxe.inf
-@@ -29,6 +29,7 @@
-   BaseLib
-   BaseMemoryLib
-   DebugLib
-+  DebugPrintErrorLevelLib
-   DevicePathLib
-   FrameBufferBltLib
-   MemoryAllocationLib
+ 
 -- 
-2.27.0
+2.35.1
 

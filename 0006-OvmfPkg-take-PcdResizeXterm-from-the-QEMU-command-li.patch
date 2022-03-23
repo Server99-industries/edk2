@@ -1,7 +1,7 @@
-From cbfd81c5bdd8bb8ee49f4e3387226cdcb83e6fb3 Mon Sep 17 00:00:00 2001
+From d0b512ade91abd2183c879a07663ceb085b261a2 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
-Subject: [PATCH 07/20] OvmfPkg: take PcdResizeXterm from the QEMU command line
+Subject: [PATCH 06/21] OvmfPkg: take PcdResizeXterm from the QEMU command line
  (RH only)
 
 edk2-stable202108 rebase
@@ -80,58 +80,58 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  6 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/AmdSev/AmdSevX64.dsc b/OvmfPkg/AmdSev/AmdSevX64.dsc
-index e589eafa49a8..e2aba82718c8 100644
+index fd56176796d5..d1f9bc6d0d61 100644
 --- a/OvmfPkg/AmdSev/AmdSevX64.dsc
 +++ b/OvmfPkg/AmdSev/AmdSevX64.dsc
-@@ -534,6 +534,7 @@ [PcdsFixedAtBuild]
+@@ -519,6 +519,7 @@ [PcdsFixedAtBuild]
  [PcdsDynamicDefault]
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64|0
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 5ccdd55472cc..9bde8702e74b 100644
+index 85abed24c1a7..6bcd222af7c2 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -594,6 +594,7 @@ [PcdsDynamicDefault]
+@@ -580,6 +580,7 @@ [PcdsDynamicDefault]
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
  !if $(SMM_REQUIRE) == FALSE
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 9862112601f2..7ee5eaa0ace7 100644
+index a9c1daecc1a8..0cce3b768e12 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -600,6 +600,7 @@ [PcdsDynamicDefault]
+@@ -586,6 +586,7 @@ [PcdsDynamicDefault]
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
  !if $(SMM_REQUIRE) == FALSE
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index a6ba816d2fb5..ec8df8397ed4 100644
+index 718399299f57..847cf6a46652 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -600,6 +600,7 @@ [PcdsDynamicDefault]
+@@ -585,6 +585,7 @@ [PcdsDynamicDefault]
    #   ($(SMM_REQUIRE) == FALSE)
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
  
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
  !if $(SMM_REQUIRE) == FALSE
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0
-   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|0
+   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64|0
 diff --git a/OvmfPkg/PlatformPei/PlatformPei.inf b/OvmfPkg/PlatformPei/PlatformPei.inf
-index 89d1f7636870..655240c6436e 100644
+index 212aa7b04751..1c0b7204ea9a 100644
 --- a/OvmfPkg/PlatformPei/PlatformPei.inf
 +++ b/OvmfPkg/PlatformPei/PlatformPei.inf
-@@ -93,6 +93,7 @@ [Pcd]
+@@ -97,6 +97,7 @@ [Pcd]
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
    gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
    gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved
@@ -140,10 +140,10 @@ index 89d1f7636870..655240c6436e 100644
    gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable
    gEfiMdeModulePkgTokenSpaceGuid.PcdSetNxForStack
 diff --git a/OvmfPkg/PlatformPei/Platform.c b/OvmfPkg/PlatformPei/Platform.c
-index d3a20122a2ea..9a40932156a3 100644
+index d0323c645162..9011a55d0f90 100644
 --- a/OvmfPkg/PlatformPei/Platform.c
 +++ b/OvmfPkg/PlatformPei/Platform.c
-@@ -738,6 +738,7 @@ InitializePlatform (
+@@ -851,6 +851,7 @@ InitializePlatform (
      MemTypeInfoInitialization ();
      MemMapInitialization ();
      NoexecDxeInitialization ();
@@ -152,5 +152,5 @@ index d3a20122a2ea..9a40932156a3 100644
  
    InstallClearCacheCallback ();
 -- 
-2.33.1
+2.35.1
 

@@ -1,7 +1,7 @@
-From b14a92fafb171ad4a47598076bd028e5cf33ac28 Mon Sep 17 00:00:00 2001
+From aa5965f02de8c044106a413f817b6a2651e89e97 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
-Subject: ArmVirtPkg: set early hello message (RH only)
+Subject: [PATCH 11/21] ArmVirtPkg: set early hello message (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
 RHEL-8.5/20210520-e1999b264f1f [edk2-stable202105] rebase:
@@ -66,10 +66,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 41a26c8d18..971422411d 100644
+index 6960df62b082..847a82ac52e6 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -132,6 +132,7 @@
+@@ -134,6 +134,7 @@ [PcdsFeatureFlag.common]
    gArmVirtTokenSpaceGuid.PcdTpm2SupportEnabled|$(TPM2_ENABLE)
  
  [PcdsFixedAtBuild.common]
@@ -78,5 +78,5 @@ index 41a26c8d18..971422411d 100644
    gArmTokenSpaceGuid.PcdVFPEnabled|1
  !endif
 -- 
-2.27.0
+2.35.1
 
