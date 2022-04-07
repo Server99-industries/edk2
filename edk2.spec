@@ -7,7 +7,7 @@
 # in theory should build everywhere without much trouble, but
 # in practice the edk2 build system barfs on archs it doesn't know
 # (such as ppc), so lets limit things to the known-good ones.
-ExclusiveArch: %{ix86} x86_64 %{arm} aarch64
+ExclusiveArch: x86_64 %{arm} aarch64
 %else
 ExclusiveArch: x86_64 aarch64
 %endif
@@ -768,6 +768,7 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 %changelog
 * Thu Apr 07 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-3
 - Fix TPM build options.
+- Stop builds on i686 (iasl missing).
 - Resolves rhbz#2072827
 
 * Wed Mar 23 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-1
