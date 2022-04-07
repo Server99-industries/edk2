@@ -52,7 +52,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -304,7 +304,8 @@ fi
 CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
 CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
 CC_FLAGS="$CC_FLAGS -D NETWORK_HTTP_BOOT_ENABLE -D NETWORK_TLS_ENABLE"
-CC_FLAGS="$CC_FLAGS -D TPM_ENABLE"
+CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
+CC_FLAGS="$CC_FLAGS -D TPM1_ENABLE"
 
 OVMF_FLAGS="${CC_FLAGS}"
 %if %{defined rhel}
@@ -765,6 +766,10 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Thu Apr 07 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-3
+- Fix TPM build options.
+- Resolves rhbz#2072827
+
 * Wed Mar 23 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-1
 - Update to edk2-stable202202
 
