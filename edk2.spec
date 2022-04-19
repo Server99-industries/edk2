@@ -23,14 +23,6 @@ ExclusiveArch: x86_64 aarch64
 %define qosb_testing 1
 %endif
 
-%if %{defined fedora} || %{defined eln}
-%define qemu_package qemu-system-x86-core
-%define qemu_binary /usr/bin/qemu-system-x86_64
-%else
-%define qemu_package qemu-kvm-core >= 2.12.0-89
-%define qemu_binary /usr/libexec/qemu-kvm
-%endif
-
 %if %{defined rhel}
 %define build_ovmf 0
 %define build_aarch64 0
@@ -52,7 +44,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -128,8 +120,8 @@ BuildRequires:  mtools
 BuildRequires:  xorriso
 
 # For generating the variable store template with the default certificates
-# enrolled, we need the qemu-kvm executable.
-BuildRequires:  %{qemu_package}
+# enrolled.
+BuildRequires:  python3-virt-firmware
 
 %if %{qosb_testing}
 # For verifying SB enablement in the above variable store template, we need a
@@ -383,15 +375,9 @@ cmp Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
 # Prepare an ISO image that boots the UEFI shell.
 build_iso Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64
 
-# Enroll the default certificates in a separate variable store template.
-%{__python3} ovmf-vars-generator --verbose --verbose \
-  --qemu-binary        %{qemu_binary} \
-  --ovmf-binary        Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
-  --ovmf-template-vars Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
-  --uefi-shell-iso     Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso \
-  --oem-string         "$(< PkKek1.oemstr)" \
-  --skip-testing \
-  Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd
+virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
+             --output Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
+             --enroll-redhat --secure-boot
 
 # endif build_ovmf
 %endif
@@ -613,20 +599,8 @@ install -p ovmf-vars-generator %{buildroot}%{_bindir}
 %check
 
 %if %{qosb_testing}
-# Of the installed host kernels, boot the one with the highest Version-Release
-# under OVMF, and check if it prints "Secure boot enabled".
-KERNEL_PKG=$(rpm -q kernel-core | rpmdev-sort | tail -n 1)
-KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
-
-%{__python3} ovmf-vars-generator --verbose --verbose \
-  --qemu-binary        %{qemu_binary} \
-  --ovmf-binary        Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
-  --ovmf-template-vars Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
-  --uefi-shell-iso     Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso \
-  --kernel-path        $KERNEL_IMG \
-  --skip-enrollment \
-  --no-download \
-  Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd
+virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
+             --print | grep "SecureBootEnable.*ON"
 
 # endif qosb_testing
 %endif
@@ -766,6 +740,9 @@ KERNEL_IMG=$(rpm -q -l $KERNEL_PKG | egrep '^/lib/modules/[^/]+/vmlinuz$')
 
 
 %changelog
+* Tue Apr 19 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-4
+- switch to virt-firmware for secure boot key enrollment
+
 * Thu Apr 07 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-3
 - Fix TPM build options.
 - Stop builds on i686 (iasl missing).
