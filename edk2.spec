@@ -2,15 +2,11 @@
 # breaks cross-building
 %undefine _auto_set_build_flags
 
-%if %{defined fedora}
 # actual firmware builds support cross-compiling.  edk2-tools
 # in theory should build everywhere without much trouble, but
 # in practice the edk2 build system barfs on archs it doesn't know
 # (such as ppc), so lets limit things to the known-good ones.
-ExclusiveArch: x86_64 %{arm} aarch64
-%else
 ExclusiveArch: x86_64 aarch64
-%endif
 
 # edk2-stable202202
 %define GITDATE        20220221
@@ -742,6 +738,7 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %changelog
 * Tue Apr 19 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-4
 - switch to virt-firmware for secure boot key enrollment
+- Stop builds on armv7 too (iasl missing).
 
 * Thu Apr 07 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-3
 - Fix TPM build options.
