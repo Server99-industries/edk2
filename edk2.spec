@@ -8,9 +8,9 @@
 # (such as ppc), so lets limit things to the known-good ones.
 ExclusiveArch: x86_64 aarch64
 
-# edk2-stable202202
-%define GITDATE        20220221
-%define GITCOMMIT      b24306f15daa
+# edk2-stable202205
+%define GITDATE        20220526
+%define GITCOMMIT      16779ede2d36
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
@@ -40,7 +40,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    4%{?dist}
+Release:    1%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
