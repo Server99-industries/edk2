@@ -14,11 +14,6 @@ ExclusiveArch: x86_64 aarch64
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
-%define qosb_testing 0
-%ifarch x86_64
-%define qosb_testing 1
-%endif
-
 %if %{defined rhel}
 %define build_ovmf 0
 %define build_aarch64 0
@@ -52,9 +47,6 @@ URL:        http://www.tianocore.org
 Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-bdd048e929dcfcf2f046d74e812e0e3d5fc58504.tar.xz
-Source3: ovmf-vars-generator
-Source4: LICENSE.qosb
-Source5: RedHatSecureBootPkKek1.pem
 
 Source10: edk2-aarch64-verbose.json
 Source11: edk2-aarch64.json
@@ -118,13 +110,6 @@ BuildRequires:  xorriso
 # For generating the variable store template with the default certificates
 # enrolled.
 BuildRequires:  python3-virt-firmware
-
-%if %{qosb_testing}
-# For verifying SB enablement in the above variable store template, we need a
-# guest kernel that prints "Secure boot enabled".
-BuildRequires: kernel-core >= 4.18.0-161
-BuildRequires: rpmdevtools
-%endif
 
 # endif build_ovmf
 %endif
@@ -217,14 +202,6 @@ License:        BSD-2-Clause-Patent and OpenSSL
 EFI Development Kit II
 ARMv7 UEFI Firmware
 
-%package qosb
-Summary:        Tool to enroll secureboot
-Requires:       python3
-Buildarch:      noarch
-%description qosb
-This package contains QOSB (QEMU OVMF Secure Boot), which can enroll OVMF
-variable files to enforce Secure Boot.
-
 %package tools-python
 Summary:        EFI Development Kit II Tools
 Requires:       python3
@@ -250,27 +227,13 @@ git config am.keepcr true
 # -D is passed to %%setup to not delete the existing archive dir
 %autosetup -T -D -n edk2-%{GITCOMMIT} -S git_am
 
-cp -a -- %{SOURCE1} %{SOURCE3} .
+cp -a -- %{SOURCE1} .
 cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
-
-# Format the Red Hat-issued certificate that is to be enrolled as both Platform
-# Key and first Key Exchange Key, as an SMBIOS OEM String. This means stripping
-# the PEM header and footer, and prepending the textual representation of the
-# GUID that identifies this particular OEM String to "EnrollDefaultKeys.efi",
-# plus the separator ":". For details, see
-# <https://bugzilla.tianocore.org/show_bug.cgi?id=1747> comments 2, 7, 14.
-sed \
-  -e 's/^-----BEGIN CERTIFICATE-----$/4e32566d-8e9e-4f52-81d3-5bb9715f9727:/' \
-  -e '/^-----END CERTIFICATE-----$/d' \
-  %{SOURCE5} \
-  > PkKek1.oemstr
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
 chmod -Rf a+rX,u+w,g-w,o-w .
 
-# Fedora specific
-cp -a -- %{SOURCE4} .
 # extract softfloat into place
 tar -xf %{SOURCE50} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
@@ -584,23 +547,14 @@ done
 %py_byte_compile %{python3} %{buildroot}%{_datadir}/edk2/Python
 %endif
 
-# edk2-qosb install
-install -p ovmf-vars-generator %{buildroot}%{_bindir}
-
 # endif defined fedora
 %endif
 
 
 
 %check
-
-%if %{qosb_testing}
 virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
              --print | grep "SecureBootEnable.*ON"
-
-# endif qosb_testing
-%endif
-
 
 %global common_files \
   %%license License.txt License.OvmfPkg.txt License-History.txt LICENSE.openssl \
@@ -725,11 +679,6 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_bindir}/UPT
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/Python
-
-
-%files qosb
-%license LICENSE.qosb
-%{_bindir}/ovmf-vars-generator
 
 # endif fedora
 %endif
