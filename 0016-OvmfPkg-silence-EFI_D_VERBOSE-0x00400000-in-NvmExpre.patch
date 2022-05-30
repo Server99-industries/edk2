@@ -1,4 +1,4 @@
-From a365d5f65506c2b8c993089ad5b77dac7c6f4296 Mon Sep 17 00:00:00 2001
+From 19a991fbfc8dd21a9ccff051da77c8651ee7aa14 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Tue, 21 Nov 2017 00:57:47 +0100
 Subject: [PATCH 16/21] OvmfPkg: silence EFI_D_VERBOSE (0x00400000) in
@@ -63,10 +63,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  4 files changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/OvmfPkg/AmdSev/AmdSevX64.dsc b/OvmfPkg/AmdSev/AmdSevX64.dsc
-index ea4070eedbde..b9718ff03f7b 100644
+index c66ad3af1a23..7df6e5c825d7 100644
 --- a/OvmfPkg/AmdSev/AmdSevX64.dsc
 +++ b/OvmfPkg/AmdSev/AmdSevX64.dsc
-@@ -709,7 +709,10 @@ [Components]
+@@ -720,7 +720,10 @@ [Components]
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -79,10 +79,10 @@ index ea4070eedbde..b9718ff03f7b 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 37d1d4b9a5e0..4dfd33853162 100644
+index b37a5a6da948..ed6a820d2e1d 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -805,7 +805,10 @@ [Components]
+@@ -823,7 +823,10 @@ [Components]
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -95,10 +95,10 @@ index 37d1d4b9a5e0..4dfd33853162 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 948e1a5ba59c..63721e5d177e 100644
+index b0e8c20e93d7..b5be86cff32c 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -819,7 +819,10 @@ [Components.X64]
+@@ -837,7 +837,10 @@ [Components.X64]
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -111,10 +111,10 @@ index 948e1a5ba59c..63721e5d177e 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 46799406b613..cac0391c0807 100644
+index 6211d5e934de..29b45e68e387 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -816,7 +816,10 @@ [Components]
+@@ -902,7 +902,10 @@ [Components]
    OvmfPkg/SataControllerDxe/SataControllerDxe.inf
    MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
    MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -127,5 +127,5 @@ index 46799406b613..cac0391c0807 100644
    MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 -- 
-2.35.1
+2.35.3
 

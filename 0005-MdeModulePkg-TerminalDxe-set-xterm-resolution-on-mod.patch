@@ -1,4 +1,4 @@
-From 7d89e95bad10d53c0b58f96606d076fe73a648cb Mon Sep 17 00:00:00 2001
+From 8fd6e63635f50b2dc9e950056f17c1688107647d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
 Subject: [PATCH 05/21] MdeModulePkg: TerminalDxe: set xterm resolution on mode
@@ -87,12 +87,12 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 35 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index 56138abbe407..8a2bc9e4f80b 100644
+index f549276b8061..1415766054be 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -2080,6 +2080,10 @@ [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
-   # @Prompt Enable PCIe Resizable BAR Capability support.
-   gEfiMdeModulePkgTokenSpaceGuid.PcdPcieResizableBarSupport|FALSE|BOOLEAN|0x10000024
+@@ -2092,6 +2092,10 @@ [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
+   # @Prompt The shared bit mask when Intel Tdx is enabled.
+   gEfiMdeModulePkgTokenSpaceGuid.PcdTdxSharedBitMask|0x0|UINT64|0x10000025
  
 +  ## Controls whether TerminalDxe outputs an XTerm resize sequence on terminal
 +  #  mode change.
@@ -176,5 +176,5 @@ index 7809869e7d49..496849458db4 100644
  
    Status = This->ClearScreen (This);
 -- 
-2.35.1
+2.35.3
 

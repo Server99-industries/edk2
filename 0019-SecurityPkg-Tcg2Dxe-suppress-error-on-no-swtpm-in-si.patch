@@ -1,4 +1,4 @@
-From bee2e929ef342eafbe44f0471154da4270cac91d Mon Sep 17 00:00:00 2001
+From ee4dd84fe0d33568b1800f5d6840627103c46d8d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 24 Jun 2020 11:40:09 +0200
 Subject: [PATCH 19/21] SecurityPkg/Tcg2Dxe: suppress error on no swtpm in
@@ -78,5 +78,5 @@ index f6ea8b2bbf18..681eb7e08b98 100644
    }
  
 -- 
-2.35.1
+2.35.3
 

@@ -1,4 +1,4 @@
-From 2ac5fede049429237cb2a698a9f927f21fd22c6e Mon Sep 17 00:00:00 2001
+From 1492c375e52d3cc6d8c39fc4853f10ceeca2948c Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 13:59:20 +0200
 Subject: [PATCH 10/21] ArmPlatformPkg: PrePeiCore: write early hello message
@@ -73,10 +73,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  5 files changed, 15 insertions(+)
 
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-index fb01dd1a113e..a6681c103297 100644
+index a5b4722459d1..ea7b220bc831 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-@@ -69,6 +69,8 @@ [FixedPcd]
+@@ -66,6 +66,8 @@ [FixedPcd]
    gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
@@ -86,10 +86,10 @@ index fb01dd1a113e..a6681c103297 100644
    gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
    gArmTokenSpaceGuid.PcdGicSgiIntId
 diff --git a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-index e9eb092d3ac9..c98dc82f0c66 100644
+index 466a2b01c384..29fb8737cb2f 100644
 --- a/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
 +++ b/ArmPlatformPkg/PrePeiCore/PrePeiCoreUniCore.inf
-@@ -67,4 +67,6 @@ [FixedPcd]
+@@ -64,4 +64,6 @@ [FixedPcd]
    gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize
    gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize
  
@@ -141,5 +141,5 @@ index 1c2580eb923b..2a7580dbb405 100644
  
    // Adjust the Temporary Ram as the new Ppi List (Common + Platform Ppi Lists) is created at
 -- 
-2.35.1
+2.35.3
 

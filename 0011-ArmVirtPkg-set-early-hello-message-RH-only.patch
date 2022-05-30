@@ -1,4 +1,4 @@
-From aa5965f02de8c044106a413f817b6a2651e89e97 Mon Sep 17 00:00:00 2001
+From 01ac59a696ed46ab1444bc5e15de791c0d90bad5 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 14:07:17 +0200
 Subject: [PATCH 11/21] ArmVirtPkg: set early hello message (RH only)
@@ -66,7 +66,7 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 6960df62b082..847a82ac52e6 100644
+index 7705bf391976..ae35cc18008d 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
 @@ -134,6 +134,7 @@ [PcdsFeatureFlag.common]
@@ -78,5 +78,5 @@ index 6960df62b082..847a82ac52e6 100644
    gArmTokenSpaceGuid.PcdVFPEnabled|1
  !endif
 -- 
-2.35.1
+2.35.3
 

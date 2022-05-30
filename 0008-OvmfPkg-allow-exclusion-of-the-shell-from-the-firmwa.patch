@@ -1,4 +1,4 @@
-From 2d7c77e17a3461d53521b42221e468fb234d5893 Mon Sep 17 00:00:00 2001
+From 6c0b7391222b4d33dbcee952b0f785701031e972 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 4 Nov 2014 23:02:53 +0100
 Subject: [PATCH 08/21] OvmfPkg: allow exclusion of the shell from the firmware
@@ -111,10 +111,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/OvmfPkg/OvmfPkgIa32.fdf b/OvmfPkg/OvmfPkgIa32.fdf
-index a6b2142ccd0c..b5bc8407e7d7 100644
+index 57d13b7130bc..69044874e2f7 100644
 --- a/OvmfPkg/OvmfPkgIa32.fdf
 +++ b/OvmfPkg/OvmfPkgIa32.fdf
-@@ -283,12 +283,14 @@ [FV.DXEFV]
+@@ -298,12 +298,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -130,10 +130,10 @@ index a6b2142ccd0c..b5bc8407e7d7 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 diff --git a/OvmfPkg/OvmfPkgIa32X64.fdf b/OvmfPkg/OvmfPkgIa32X64.fdf
-index 49266dd46768..f4fa19bb013c 100644
+index ccde366887a9..bf535bef4200 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.fdf
 +++ b/OvmfPkg/OvmfPkgIa32X64.fdf
-@@ -287,12 +287,14 @@ [FV.DXEFV]
+@@ -299,12 +299,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -149,10 +149,10 @@ index 49266dd46768..f4fa19bb013c 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
-index ba7f26d01dc4..dfd17804c2a2 100644
+index 438806fba8f1..21e4ce00dde6 100644
 --- a/OvmfPkg/OvmfPkgX64.fdf
 +++ b/OvmfPkg/OvmfPkgX64.fdf
-@@ -309,12 +309,14 @@ [FV.DXEFV]
+@@ -324,12 +324,14 @@ [FV.DXEFV]
  INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
  INF  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
  
@@ -168,5 +168,5 @@ index ba7f26d01dc4..dfd17804c2a2 100644
  INF MdeModulePkg/Logo/LogoDxe.inf
  
 -- 
-2.35.1
+2.35.3
 

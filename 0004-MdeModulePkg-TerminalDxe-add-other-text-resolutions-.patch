@@ -1,4 +1,4 @@
-From 986f59c22b45facd1bd124896a5c655d901065a3 Mon Sep 17 00:00:00 2001
+From 8708aff7d939989ab52932c1329c81dfe86bdc61 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 18:40:35 +0100
 Subject: [PATCH 04/21] MdeModulePkg: TerminalDxe: add other text resolutions
@@ -165,5 +165,5 @@ index e2d779c78378..f238c4103b3d 100644
    // New modes can be added here.
    //
 -- 
-2.35.1
+2.35.3
 

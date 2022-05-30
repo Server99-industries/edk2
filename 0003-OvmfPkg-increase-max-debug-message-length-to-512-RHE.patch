@@ -1,4 +1,4 @@
-From 6c102285ab54deba5098316e9a56a95e6895c866 Mon Sep 17 00:00:00 2001
+From 967e66ce4fbce81338ed4cdd9131a4a25a24e461 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 20 Feb 2014 22:54:45 +0100
 Subject: [PATCH 03/21] OvmfPkg: increase max debug message length to 512 (RHEL
@@ -79,5 +79,5 @@ index 4e25f198aa76..640627f38b72 100644
  //
  // VA_LIST can not initialize to NULL for all compiler, so we use this to
 -- 
-2.35.1
+2.35.3
 

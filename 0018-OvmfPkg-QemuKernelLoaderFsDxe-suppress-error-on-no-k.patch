@@ -1,4 +1,4 @@
-From c36a16dad384129382088ef783d8e672ead2752a Mon Sep 17 00:00:00 2001
+From 98e14a58d727bb2d863a7a8c3a257f3b02b15b80 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 24 Jun 2020 11:31:36 +0200
 Subject: [PATCH 18/21] OvmfPkg/QemuKernelLoaderFsDxe: suppress error on no
@@ -80,5 +80,5 @@ index d4f3cd92255f..f007f8a6c233 100644
    }
  
 -- 
-2.35.1
+2.35.3
 

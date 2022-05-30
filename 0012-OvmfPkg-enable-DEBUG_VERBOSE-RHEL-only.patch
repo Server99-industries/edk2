@@ -1,4 +1,4 @@
-From 68eb31a414bf2fc427cfa7831a90690dcb703c65 Mon Sep 17 00:00:00 2001
+From 9fcfbf51e0a342172f316ae709311b4a6365b673 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Tue, 21 Nov 2017 00:57:45 +0100
 Subject: [PATCH 12/21] OvmfPkg: enable DEBUG_VERBOSE (RHEL only)
@@ -65,10 +65,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/OvmfPkg/AmdSev/AmdSevX64.dsc b/OvmfPkg/AmdSev/AmdSevX64.dsc
-index d1f9bc6d0d61..538a0c77f671 100644
+index ae23094ffc27..ccc46c974b16 100644
 --- a/OvmfPkg/AmdSev/AmdSevX64.dsc
 +++ b/OvmfPkg/AmdSev/AmdSevX64.dsc
-@@ -471,7 +471,7 @@ [PcdsFixedAtBuild]
+@@ -476,7 +476,7 @@ [PcdsFixedAtBuild]
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
    # DEBUG_ERROR     0x80000000  // Error
@@ -78,35 +78,9 @@ index d1f9bc6d0d61..538a0c77f671 100644
  !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index 6bcd222af7c2..91a3c8f9dda6 100644
+index b69e3c05a281..bbe4e91037c2 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -520,7 +520,7 @@ [PcdsFixedAtBuild]
-   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
-   #                             // significantly impact boot performance
-   # DEBUG_ERROR     0x80000000  // Error
--  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
-+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
- 
- !if $(SOURCE_DEBUG_ENABLE) == TRUE
-   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
-diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 0cce3b768e12..1a7ba6e6eac5 100644
---- a/OvmfPkg/OvmfPkgIa32X64.dsc
-+++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -524,7 +524,7 @@ [PcdsFixedAtBuild]
-   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
-   #                             // significantly impact boot performance
-   # DEBUG_ERROR     0x80000000  // Error
--  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
-+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
- 
- !if $(SOURCE_DEBUG_ENABLE) == TRUE
-   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
-diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 847cf6a46652..1a7afc764607 100644
---- a/OvmfPkg/OvmfPkgX64.dsc
-+++ b/OvmfPkg/OvmfPkgX64.dsc
 @@ -525,7 +525,7 @@ [PcdsFixedAtBuild]
    # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
    #                             // significantly impact boot performance
@@ -116,6 +90,32 @@ index 847cf6a46652..1a7afc764607 100644
  
  !if $(SOURCE_DEBUG_ENABLE) == TRUE
    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index 726011ec42a5..072f06c0a3ab 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -531,7 +531,7 @@ [PcdsFixedAtBuild]
+   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
+   #                             // significantly impact boot performance
+   # DEBUG_ERROR     0x80000000  // Error
+-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
+ 
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
+   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index ab2e31ea8f2b..46661408f97b 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -548,7 +548,7 @@ [PcdsFixedAtBuild]
+   # DEBUG_VERBOSE   0x00400000  // Detailed debug messages that may
+   #                             // significantly impact boot performance
+   # DEBUG_ERROR     0x80000000  // Error
+-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F
++  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8040004F
+ 
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
+   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x17
 -- 
-2.35.1
+2.35.3
 
