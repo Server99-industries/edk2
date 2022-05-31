@@ -708,6 +708,11 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 
 %changelog
+* Tue May 31 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-1
+- update to new edk2 stable tag (2022-05), refresh patches.
+- add amdsev and inteltdx builds
+- drop qosb
+
 * Tue Apr 19 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220221gitb24306f15daa-4
 - switch to virt-firmware for secure boot key enrollment
 - Stop builds on armv7 too (iasl missing).
