@@ -53,6 +53,8 @@ Source11: edk2-aarch64.json
 Source12: edk2-ovmf-sb.json
 Source13: edk2-ovmf.json
 Source14: edk2-ovmf-cc.json
+Source15: edk2-ovmf-amdsev.json
+Source16: edk2-ovmf-inteltdx.json
 
 # Fedora specific sources
 Source50: softfloat-%{softfloat_version}.tar.xz
@@ -228,7 +230,8 @@ git config am.keepcr true
 %autosetup -T -D -n edk2-%{GITCOMMIT} -S git_am
 
 cp -a -- %{SOURCE1} .
-cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} .
+cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} .
+cp -a -- %{SOURCE14} %{SOURCE15} %{SOURCE16} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
@@ -326,6 +329,13 @@ build ${OVMF_FLAGS} -a X64 \
 # Build with SB and SMM; exclude UEFI shell.
 build ${OVMF_SB_FLAGS} -a IA32 -a X64 \
   -p OvmfPkg/OvmfPkgIa32X64.dsc
+
+# Build AmdSev and IntelTdx variants
+touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
+build ${OVMF_FLAGS} -a X64 \
+  -p OvmfPkg/AmdSev/AmdSevX64.dsc
+build ${OVMF_FLAGS} -a X64 \
+  -p OvmfPkg/IntelTdx/IntelTdxX64.dsc
 
 # Sanity check: the varstore templates must be identical.
 cmp Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
@@ -436,6 +446,11 @@ install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso \
   %{buildroot}%{_datadir}/%{name}/ovmf/UefiShell.iso
 
+install -m 0644 Build/AmdSev/DEBUG_%{TOOLCHAIN}/FV/OVMF.fd \
+  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF.amdsev.fd
+install -m 0644 Build/IntelTdx/DEBUG_%{TOOLCHAIN}/FV/OVMF.fd \
+  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF.inteltdx.fd
+
 ln -s ../%{name}/ovmf/OVMF_CODE.fd         %{buildroot}%{_datadir}/OVMF
 ln -s ../%{name}/ovmf/OVMF_CODE.secboot.fd %{buildroot}%{_datadir}/OVMF/
 ln -s ../%{name}/ovmf/OVMF_VARS.fd         %{buildroot}%{_datadir}/OVMF/
@@ -453,6 +468,10 @@ install -m 0644 edk2-ovmf.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf.json
 install -m 0644 edk2-ovmf-cc.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
+install -m 0644 edk2-ovmf-amdsev.json \
+  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
+install -m 0644 edk2-ovmf-inteltdx.json \
+  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
 # endif build_ovmf
 %endif
 
@@ -574,6 +593,8 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_datadir}/%{name}/ovmf/OVMF_CODE.secboot.fd
 %{_datadir}/%{name}/ovmf/OVMF_VARS.fd
 %{_datadir}/%{name}/ovmf/OVMF_VARS.secboot.fd
+%{_datadir}/%{name}/ovmf/OVMF.amdsev.fd
+%{_datadir}/%{name}/ovmf/OVMF.inteltdx.fd
 %{_datadir}/%{name}/ovmf/UefiShell.iso
 %{_datadir}/OVMF/OVMF_CODE.fd
 %{_datadir}/OVMF/OVMF_CODE.secboot.fd
@@ -584,6 +605,8 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
 %{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
+%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
+%{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf.json
 %if %{defined fedora}
 %{_datadir}/%{name}/ovmf/MICROVM.fd
