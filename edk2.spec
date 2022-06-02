@@ -572,8 +572,11 @@ done
 
 
 %check
+%if %{build_ovmf}
 virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
              --print | grep "SecureBootEnable.*ON"
+# endif build_ovmf
+%endif
 
 %global common_files \
   %%license License.txt License.OvmfPkg.txt License-History.txt LICENSE.openssl \
