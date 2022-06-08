@@ -1,4 +1,4 @@
-From b969a329b7a7df0f8f25c8497eaa3c0987b69265 Mon Sep 17 00:00:00 2001
+From e2aa9521a02cacb0ec147667d7bd87ccde2508db Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 14 Oct 2015 15:59:06 +0200
 Subject: [PATCH 06/21] OvmfPkg: take PcdResizeXterm from the QEMU command line
@@ -215,5 +215,5 @@ index f006755d5fdb..b8f56902512c 100644
  
    InstallClearCacheCallback ();
 -- 
-2.35.3
+2.36.1
 

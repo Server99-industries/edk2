@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -84,12 +84,8 @@ Patch0016: 0016-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0017: 0017-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
 Patch0018: 0018-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0019: 0019-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
-Patch0020: 0020-OvmfPkg-Microvm-take-PcdResizeXterm-from-the-QEMU-co.patch
-Patch0021: 0021-Tweak-the-tools_def-to-support-cross-compiling.patch
-
-#Patch0030: 0030-BaseTools-fix-gcc12-warning.patch
-#Patch0031: 0031-BaseTools-fix-gcc12-warning.patch
-#Patch0032: 0032-Basetools-turn-off-gcc12-warning.patch
+Patch0020: 0020-Tweak-the-tools_def-to-support-cross-compiling.patch
+Patch0021: 0021-OvmfPkg-Sec-fix-stack-switch.patch
 
 # python3-devel and libuuid-devel are required for building tools.
 # python3-devel is also needed for varstore template generation and
@@ -711,6 +707,12 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 
 %changelog
+* Wed Jun 08 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-2
+- fix PcdResizeXterm patch.
+- minor specfile cleanup.
+- add 0021-OvmfPkg-Sec-fix-stack-switch.patch
+- Resolves rhbz#2093745
+
 * Tue May 31 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-1
 - update to new edk2 stable tag (2022-05), refresh patches.
 - add amdsev and inteltdx builds

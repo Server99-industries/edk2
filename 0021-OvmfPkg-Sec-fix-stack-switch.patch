@@ -1,0 +1,66 @@
+From 16974ba9c90984e667f057e13630cea6c27d0ae9 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Tue, 7 Jun 2022 14:24:59 +0200
+Subject: [PATCH 21/21] OvmfPkg/Sec: fix stack switch
+
+The ebp/rbp register can either be used for the frame pointer or
+as general purpose register.  With gcc (and clang) this depends
+on the -f(no-)omit-frame-pointer switch.
+
+This patch updates tools_def.template to explicitly set the compiler
+option and also add a define to allow conditionally compile code.
+
+The new define is used to fix stack switching in TemporaryRamMigration.
+The ebp/rbp must not be touched when the compiler can use it as general
+purpose register.  With version 12 gcc starts actually using the
+register, so changing it leads to firmware crashes in some
+configurations.
+
+Ref: https://bugzilla.tianocore.org/show_bug.cgi?id=3934
+Reported-by: Jiri Slaby <jirislaby@kernel.org>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ OvmfPkg/Sec/SecMain.c             | 4 ++++
+ BaseTools/Conf/tools_def.template | 6 +++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/OvmfPkg/Sec/SecMain.c b/OvmfPkg/Sec/SecMain.c
+index 1167d22a68cc..3ca0dcdfd3dd 100644
+--- a/OvmfPkg/Sec/SecMain.c
++++ b/OvmfPkg/Sec/SecMain.c
+@@ -1052,11 +1052,15 @@ TemporaryRamMigration (
+   if (SetJump (&JumpBuffer) == 0) {
+  #if defined (MDE_CPU_IA32)
+     JumpBuffer.Esp = JumpBuffer.Esp + DebugAgentContext.StackMigrateOffset;
++ #ifndef OMIT_FRAME_POINTER
+     JumpBuffer.Ebp = JumpBuffer.Ebp + DebugAgentContext.StackMigrateOffset;
+  #endif
++ #endif
+  #if defined (MDE_CPU_X64)
+     JumpBuffer.Rsp = JumpBuffer.Rsp + DebugAgentContext.StackMigrateOffset;
++ #ifndef OMIT_FRAME_POINTER
+     JumpBuffer.Rbp = JumpBuffer.Rbp + DebugAgentContext.StackMigrateOffset;
++ #endif
+  #endif
+     LongJump (&JumpBuffer, (UINTN)-1);
+   }
+diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
+index 5901d9eecb5d..3b5f1f915c96 100755
+--- a/BaseTools/Conf/tools_def.template
++++ b/BaseTools/Conf/tools_def.template
+@@ -1849,9 +1849,9 @@ NOOPT_*_*_OBJCOPY_ADDDEBUGFLAG     = --add-gnu-debuglink=$(DEBUG_DIR)/$(MODULE_N
+ *_*_*_DTC_PATH                     = DEF(DTC_BIN)
+ 
+ DEFINE GCC_ALL_CC_FLAGS            = -g -Os -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -include AutoGen.h -fno-common
+-DEFINE GCC_IA32_CC_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -m32 -malign-double -freorder-blocks -freorder-blocks-and-partition -O2 -mno-stack-arg-probe
+-DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -Wno-address -mno-stack-arg-probe
+-DEFINE GCC_ARM_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -Wno-address -mthumb -mfloat-abi=soft -fno-pic -fno-pie
++DEFINE GCC_IA32_CC_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -m32 -malign-double -freorder-blocks -freorder-blocks-and-partition -O2 -mno-stack-arg-probe -fno-omit-frame-pointer
++DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -Wno-address -mno-stack-arg-probe -fomit-frame-pointer -DOMIT_FRAME_POINTER=1
++DEFINE GCC_ARM_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -DOMIT_FRAME_POINTER=1 -Wno-address -mthumb -mfloat-abi=soft -fno-pic -fno-pie
+ DEFINE GCC_ARM_CC_XIPFLAGS         = -mno-unaligned-access
+ DEFINE GCC_AARCH64_CC_FLAGS        = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -fno-short-enums -fverbose-asm -funsigned-char  -ffunction-sections -fdata-sections -Wno-address -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-pic -fno-pie -ffixed-x18
+ DEFINE GCC_AARCH64_CC_XIPFLAGS     = -mstrict-align -mgeneral-regs-only
+-- 
+2.36.1
+
