@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -707,6 +707,9 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 
 %changelog
+* Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 20220526git16779ede2d36-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
 * Fri Jun 10 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-3
 - swap stack fix patch.
 
