@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -68,7 +68,7 @@ Source60: edk2-microvm.json
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
 Patch0003: 0003-OvmfPkg-increase-max-debug-message-length-to-512-RHE.patch
-Patch0004: 0004-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
+#Patch0004: 0004-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
 Patch0005: 0005-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
 Patch0006: 0006-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
 Patch0007: 0007-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
@@ -76,7 +76,7 @@ Patch0008: 0008-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
 Patch0009: 0009-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
 Patch0010: 0010-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
 Patch0011: 0011-ArmVirtPkg-set-early-hello-message-RH-only.patch
-Patch0012: 0012-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
+#Patch0012: 0012-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
 Patch0013: 0013-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
 Patch0014: 0014-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
 Patch0015: 0015-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
@@ -707,6 +707,10 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 
 %changelog
+* Thu Aug 18 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-5
+- comment out patch #4 (bug 2116534 workaround)
+- comment out patch #12 (bug 2114858 workaround)
+
 * Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 20220526git16779ede2d36-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
