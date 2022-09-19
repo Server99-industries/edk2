@@ -9,8 +9,8 @@
 ExclusiveArch: x86_64 aarch64
 
 # edk2-stable202205
-%define GITDATE        20220526
-%define GITCOMMIT      16779ede2d36
+%define GITDATE        20220826
+%define GITCOMMIT      ba0e0e4c6a17
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    5%{?dist}
+Release:    1%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -46,7 +46,7 @@ URL:        http://www.tianocore.org
 # | xz -9ev >/tmp/edk2-$COMMIT.tar.xz
 Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
-Source2: openssl-rhel-bdd048e929dcfcf2f046d74e812e0e3d5fc58504.tar.xz
+Source2: openssl-rhel-740e53ace8f6771c205bf84780e26bcd7a3275df.tar.xz
 
 Source10: edk2-aarch64-verbose.json
 Source11: edk2-aarch64.json
