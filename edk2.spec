@@ -735,6 +735,12 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 
 %changelog
+* Tue Sep 20 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220826gitba0e0e4c6a17-1
+- update edk2 to 2022-08 stable tag.
+- update openssl bundle to rhel-8.7 level.
+- add stdvga fix.
+- add 4MB firmware builds.
+
 * Thu Aug 18 2022 Gerd Hoffmann <kraxel@redhat.com> - 20220526git16779ede2d36-5
 - comment out patch #4 (bug 2116534 workaround)
 - comment out patch #12 (bug 2114858 workaround)
