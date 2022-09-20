@@ -23,8 +23,10 @@ ExclusiveArch: x86_64 aarch64
 %ifarch aarch64
   %define build_aarch64 1
 %endif
+%define build_ovmf_4m 0
 %else
 %define build_ovmf 1
+%define build_ovmf_4m 1
 %define build_aarch64 1
 %endif
 
@@ -270,6 +272,9 @@ OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SECURE_BOOT_ENABLE"
 OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SMM_REQUIRE"
 OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
 
+OVMF_4M_FLAGS=""
+OVMF_4M_FLAGS="${OVMF_4M_FLAGS} -D FD_SIZE_IN_KB=4096"
+
 %if %{disable_werror}
 sed -i -e 's/-Werror//' Conf/tools_def.txt
 %endif
@@ -318,6 +323,19 @@ build_iso() {
 
 
 %if %{build_ovmf}
+%if %{build_ovmf_4m}
+build ${OVMF_FLAGS} ${OVMF_4M_FLAGS} -a X64 \
+      -p OvmfPkg/OvmfPkgX64.dsc
+build ${OVMF_SB_FLAGS} ${OVMF_4M_FLAGS} -a IA32 -a X64 \
+      -p OvmfPkg/OvmfPkgIa32X64.dsc
+
+mkdir ovmf-4m
+cp -a Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_*.fd ovmf-4m
+cp -a Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd ovmf-4m/OVMF_CODE.secboot.fd
+ls -la ovmf-4m
+rm -rf Build/OvmfX64
+%endif
+
 # Build with neither SB nor SMM; include UEFI shell.
 build ${OVMF_FLAGS} -a X64 \
   -p OvmfPkg/OvmfPkgX64.dsc
@@ -427,6 +445,10 @@ install BaseTools/Scripts/GccBase.lds \
 mkdir -p \
   %{buildroot}%{_datadir}/OVMF \
   %{buildroot}%{_datadir}/%{name}/ovmf
+
+%if %{build_ovmf_4m}
+cp -a ovmf-4m %{buildroot}%{_datadir}/%{name}
+%endif
 
 install -m 0644 Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
   %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.fd
@@ -611,6 +633,11 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_datadir}/%{name}/ovmf/MICROVM.fd
 %{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
 %{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
+%endif
+%if %{build_ovmf_4m}
+%{_datadir}/%{name}/ovmf-4m/OVMF_CODE.fd
+%{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.fd
+%{_datadir}/%{name}/ovmf-4m/OVMF_VARS.fd
 %endif
 # endif build_ovmf
 %endif
