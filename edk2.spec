@@ -88,6 +88,7 @@ Patch0018: 0018-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0019: 0019-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 Patch0020: 0020-Tweak-the-tools_def-to-support-cross-compiling.patch
 Patch0021: 0021-tools_def-add-fno-omit-frame-pointer-to-GCC48_-IA32-.patch
+Patch0022: 0022-OvmfPkg-QemuVideoDxe-fix-bochs-mode-init.patch
 
 # python3-devel and libuuid-devel are required for building tools.
 # python3-devel is also needed for varstore template generation and
