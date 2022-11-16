@@ -23,10 +23,8 @@ ExclusiveArch: x86_64 aarch64
 %ifarch aarch64
   %define build_aarch64 1
 %endif
-%define build_ovmf_4m 0
 %else
 %define build_ovmf 1
-%define build_ovmf_4m 1
 %define build_aarch64 1
 %endif
 
@@ -66,6 +64,11 @@ Source57: 60-edk2-ovmf-ia32.json
 Source58: edk2-ovmf-nosb.json
 Source59: 70-edk2-arm-verbose.json
 Source60: edk2-microvm.json
+
+# https://gitlab.com/kraxel/edk2-build-config
+Source80: edk2-build.py
+Source81: edk2-build.fedora
+Source82: edk2-build.rhel-9
 
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
@@ -231,6 +234,7 @@ git config am.keepcr true
 cp -a -- %{SOURCE1} .
 cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} .
 cp -a -- %{SOURCE14} %{SOURCE15} %{SOURCE16} .
+cp -a -- %{SOURCE80} %{SOURCE81} %{SOURCE82} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
@@ -241,52 +245,6 @@ tar -xf %{SOURCE50} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloat
 
 
 %build
-export PYTHON_COMMAND=%{__python3}
-source ./edksetup.sh
-%make_build -C "$EDK_TOOLS_PATH" \
-  EXTRA_OPTFLAGS="%{optflags}" \
-  EXTRA_LDFLAGS="%{__global_ldflags}"
-
-SMP_MFLAGS="%{?_smp_mflags}"
-if [[ x"$SMP_MFLAGS" = x-j* ]]; then
-        CC_FLAGS="$CC_FLAGS -n ${SMP_MFLAGS#-j}"
-elif [ -n "%{?jobs}" ]; then
-        CC_FLAGS="$CC_FLAGS -n %{?jobs}"
-fi
-
-CC_FLAGS="$CC_FLAGS --cmd-len=65536 -t %{TOOLCHAIN} -b DEBUG --hash"
-CC_FLAGS="$CC_FLAGS -D NETWORK_IP6_ENABLE"
-CC_FLAGS="$CC_FLAGS -D NETWORK_HTTP_BOOT_ENABLE -D NETWORK_TLS_ENABLE"
-CC_FLAGS="$CC_FLAGS -D TPM2_ENABLE"
-CC_FLAGS="$CC_FLAGS -D TPM1_ENABLE"
-
-OVMF_FLAGS="${CC_FLAGS}"
-%if %{defined rhel}
-OVMF_FLAGS="${OVMF_FLAGS} -D FD_SIZE_4MB"
-OVMF_FLAGS="${OVMF_FLAGS} -D PVSCSI_ENABLE=FALSE -D MPT_SCSI_ENABLE=FALSE"
-%else
-OVMF_FLAGS="${OVMF_FLAGS} -D FD_SIZE_2MB"
-%endif
-
-OVMF_SB_FLAGS="${OVMF_FLAGS}"
-OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SECURE_BOOT_ENABLE"
-OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D SMM_REQUIRE"
-OVMF_SB_FLAGS="${OVMF_SB_FLAGS} -D EXCLUDE_SHELL_FROM_FD"
-
-OVMF_4M_FLAGS=""
-OVMF_4M_FLAGS="${OVMF_4M_FLAGS} -D FD_SIZE_IN_KB=4096"
-
-%if %{disable_werror}
-sed -i -e 's/-Werror//' Conf/tools_def.txt
-%endif
-
-
-%if %{cross}
-export GCC5_IA32_PREFIX="x86_64-linux-gnu-"
-export GCC5_X64_PREFIX="x86_64-linux-gnu-"
-export GCC5_AARCH64_PREFIX="aarch64-linux-gnu-"
-export GCC5_ARM_PREFIX="arm-linux-gnu-"
-%endif
 
 build_iso() {
   dir="$1"
@@ -322,102 +280,42 @@ build_iso() {
     -o "$ISO_IMAGE" "$UEFI_SHELL_IMAGE"
 }
 
+touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 
 %if %{build_ovmf}
-%if %{build_ovmf_4m}
-build ${OVMF_FLAGS} ${OVMF_4M_FLAGS} -a X64 \
-      -p OvmfPkg/OvmfPkgX64.dsc
-build ${OVMF_SB_FLAGS} ${OVMF_4M_FLAGS} -a IA32 -a X64 \
-      -p OvmfPkg/OvmfPkgIa32X64.dsc
+%if %{defined rhel}
 
-mkdir ovmf-4m
-cp -a Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_*.fd ovmf-4m
-cp -a Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd ovmf-4m/OVMF_CODE.secboot.fd
-ls -la ovmf-4m
-rm -rf Build/OvmfX64
-%endif
-
-# Build with neither SB nor SMM; include UEFI shell.
-build ${OVMF_FLAGS} -a X64 \
-  -p OvmfPkg/OvmfPkgX64.dsc
-
-# Build with SB and SMM; exclude UEFI shell.
-build ${OVMF_SB_FLAGS} -a IA32 -a X64 \
-  -p OvmfPkg/OvmfPkgIa32X64.dsc
-
-# Build AmdSev and IntelTdx variants
-touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
-build ${OVMF_FLAGS} -a X64 \
-  -p OvmfPkg/AmdSev/AmdSevX64.dsc
-build ${OVMF_FLAGS} -a X64 \
-  -p OvmfPkg/IntelTdx/IntelTdxX64.dsc
-
-# Sanity check: the varstore templates must be identical.
-cmp Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
-  Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd
-
-# Prepare an ISO image that boots the UEFI shell.
+./edk2-build.py --config edk2-build.rhel-9 -m ovmf
+virt-fw-vars --input  RHEL-9/ovmf/OVMF_VARS.fd \
+             --output RHEL-9/ovmf/OVMF_VARS.secboot.fd \
+             --enroll-redhat --secure-boot
 build_iso Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64
 
-virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
-             --output Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
-             --enroll-redhat --secure-boot
+%else
 
-# endif build_ovmf
+./edk2-build.py --config edk2-build.fedora -m ovmf
+virt-fw-vars --input  Fedora/ovmf/OVMF_VARS.fd \
+             --output Fedora/ovmf/OVMF_VARS.secboot.fd \
+             --enroll-redhat --secure-boot
+virt-fw-vars --input  Fedora/ovmf-4m/OVMF_VARS.fd \
+             --output Fedora/ovmf-4m/OVMF_VARS.secboot.fd \
+             --enroll-redhat --secure-boot
+virt-fw-vars --input  Fedora/ovmf-ia32/OVMF_VARS.fd \
+             --output Fedora/ovmf-ia32/OVMF_VARS.secboot.fd \
+             --enroll-redhat --secure-boot
+build_iso Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64
+build_iso Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32
+
+%endif
 %endif
 
 %if %{build_aarch64}
-# Build with a verbose debug mask first, and stash the binary.
-build ${CC_FLAGS} -a AARCH64 \
-  -p ArmVirtPkg/ArmVirtQemu.dsc \
-  -D DEBUG_PRINT_ERROR_LEVEL=0x8040004F
-cp -a Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.fd \
-  Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.verbose.fd
-
-# Rebuild with a silent (errors only) debug mask.
-build ${CC_FLAGS} -a AARCH64 \
-  -p ArmVirtPkg/ArmVirtQemu.dsc \
-  -D DEBUG_PRINT_ERROR_LEVEL=0x80000000
-# endif build_aarch64
+%if %{defined rhel}
+./edk2-build.py --config edk2-build.rhel-9 -m armvirt
+%else
+./edk2-build.py --config edk2-build.fedora -m armvirt
 %endif
-
-
-%if %{defined fedora}
-%if %{build_ovmf}
-# build microvm
-build ${OVMF_FLAGS} -a X64 -p OvmfPkg/Microvm/MicrovmX64.dsc
-
-# build ovmf-ia32
-mkdir -p ovmf-ia32
-build ${OVMF_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
-cp Build/OvmfIa32/*/FV/OVMF_CODE*.fd ovmf-ia32/
-# cp VARS files from from ovmf/, which are all we need
-cp -a Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS*.fd ovmf-ia32
-rm -rf Build/OvmfIa32
-
-# build ovmf-ia32 with secure boot
-build ${OVMF_SB_FLAGS} -a IA32 -p OvmfPkg/OvmfPkgIa32.dsc
-cp Build/OvmfIa32/*/FV/OVMF_CODE.fd ovmf-ia32/OVMF_CODE.secboot.fd
-
-# build ovmf-ia32 shell iso with EnrollDefaultKeys
-build_iso Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32
-mv Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/UefiShell.iso ovmf-ia32
-cp -a Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/Shell.efi ovmf-ia32
-cp -a Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/EnrollDefaultKeys.efi ovmf-ia32
-# endif build_ovmf
 %endif
-
-# build ARMv7 firmware
-mkdir -p arm
-build ${CC_FLAGS} -a ARM -p ArmVirtPkg/ArmVirtQemu.dsc
-cp Build/ArmVirtQemu-ARM/DEBUG_*/FV/*.fd arm
-dd of="arm/QEMU_EFI-pflash.raw" if="/dev/zero" bs=1M count=64
-dd of="arm/QEMU_EFI-pflash.raw" if="arm/QEMU_EFI.fd" conv=notrunc
-dd of="arm/vars-template-pflash.raw" if="/dev/zero" bs=1M count=64
-
-# endif defined fedora
-%endif
-
 
 
 %install
@@ -441,46 +339,28 @@ install BaseTools/Conf/*.template \
 install BaseTools/Scripts/GccBase.lds \
         %{buildroot}%{_datadir}/%{name}/Scripts
 
-
-%if %{build_ovmf}
-mkdir -p \
-  %{buildroot}%{_datadir}/OVMF \
-  %{buildroot}%{_datadir}/%{name}/ovmf
-
-%if %{build_ovmf_4m}
-cp -a ovmf-4m %{buildroot}%{_datadir}/%{name}
+# install firmware images
+mkdir -p %{buildroot}%{_datadir}/%{name}
+%if %{defined rhel}
+cp -av RHEL-9/* %{buildroot}%{_datadir}/%{name}
+%else
+cp -av Fedora/* %{buildroot}%{_datadir}/%{name}
 %endif
 
-install -m 0644 Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.fd
-install -m 0644 Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.cc.fd
-install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_CODE.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.secboot.fd
 
-install -m 0644 Build/OvmfX64/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_VARS.fd
-install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_VARS.secboot.fd
-install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso \
-  %{buildroot}%{_datadir}/%{name}/ovmf/UefiShell.iso
+%if %{build_ovmf}
 
-install -m 0644 Build/AmdSev/DEBUG_%{TOOLCHAIN}/FV/OVMF.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF.amdsev.fd
-install -m 0644 Build/IntelTdx/DEBUG_%{TOOLCHAIN}/FV/OVMF.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/OVMF.inteltdx.fd
-
-ln -s ../%{name}/ovmf/OVMF_CODE.fd         %{buildroot}%{_datadir}/OVMF
+# compat symlinks
+mkdir -p %{buildroot}%{_datadir}/OVMF
+ln -s ../%{name}/ovmf/OVMF_CODE.fd         %{buildroot}%{_datadir}/OVMF/
 ln -s ../%{name}/ovmf/OVMF_CODE.secboot.fd %{buildroot}%{_datadir}/OVMF/
 ln -s ../%{name}/ovmf/OVMF_VARS.fd         %{buildroot}%{_datadir}/OVMF/
 ln -s ../%{name}/ovmf/OVMF_VARS.secboot.fd %{buildroot}%{_datadir}/OVMF/
 ln -s ../%{name}/ovmf/UefiShell.iso        %{buildroot}%{_datadir}/OVMF/
+ln -s OVMF_CODE.fd %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.cc.fd
 
-install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/Shell.efi \
-  %{buildroot}%{_datadir}/%{name}/ovmf/Shell.efi
-install -m 0644 Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/EnrollDefaultKeys.efi \
-  %{buildroot}%{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
-
+# json description files
+mkdir -p %{buildroot}%{_datadir}/qemu/firmware
 install -m 0644 edk2-ovmf-sb.json \
   %{buildroot}%{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
 install -m 0644 edk2-ovmf.json \
@@ -491,85 +371,55 @@ install -m 0644 edk2-ovmf-amdsev.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
 install -m 0644 edk2-ovmf-inteltdx.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
+%if %{defined fedora}
+install -p -m 0644 %{_sourcedir}/edk2-microvm.json \
+  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
+install -p -m 0644 %{_sourcedir}/edk2-ovmf-nosb.json \
+  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
+for f in %{_sourcedir}/*edk2-ovmf-ia32*.json; do
+    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
+done
+%endif
+
+# shell iso
+cp Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso  %{buildroot}%{_datadir}/%{name}/ovmf
+%if %{defined fedora}
+cp Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/UefiShell.iso %{buildroot}%{_datadir}/%{name}/ovmf-ia32
+%endif
+
 # endif build_ovmf
 %endif
 
-mkdir -p %{buildroot}%{_datadir}/AAVMF
 %if %{build_aarch64}
-mkdir -p %{buildroot}%{_datadir}/%{name}/aarch64
 
-# Pad and install the verbose binary.
-cat Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.verbose.fd \
-  /dev/zero \
-| head -c 64m \
-  > %{buildroot}%{_datadir}/%{name}/aarch64/QEMU_EFI-pflash.raw
-
-# Pad and install the silent (default) binary.
-cat Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.fd \
-  /dev/zero \
-| head -c 64m \
-  > %{buildroot}%{_datadir}/%{name}/aarch64/QEMU_EFI-silent-pflash.raw
-
-# Create varstore template.
-cat Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_VARS.fd \
-  /dev/zero \
-| head -c 64m \
-  > %{buildroot}%{_datadir}/%{name}/aarch64/vars-template-pflash.raw
-
+# compat symlinks
+mkdir -p %{buildroot}%{_datadir}/AAVMF
 ln -s ../%{name}/aarch64/QEMU_EFI-pflash.raw \
   %{buildroot}%{_datadir}/AAVMF/AAVMF_CODE.verbose.fd
 ln -s ../%{name}/aarch64/QEMU_EFI-silent-pflash.raw \
   %{buildroot}%{_datadir}/AAVMF/AAVMF_CODE.fd
 ln -s ../%{name}/aarch64/vars-template-pflash.raw \
   %{buildroot}%{_datadir}/AAVMF/AAVMF_VARS.fd
+%if %{defined fedora}
+ln -s ../%{name}/arm/QEMU_EFI-pflash.raw \
+   %{buildroot}%{_datadir}/AAVMF/AAVMF32_CODE.fd
+%endif
 
-chmod 0644 -- %{buildroot}%{_datadir}/AAVMF/AAVMF_*.fd
-
-install -m 0644 Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.verbose.fd \
-  %{buildroot}%{_datadir}/%{name}/aarch64/QEMU_EFI.fd
-install -m 0644 Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_EFI.fd \
-  %{buildroot}%{_datadir}/%{name}/aarch64/QEMU_EFI.silent.fd
-install -m 0644 Build/ArmVirtQemu-AARCH64/DEBUG_%{TOOLCHAIN}/FV/QEMU_VARS.fd \
-  %{buildroot}%{_datadir}/%{name}/aarch64/QEMU_VARS.fd
-
+# json description files
 install -m 0644 edk2-aarch64.json \
   %{buildroot}%{_datadir}/qemu/firmware/60-edk2-aarch64.json
 install -m 0644 edk2-aarch64-verbose.json \
   %{buildroot}%{_datadir}/qemu/firmware/70-edk2-aarch64-verbose.json
-# endif build_aarch64
-%endif
-
-
 %if %{defined fedora}
-%if %{build_ovmf}
-# install microvm
-install -m 0644 Build/MicrovmX64/DEBUG_%{TOOLCHAIN}/FV/MICROVM.fd \
-  %{buildroot}%{_datadir}/%{name}/ovmf/MICROVM.fd
-install -p -m 0644 %{_sourcedir}/edk2-microvm.json \
-  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
-
-# Install extra x86_64 json files
-install -p -m 0644 %{_sourcedir}/edk2-ovmf-nosb.json \
-  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
-
-
-# install ia32
-cp -a ovmf-ia32 %{buildroot}%{_datadir}/%{name}
-
-for f in %{_sourcedir}/*edk2-ovmf-ia32*.json; do
-    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
-done
-# endif build_ovmf
-%endif
-
-# install arm32
-cp -a arm %{buildroot}%{_datadir}/%{name}
-ln -sf ../%{name}/arm/QEMU_EFI-pflash.raw          %{buildroot}%{_datadir}/AAVMF/AAVMF32_CODE.fd
-
 for f in %{_sourcedir}/*edk2-arm-*.json; do
     install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
 done
+%endif
 
+# endif build_aarch64
+%endif
+
+%if %{defined fedora}
 
 # edk2-tools-python install
 cp -R BaseTools/Source/Python %{buildroot}%{_datadir}/%{name}/Python
@@ -585,17 +435,13 @@ done
 %py_byte_compile %{python3} %{buildroot}%{_datadir}/edk2/Python
 %endif
 
-# endif defined fedora
 %endif
-
-
 
 %check
-%if %{build_ovmf}
-virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
-             --print | grep "SecureBootEnable.*ON"
-# endif build_ovmf
-%endif
+for file in %{buildroot}%{_datadir}/%{name}/*/*VARS.secboot*; do
+    test -f "$file" || continue
+    virt-fw-vars --input $file --print | grep "SecureBootEnable.*ON" || exit 1
+done
 
 %global common_files \
   %%license License.txt License.OvmfPkg.txt License-History.txt LICENSE.openssl \
@@ -609,6 +455,11 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %doc OvmfPkg/README
 %doc ovmf-whitepaper-c770f8c.txt
 %dir %{_datadir}/OVMF/
+%{_datadir}/OVMF/OVMF_CODE.fd
+%{_datadir}/OVMF/OVMF_CODE.secboot.fd
+%{_datadir}/OVMF/OVMF_VARS.fd
+%{_datadir}/OVMF/OVMF_VARS.secboot.fd
+%{_datadir}/OVMF/UefiShell.iso
 %dir %{_datadir}/%{name}/ovmf/
 %{_datadir}/%{name}/ovmf/OVMF_CODE.fd
 %{_datadir}/%{name}/ovmf/OVMF_CODE.cc.fd
@@ -618,11 +469,6 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_datadir}/%{name}/ovmf/OVMF.amdsev.fd
 %{_datadir}/%{name}/ovmf/OVMF.inteltdx.fd
 %{_datadir}/%{name}/ovmf/UefiShell.iso
-%{_datadir}/OVMF/OVMF_CODE.fd
-%{_datadir}/OVMF/OVMF_CODE.secboot.fd
-%{_datadir}/OVMF/OVMF_VARS.fd
-%{_datadir}/OVMF/OVMF_VARS.secboot.fd
-%{_datadir}/OVMF/UefiShell.iso
 %{_datadir}/%{name}/ovmf/Shell.efi
 %{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
 %{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
@@ -632,13 +478,13 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %{_datadir}/qemu/firmware/50-edk2-ovmf.json
 %if %{defined fedora}
 %{_datadir}/%{name}/ovmf/MICROVM.fd
-%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
-%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
-%endif
-%if %{build_ovmf_4m}
+%dir %{_datadir}/%{name}/ovmf-4m/
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.fd
+%{_datadir}/%{name}/ovmf-4m/OVMF_VARS.secboot.fd
+%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
+%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
 %endif
 # endif build_ovmf
 %endif
@@ -647,13 +493,13 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %files aarch64
 %common_files
 %dir %{_datadir}/AAVMF/
+%{_datadir}/AAVMF/AAVMF_CODE.verbose.fd
+%{_datadir}/AAVMF/AAVMF_CODE.fd
+%{_datadir}/AAVMF/AAVMF_VARS.fd
 %dir %{_datadir}/%{name}/aarch64/
 %{_datadir}/%{name}/aarch64/QEMU_EFI-pflash.raw
 %{_datadir}/%{name}/aarch64/QEMU_EFI-silent-pflash.raw
 %{_datadir}/%{name}/aarch64/vars-template-pflash.raw
-%{_datadir}/AAVMF/AAVMF_CODE.verbose.fd
-%{_datadir}/AAVMF/AAVMF_CODE.fd
-%{_datadir}/AAVMF/AAVMF_VARS.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.silent.fd
 %{_datadir}/%{name}/aarch64/QEMU_VARS.fd
@@ -691,7 +537,6 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 %files ovmf-ia32
 %common_files
 %dir %{_datadir}/%{name}/ovmf-ia32
-%{_datadir}/%{name}/ovmf-ia32
 %{_datadir}/%{name}/ovmf-ia32/EnrollDefaultKeys.efi
 %{_datadir}/%{name}/ovmf-ia32/OVMF_CODE.fd
 %{_datadir}/%{name}/ovmf-ia32/OVMF_CODE.secboot.fd
@@ -706,9 +551,9 @@ virt-fw-vars --input Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/FV/OVMF_VARS.secboot.fd \
 
 %files arm
 %common_files
-%dir %{_datadir}/%{name}/arm
+%dir %{_datadir}/AAVMF/
 %{_datadir}/AAVMF/AAVMF32_CODE.fd
-%{_datadir}/%{name}/arm
+%dir %{_datadir}/%{name}/arm
 %{_datadir}/%{name}/arm/QEMU_EFI-pflash.raw
 %{_datadir}/%{name}/arm/QEMU_EFI.fd
 %{_datadir}/%{name}/arm/QEMU_VARS.fd
