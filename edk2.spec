@@ -52,9 +52,8 @@ Source10: edk2-aarch64-verbose.json
 Source11: edk2-aarch64.json
 Source12: edk2-ovmf-sb.json
 Source13: edk2-ovmf.json
-Source14: edk2-ovmf-cc.json
-Source15: edk2-ovmf-amdsev.json
-Source16: edk2-ovmf-inteltdx.json
+Source14: edk2-ovmf-amdsev.json
+Source15: edk2-ovmf-inteltdx.json
 
 # Fedora specific sources
 Source50: softfloat-%{softfloat_version}.tar.xz
@@ -233,7 +232,7 @@ git config am.keepcr true
 
 cp -a -- %{SOURCE1} .
 cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} .
-cp -a -- %{SOURCE14} %{SOURCE15} %{SOURCE16} .
+cp -a -- %{SOURCE14} %{SOURCE15} .
 cp -a -- %{SOURCE80} %{SOURCE81} %{SOURCE82} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 
@@ -365,8 +364,6 @@ install -m 0644 edk2-ovmf-sb.json \
   %{buildroot}%{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
 install -m 0644 edk2-ovmf.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf.json
-install -m 0644 edk2-ovmf-cc.json \
-  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
 install -m 0644 edk2-ovmf-amdsev.json \
   %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
 install -m 0644 edk2-ovmf-inteltdx.json \
@@ -472,7 +469,6 @@ done
 %{_datadir}/%{name}/ovmf/Shell.efi
 %{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
 %{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf-cc.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf.json
