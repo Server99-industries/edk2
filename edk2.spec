@@ -47,22 +47,24 @@ URL:        http://www.tianocore.org
 Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-740e53ace8f6771c205bf84780e26bcd7a3275df.tar.xz
+Source3: softfloat-%{softfloat_version}.tar.xz
 
-Source10: edk2-aarch64-verbose.json
-Source11: edk2-aarch64.json
-Source12: edk2-ovmf-sb.json
-Source13: edk2-ovmf.json
-Source14: edk2-ovmf-amdsev.json
-Source15: edk2-ovmf-inteltdx.json
+# json description files
+Source10: json-aa64/50-edk2-aarch64.json
+Source11: json-aa64/51-edk2-aarch64-verbose.json
 
-# Fedora specific sources
-Source50: softfloat-%{softfloat_version}.tar.xz
-Source55: 40-edk2-ovmf-ia32-sb-enrolled.json
-Source56: 50-edk2-ovmf-ia32-sb.json
-Source57: 60-edk2-ovmf-ia32.json
-Source58: edk2-ovmf-nosb.json
-Source59: 70-edk2-arm-verbose.json
-Source60: edk2-microvm.json
+Source20: json-arm/50-edk2-arm-verbose.json
+
+Source30: json-ia32/30-edk2-ovmf-ia32-sb-enrolled.json
+Source31: json-ia32/40-edk2-ovmf-ia32-sb.json
+Source32: json-ia32/50-edk2-ovmf-ia32.json
+
+Source40: json-x64/30-edk2-ovmf-x64-sb.json
+Source41: json-x64/40-edk2-ovmf-x64.json
+Source42: json-x64/50-edk2-ovmf-x64-microvm.json
+Source43: json-x64/50-edk2-ovmf-x64-nosb.json
+Source44: json-x64/60-edk2-ovmf-x64-amdsev.json
+Source45: json-x64/60-edk2-ovmf-x64-inteltdx.json
 
 # https://gitlab.com/kraxel/edk2-build-config
 Source80: edk2-build.py
@@ -231,17 +233,20 @@ git config am.keepcr true
 %autosetup -T -D -n edk2-%{GITCOMMIT} -S git_am
 
 cp -a -- %{SOURCE1} .
-cp -a -- %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} .
-cp -a -- %{SOURCE14} %{SOURCE15} .
-cp -a -- %{SOURCE80} %{SOURCE81} %{SOURCE82} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
+# extract softfloat into place
+tar -xf %{SOURCE3} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
 chmod -Rf a+rX,u+w,g-w,o-w .
 
-# extract softfloat into place
-tar -xf %{SOURCE50} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
-
+cp -a -- \
+   %{SOURCE10} %{SOURCE11} \
+   %{SOURCE20} \
+   %{SOURCE30} %{SOURCE31} %{SOURCE32} \
+   %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
+   %{SOURCE80} %{SOURCE81} %{SOURCE82} \
+   .
 
 %build
 
@@ -360,22 +365,20 @@ ln -s OVMF_CODE.fd %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.cc.fd
 
 # json description files
 mkdir -p %{buildroot}%{_datadir}/qemu/firmware
-install -m 0644 edk2-ovmf-sb.json \
-  %{buildroot}%{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
-install -m 0644 edk2-ovmf.json \
-  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf.json
-install -m 0644 edk2-ovmf-amdsev.json \
-  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
-install -m 0644 edk2-ovmf-inteltdx.json \
-  %{buildroot}%{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
+install -m 0644 \
+        30-edk2-ovmf-x64-sb.json \
+        40-edk2-ovmf-x64.json \
+        50-edk2-ovmf-x64-nosb.json \
+        60-edk2-ovmf-x64-amdsev.json \
+        60-edk2-ovmf-x64-inteltdx.json \
+        %{buildroot}%{_datadir}/qemu/firmware
 %if %{defined fedora}
-install -p -m 0644 %{_sourcedir}/edk2-microvm.json \
-  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
-install -p -m 0644 %{_sourcedir}/edk2-ovmf-nosb.json \
-  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
-for f in %{_sourcedir}/*edk2-ovmf-ia32*.json; do
-    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
-done
+install -m 0644 \
+        50-edk2-ovmf-x64-microvm.json \
+        30-edk2-ovmf-ia32-sb-enrolled.json \
+        40-edk2-ovmf-ia32-sb.json \
+        50-edk2-ovmf-ia32.json \
+        %{buildroot}%{_datadir}/qemu/firmware
 %endif
 
 # shell iso
@@ -403,14 +406,14 @@ ln -s ../%{name}/arm/QEMU_EFI-pflash.raw \
 %endif
 
 # json description files
-install -m 0644 edk2-aarch64.json \
-  %{buildroot}%{_datadir}/qemu/firmware/60-edk2-aarch64.json
-install -m 0644 edk2-aarch64-verbose.json \
-  %{buildroot}%{_datadir}/qemu/firmware/70-edk2-aarch64-verbose.json
+install -m 0644 \
+        50-edk2-aarch64.json \
+        51-edk2-aarch64-verbose.json \
+        %{buildroot}%{_datadir}/qemu/firmware
 %if %{defined fedora}
-for f in %{_sourcedir}/*edk2-arm-*.json; do
-    install -pm 644 $f %{buildroot}/%{_datadir}/qemu/firmware
-done
+install -m 0644 \
+        50-edk2-arm-verbose.json \
+        %{buildroot}%{_datadir}/qemu/firmware
 %endif
 
 # endif build_aarch64
@@ -468,19 +471,19 @@ done
 %{_datadir}/%{name}/ovmf/UefiShell.iso
 %{_datadir}/%{name}/ovmf/Shell.efi
 %{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
-%{_datadir}/qemu/firmware/40-edk2-ovmf-sb.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf-amdsev.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf-inteltdx.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf.json
+%{_datadir}/qemu/firmware/30-edk2-ovmf-x64-sb.json
+%{_datadir}/qemu/firmware/40-edk2-ovmf-x64.json
+%{_datadir}/qemu/firmware/50-edk2-ovmf-x64-nosb.json
+%{_datadir}/qemu/firmware/60-edk2-ovmf-x64-amdsev.json
+%{_datadir}/qemu/firmware/60-edk2-ovmf-x64-inteltdx.json
 %if %{defined fedora}
 %{_datadir}/%{name}/ovmf/MICROVM.fd
+%{_datadir}/qemu/firmware/50-edk2-ovmf-x64-microvm.json
 %dir %{_datadir}/%{name}/ovmf-4m/
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.secboot.fd
-%{_datadir}/qemu/firmware/60-edk2-ovmf-nosb.json
-%{_datadir}/qemu/firmware/60-edk2-ovmf-microvm.json
 %endif
 # endif build_ovmf
 %endif
@@ -499,8 +502,8 @@ done
 %{_datadir}/%{name}/aarch64/QEMU_EFI.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.silent.fd
 %{_datadir}/%{name}/aarch64/QEMU_VARS.fd
-%{_datadir}/qemu/firmware/60-edk2-aarch64.json
-%{_datadir}/qemu/firmware/70-edk2-aarch64-verbose.json
+%{_datadir}/qemu/firmware/50-edk2-aarch64.json
+%{_datadir}/qemu/firmware/51-edk2-aarch64-verbose.json
 # endif build_aarch64
 %endif
 
@@ -540,9 +543,9 @@ done
 %{_datadir}/%{name}/ovmf-ia32/OVMF_VARS.secboot.fd
 %{_datadir}/%{name}/ovmf-ia32/Shell.efi
 %{_datadir}/%{name}/ovmf-ia32/UefiShell.iso
-%{_datadir}/qemu/firmware/40-edk2-ovmf-ia32-sb-enrolled.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf-ia32-sb.json
-%{_datadir}/qemu/firmware/60-edk2-ovmf-ia32.json
+%{_datadir}/qemu/firmware/30-edk2-ovmf-ia32-sb-enrolled.json
+%{_datadir}/qemu/firmware/40-edk2-ovmf-ia32-sb.json
+%{_datadir}/qemu/firmware/50-edk2-ovmf-ia32.json
 %endif
 
 %files arm
@@ -554,7 +557,7 @@ done
 %{_datadir}/%{name}/arm/QEMU_EFI.fd
 %{_datadir}/%{name}/arm/QEMU_VARS.fd
 %{_datadir}/%{name}/arm/vars-template-pflash.raw
-%{_datadir}/qemu/firmware/70-edk2-arm-verbose.json
+%{_datadir}/qemu/firmware/50-edk2-arm-verbose.json
 
 
 %files tools-python
