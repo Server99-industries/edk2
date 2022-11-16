@@ -1,5 +1,5 @@
 {
-    "description": "OVMF for x86_64, without SB, without SMM, with empty varstore",
+    "description": "OVMF without SB+SMM, empty varstore",
     "interface-types": [
         "uefi"
     ],
