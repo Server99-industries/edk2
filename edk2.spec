@@ -9,8 +9,8 @@
 ExclusiveArch: x86_64 aarch64
 
 # edk2-stable202205
-%define GITDATE        20220826
-%define GITCOMMIT      ba0e0e4c6a17
+%define GITDATE        20221117
+%define GITCOMMIT      fff6d81270b5
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
