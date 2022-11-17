@@ -194,6 +194,15 @@ BuildArch:      noarch
 EFI Development Kit II
 Open Virtual Machine Firmware (ia32)
 
+%package ovmf-experimental
+Summary:        Open Virtual Machine Firmware, experimental builds
+License:        BSD-2-Clause-Patent and OpenSSL
+Provides:       bundled(openssl)
+BuildArch:      noarch
+%description ovmf-experimental
+EFI Development Kit II
+Open Virtual Machine Firmware (experimental builds)
+
 %package arm
 Summary:        ARM Virtual Machine Firmware
 BuildArch:      noarch
@@ -304,6 +313,11 @@ virt-fw-vars --input  Fedora/ovmf-ia32/OVMF_VARS.fd \
              --enroll-redhat --secure-boot
 build_iso Fedora/ovmf
 build_iso Fedora/ovmf-ia32
+
+# experimental stateless builds
+virt-fw-vars --input  Fedora/experimental/OVMF.stateless.fd \
+             --output Fedora/experimental/OVMF.stateless.secboot.fd \
+             --enroll-redhat --secure-boot
 
 %endif
 %endif
@@ -535,6 +549,11 @@ done
 %{_datadir}/qemu/firmware/30-edk2-ovmf-ia32-sb-enrolled.json
 %{_datadir}/qemu/firmware/40-edk2-ovmf-ia32-sb.json
 %{_datadir}/qemu/firmware/50-edk2-ovmf-ia32.json
+
+%files ovmf-experimental
+%common_files
+%dir %{_datadir}/%{name}/experimental
+%{_datadir}/%{name}/experimental/*.fd
 %endif
 
 %files arm

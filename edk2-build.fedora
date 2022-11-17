@@ -24,6 +24,11 @@ EXCLUDE_SHELL_FROM_FD    = TRUE
 # new upstream
 BUILD_SHELL              = FALSE
 
+# requires edk2 2022-11 or newer
+[opts.ovmf.sb.stateless]
+SECURE_BOOT_ENABLE       = TRUE
+SMM_REQUIRE              = FALSE
+
 [opts.armvirt.verbose]
 DEBUG_PRINT_ERROR_LEVEL  = 0x8040004F
 
@@ -172,3 +177,16 @@ cpy3 = FV/QEMU_EFI.fd  QEMU_EFI-pflash.raw
 cpy4 = FV/QEMU_VARS.fd vars-template-pflash.raw
 pad3 = QEMU_EFI-pflash.raw      64m
 pad4 = vars-template-pflash.raw 64m
+
+
+#####################################################################
+# experimental builds
+
+[build.ovmf.sb.stateless]
+desc = ovmf build (64-bit, stateless secure boot)
+conf = OvmfPkg/OvmfPkgX64.dsc
+arch = X64
+opts = ovmf.common ovmf.4m ovmf.sb.stateless
+plat = OvmfX64
+dest = Fedora/experimental
+cpy1 = FV/OVMF.fd OVMF.stateless.fd
