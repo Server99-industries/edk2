@@ -73,26 +73,21 @@ Source82: edk2-build.rhel-9
 
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
-Patch0003: 0003-OvmfPkg-increase-max-debug-message-length-to-512-RHE.patch
-#Patch0004: 0004-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
-Patch0005: 0005-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
-Patch0006: 0006-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
-Patch0007: 0007-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
-Patch0008: 0008-OvmfPkg-allow-exclusion-of-the-shell-from-the-firmwa.patch
-Patch0009: 0009-ArmPlatformPkg-introduce-fixed-PCD-for-early-hello-m.patch
-Patch0010: 0010-ArmPlatformPkg-PrePeiCore-write-early-hello-message-.patch
-Patch0011: 0011-ArmVirtPkg-set-early-hello-message-RH-only.patch
-#Patch0012: 0012-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
-Patch0013: 0013-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
-Patch0014: 0014-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
-Patch0015: 0015-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
-Patch0016: 0016-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
-Patch0017: 0017-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
-Patch0018: 0018-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
-Patch0019: 0019-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
-Patch0020: 0020-Tweak-the-tools_def-to-support-cross-compiling.patch
-Patch0021: 0021-tools_def-add-fno-omit-frame-pointer-to-GCC48_-IA32-.patch
-Patch0022: 0022-OvmfPkg-QemuVideoDxe-fix-bochs-mode-init.patch
+#Patch0003: 0003-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
+Patch0004: 0004-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
+Patch0005: 0005-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
+Patch0006: 0006-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0007: 0007-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
+Patch0008: 0008-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
+Patch0009: 0009-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
+Patch0010: 0010-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
+Patch0011: 0011-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
+Patch0012: 0012-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
+Patch0013: 0013-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
+Patch0014: 0014-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
+Patch0015: 0015-Tweak-the-tools_def-to-support-cross-compiling.patch
+Patch0016: 0016-tools_def-add-fno-omit-frame-pointer-to-GCC48_-IA32-.patch
+
 
 # python3-devel and libuuid-devel are required for building tools.
 # python3-devel is also needed for varstore template generation and
