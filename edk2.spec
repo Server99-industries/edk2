@@ -293,7 +293,7 @@ touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 virt-fw-vars --input  RHEL-9/ovmf/OVMF_VARS.fd \
              --output RHEL-9/ovmf/OVMF_VARS.secboot.fd \
              --enroll-redhat --secure-boot
-build_iso Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64
+build_iso RHEL-9/ovmf
 
 %else
 
@@ -307,8 +307,8 @@ virt-fw-vars --input  Fedora/ovmf-4m/OVMF_VARS.fd \
 virt-fw-vars --input  Fedora/ovmf-ia32/OVMF_VARS.fd \
              --output Fedora/ovmf-ia32/OVMF_VARS.secboot.fd \
              --enroll-redhat --secure-boot
-build_iso Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64
-build_iso Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32
+build_iso Fedora/ovmf
+build_iso Fedora/ovmf-ia32
 
 %endif
 %endif
@@ -379,12 +379,6 @@ install -m 0644 \
         40-edk2-ovmf-ia32-sb.json \
         50-edk2-ovmf-ia32.json \
         %{buildroot}%{_datadir}/qemu/firmware
-%endif
-
-# shell iso
-cp Build/Ovmf3264/DEBUG_%{TOOLCHAIN}/X64/UefiShell.iso  %{buildroot}%{_datadir}/%{name}/ovmf
-%if %{defined fedora}
-cp Build/OvmfIa32/DEBUG_%{TOOLCHAIN}/IA32/UefiShell.iso %{buildroot}%{_datadir}/%{name}/ovmf-ia32
 %endif
 
 # endif build_ovmf
