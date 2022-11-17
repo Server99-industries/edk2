@@ -1,7 +1,7 @@
-From 46c6d0e6a1d971edef5846e352a81a097f8d51d5 Mon Sep 17 00:00:00 2001
+From a655395cd7ed48eb70f33eaeb2637d531503fc8f Mon Sep 17 00:00:00 2001
 From: Gerd Hoffmann <kraxel@redhat.com>
 Date: Fri, 10 Jun 2022 07:43:15 +0200
-Subject: [PATCH 21/21] tools_def: add -fno-omit-frame-pointer to
+Subject: [PATCH 16/17] tools_def: add -fno-omit-frame-pointer to
  GCC48_{IA32,X64}_CC_FLAGS
 
 Fixes problems due to code assuming it runs with frame pointers and thus
@@ -13,10 +13,10 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
-index 5901d9eecb5d..e3aa88fec31f 100755
+index f19c59039921..2e20e9b84428 100755
 --- a/BaseTools/Conf/tools_def.template
 +++ b/BaseTools/Conf/tools_def.template
-@@ -1884,8 +1884,8 @@ DEFINE GCC_DEPS_FLAGS              = -MMD -MF $@.deps
+@@ -1890,8 +1890,8 @@ DEFINE GCC_DEPS_FLAGS              = -MMD -MF $@.deps
  
  DEFINE GCC48_ALL_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -ffunction-sections -fdata-sections -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
  DEFINE GCC48_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x20
@@ -28,5 +28,5 @@ index 5901d9eecb5d..e3aa88fec31f 100755
  DEFINE GCC48_IA32_X64_DLINK_FLAGS    = DEF(GCC48_IA32_X64_DLINK_COMMON) -Wl,--entry,$(IMAGE_ENTRY_POINT) -u $(IMAGE_ENTRY_POINT) -Wl,-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map,--whole-archive
  DEFINE GCC48_IA32_DLINK2_FLAGS       = -Wl,--defsym=PECOFF_HEADER_SIZE=0x220 DEF(GCC_DLINK2_FLAGS_COMMON)
 -- 
-2.36.1
+2.38.1
 

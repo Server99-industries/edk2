@@ -1,7 +1,7 @@
-From d64349e98dac4add2813971c7e9f44d837d87880 Mon Sep 17 00:00:00 2001
+From a8048db38e11d9b4cbcde3addf907455833be332 Mon Sep 17 00:00:00 2001
 From: Philippe Mathieu-Daude <philmd@redhat.com>
 Date: Thu, 1 Aug 2019 20:43:48 +0200
-Subject: [PATCH 15/21] OvmfPkg: QemuRamfbDxe: Do not report DXE failure on
+Subject: [PATCH 10/17] OvmfPkg: QemuRamfbDxe: Do not report DXE failure on
  Aarch64 silent builds (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
@@ -92,5 +92,5 @@ index f5113fbc78a6..0295986fe0f1 100644
    }
  
 -- 
-2.35.3
+2.38.1
 
