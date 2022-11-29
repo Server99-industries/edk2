@@ -43,7 +43,7 @@ def get_version(cfg):
     return None
 
 def pcd_string(name, value):
-    return f"{name}=L'{value}\\0'"
+    return f'{name}=L{value}\\0'
 
 def pcd_version(cfg):
     version = get_version(cfg)
