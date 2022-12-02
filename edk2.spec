@@ -50,21 +50,21 @@ Source2: openssl-rhel-740e53ace8f6771c205bf84780e26bcd7a3275df.tar.xz
 Source3: softfloat-%{softfloat_version}.tar.xz
 
 # json description files
-Source10: json-aa64/50-edk2-aarch64.json
-Source11: json-aa64/51-edk2-aarch64-verbose.json
+Source10: 50-edk2-aarch64.json
+Source11: 51-edk2-aarch64-verbose.json
 
-Source20: json-arm/50-edk2-arm-verbose.json
+Source20: 50-edk2-arm-verbose.json
 
-Source30: json-ia32/30-edk2-ovmf-ia32-sb-enrolled.json
-Source31: json-ia32/40-edk2-ovmf-ia32-sb.json
-Source32: json-ia32/50-edk2-ovmf-ia32.json
+Source30: 30-edk2-ovmf-ia32-sb-enrolled.json
+Source31: 40-edk2-ovmf-ia32-sb.json
+Source32: 50-edk2-ovmf-ia32.json
 
-Source40: json-x64/30-edk2-ovmf-x64-sb.json
-Source41: json-x64/40-edk2-ovmf-x64.json
-Source42: json-x64/50-edk2-ovmf-x64-microvm.json
-Source43: json-x64/50-edk2-ovmf-x64-nosb.json
-Source44: json-x64/60-edk2-ovmf-x64-amdsev.json
-Source45: json-x64/60-edk2-ovmf-x64-inteltdx.json
+Source40: 30-edk2-ovmf-x64-sb.json
+Source41: 40-edk2-ovmf-x64.json
+Source42: 50-edk2-ovmf-x64-microvm.json
+Source43: 50-edk2-ovmf-x64-nosb.json
+Source44: 60-edk2-ovmf-x64-amdsev.json
+Source45: 60-edk2-ovmf-x64-inteltdx.json
 
 # https://gitlab.com/kraxel/edk2-build-config
 Source80: edk2-build.py
