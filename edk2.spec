@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -70,6 +70,8 @@ Source45: 60-edk2-ovmf-x64-inteltdx.json
 Source80: edk2-build.py
 Source81: edk2-build.fedora
 Source82: edk2-build.rhel-9
+
+Source90: DBXUpdate-20200729.x64.bin
 
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
@@ -110,7 +112,7 @@ BuildRequires:  xorriso
 
 # For generating the variable store template with the default certificates
 # enrolled.
-BuildRequires:  python3-virt-firmware
+BuildRequires:  python3-virt-firmware >= 1.7
 
 # endif build_ovmf
 %endif
@@ -251,6 +253,7 @@ cp -a -- \
    %{SOURCE30} %{SOURCE31} %{SOURCE32} \
    %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
    %{SOURCE80} %{SOURCE81} %{SOURCE82} \
+   %{SOURCE90} \
    .
 
 %build
@@ -295,29 +298,34 @@ touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 %if %{defined rhel}
 
 ./edk2-build.py --config edk2-build.rhel-9 -m ovmf
-virt-fw-vars --input  RHEL-9/ovmf/OVMF_VARS.fd \
-             --output RHEL-9/ovmf/OVMF_VARS.secboot.fd \
+virt-fw-vars --input   RHEL-9/ovmf/OVMF_VARS.fd \
+             --output  RHEL-9/ovmf/OVMF_VARS.secboot.fd \
+             --set-dbx DBXUpdate-20200729.x64.bin \
              --enroll-redhat --secure-boot
 build_iso RHEL-9/ovmf
 
 %else
 
 ./edk2-build.py --config edk2-build.fedora -m ovmf
-virt-fw-vars --input  Fedora/ovmf/OVMF_VARS.fd \
-             --output Fedora/ovmf/OVMF_VARS.secboot.fd \
+virt-fw-vars --input   Fedora/ovmf/OVMF_VARS.fd \
+             --output  Fedora/ovmf/OVMF_VARS.secboot.fd \
+             --set-dbx DBXUpdate-20200729.x64.bin \
              --enroll-redhat --secure-boot
-virt-fw-vars --input  Fedora/ovmf-4m/OVMF_VARS.fd \
-             --output Fedora/ovmf-4m/OVMF_VARS.secboot.fd \
+virt-fw-vars --input   Fedora/ovmf-4m/OVMF_VARS.fd \
+             --output  Fedora/ovmf-4m/OVMF_VARS.secboot.fd \
+             --set-dbx DBXUpdate-20200729.x64.bin \
              --enroll-redhat --secure-boot
-virt-fw-vars --input  Fedora/ovmf-ia32/OVMF_VARS.fd \
-             --output Fedora/ovmf-ia32/OVMF_VARS.secboot.fd \
+virt-fw-vars --input   Fedora/ovmf-ia32/OVMF_VARS.fd \
+             --output  Fedora/ovmf-ia32/OVMF_VARS.secboot.fd \
+             --set-dbx DBXUpdate-20200729.x64.bin \
              --enroll-redhat --secure-boot
 build_iso Fedora/ovmf
 build_iso Fedora/ovmf-ia32
 
 # experimental stateless builds
-virt-fw-vars --input  Fedora/experimental/OVMF.stateless.fd \
-             --output Fedora/experimental/OVMF.stateless.secboot.fd \
+virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
+             --output  Fedora/experimental/OVMF.stateless.secboot.fd \
+             --set-dbx DBXUpdate-20200729.x64.bin \
              --enroll-redhat --secure-boot
 
 %endif
@@ -588,6 +596,9 @@ done
 
 
 %changelog
+* Fri Dec 02 2022 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-4
+- apply dbx updates
+
 * Tue Nov 29 2022 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-3
 - fix build script
 
