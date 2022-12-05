@@ -7,7 +7,14 @@ import optparse
 import subprocess
 import configparser
 
+rebase_prefix    = ""
+version_override = None
+
 def check_rebase():
+    """ detect 'git rebase -x edk2-build.py master' testbuilds """
+    global rebase_prefix
+    global version_override
+
     if not os.path.exists('.git/rebase-merge/msgnum'):
         return ""
     with open('.git/rebase-merge/msgnum', 'r') as f:
@@ -16,7 +23,11 @@ def check_rebase():
         end = int(f.read())
     with open('.git/rebase-merge/head-name', 'r') as f:
         head = f.read().strip().split('/')
-    return f'[ {int(msgnum/2)} / {int(end/2)} - {head[-1]} ] '
+
+    rebase_prefix = f'[ {int(msgnum/2)} / {int(end/2)} - {head[-1]} ] '
+    if msgnum != end:
+        # fixed version speeds up builds
+        version_override = "test-build-patch-series"
 
 def get_coredir(cfg):
     if cfg.has_option('global', 'core'):
@@ -26,6 +37,11 @@ def get_coredir(cfg):
 
 def get_version(cfg):
     coredir = get_coredir(cfg)
+    if version_override:
+        version = version_override
+        print('')
+        print(f'### version [override]: {version}')
+        return version
     if os.environ.get('RPM_PACKAGE_NAME'):
         version = os.environ.get('RPM_PACKAGE_NAME');
         version += '-' + os.environ.get('RPM_PACKAGE_VERSION');
@@ -37,6 +53,11 @@ def get_version(cfg):
         cmdline = [ 'git', 'describe', '--tags', '--abbrev=8', '--match=edk2-stable*' ]
         result = subprocess.run(cmdline, capture_output = True, cwd = coredir)
         version = result.stdout.decode().strip()
+        #cmdline = [ 'git', 'branch', '--show-current']
+        #result = subprocess.run(cmdline, capture_output = True, cwd = coredir)
+        #branch = result.stdout.decode().strip()
+        #if branch != "master":
+        #    version += f' ({branch})'
         print('')
         print(f'### version [git]: {version}')
         return version
@@ -52,17 +73,15 @@ def pcd_version(cfg):
     return [ '--pcd', pcd_string('PcdFirmwareVersionString', version) ]
 
 def build_message(line):
-    prefix = check_rebase()
-
     if os.environ.get('TERM') in [ 'xterm', 'xterm-256color' ]:
         # setxterm  title
         start  = '\x1b]2;'
         end    = '\x07'
-        print(f'{start}{prefix}{line}{end}', end = '')
+        print(f'{start}{rebase_prefix}{line}{end}', end = '')
 
     print('')
     print('###')
-    print(f'### {prefix}{line}')
+    print(f'### {rebase_prefix}{line}')
     print('###')
 
 def build_run(cmdline, name):
@@ -213,7 +232,7 @@ def build_list(cfg):
         desc = 'no description'
         if 'desc' in cfg[build]:
             desc = cfg[build]['desc']
-        print(f'# {name:16s} - {desc}')
+        print(f'# {name:20s} - {desc}')
     
 def main():
     parser = optparse.OptionParser()
@@ -223,6 +242,7 @@ def main():
     parser.add_option('-m', '--match', dest = 'match', type = 'string')
     parser.add_option('-l', '--list', dest = 'list', action = 'store_true')
     parser.add_option('--core', dest = 'core', type = 'string')
+    parser.add_option('--version-override', dest = 'version_override', type = 'string')
     (options, args) = parser.parse_args()
 
     cfg = configparser.ConfigParser()
@@ -236,6 +256,10 @@ def main():
         cfg.add_section('global')
     if options.core:
         cfg.set('global', 'core', options.core)
+
+    check_rebase()
+    if options.version_override:
+        version_override = options.version_override
 
     prepare_env(cfg)
     build_basetools()
