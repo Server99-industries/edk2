@@ -306,6 +306,9 @@ build_iso() {
     -o "$ISO_IMAGE" "$UEFI_SHELL_IMAGE"
 }
 
+export EXTRA_OPTFLAGS="%{optflags}"
+export EXTRA_LDFLAGS="%{__global_ldflags}"
+
 touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 
 %if %{build_ovmf}
