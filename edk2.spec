@@ -472,21 +472,6 @@ for file in %{buildroot}%{_datadir}/%{name}/*/*VARS.secboot*; do
     virt-fw-vars --input $file --print | grep "SecureBootEnable.*ON" || exit 1
 done
 
-%if %{build_aarch64}
-%post aarch64
-# make files sparse again
-for file in %{_datadir}/%{name}/aarch64/*.raw; do
-    fallocate --dig-holes "$file"
-done
-%if %{defined fedora}
-%post arm
-# make files sparse again
-for file in %{_datadir}/%{name}/arm/*.raw; do
-    fallocate --dig-holes "$file"
-done
-%endif
-%endif
-
 %global common_files \
   %%license License.txt License.OvmfPkg.txt License-History.txt LICENSE.openssl \
   %%dir %%{_datadir}/%%{name}/ \
