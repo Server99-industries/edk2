@@ -34,7 +34,8 @@ DEBUG_PRINT_ERROR_LEVEL  = 0x80000000
 desc = ovmf build (64-bit, 4MB)
 conf = OvmfPkg/OvmfPkgX64.dsc
 arch = X64
-opts = ovmf.common ovmf.4m
+opts = ovmf.common
+       ovmf.4m
 plat = OvmfX64
 dest = RHEL-9/ovmf
 cpy1 = FV/OVMF_CODE.fd OVMF_CODE.fd
@@ -45,7 +46,8 @@ cpy3 = X64/Shell.efi
 desc = ovmf build (32/64-bit, 4MB, q35 only, needs smm, secure boot)
 conf = OvmfPkg/OvmfPkgIa32X64.dsc
 arch = IA32 X64
-opts = ovmf.common ovmf.4m ovmf.sb.smm
+opts = ovmf.common ovmf.4m
+       ovmf.sb.smm
 plat = Ovmf3264
 dest = RHEL-9/ovmf
 cpy1 = FV/OVMF_CODE.fd OVMF_CODE.secboot.fd
@@ -59,7 +61,8 @@ cpy2 = X64/EnrollDefaultKeys.efi
 desc = ovmf build for AmdSev (4MB)
 conf = OvmfPkg/AmdSev/AmdSevX64.dsc
 arch = X64
-opts = ovmf.common ovmf.4m
+opts = ovmf.common
+       ovmf.4m
 plat = AmdSev
 dest = RHEL-9/ovmf
 cpy1 = FV/OVMF.fd OVMF.amdsev.fd
@@ -68,7 +71,8 @@ cpy1 = FV/OVMF.fd OVMF.amdsev.fd
 desc = ovmf build for IntelTdx (4MB)
 conf = OvmfPkg/IntelTdx/IntelTdxX64.dsc
 arch = X64
-opts = ovmf.common ovmf.4m
+opts = ovmf.common
+       ovmf.4m
 plat = IntelTdx
 dest = RHEL-9/ovmf
 cpy1 = FV/OVMF.fd OVMF.inteltdx.fd
@@ -81,7 +85,8 @@ cpy1 = FV/OVMF.fd OVMF.inteltdx.fd
 desc = ArmVirt build for qemu, 64-bit (arm v8), verbose
 conf = ArmVirtPkg/ArmVirtQemu.dsc
 arch = AARCH64
-opts = ovmf.common armvirt.verbose
+opts = ovmf.common
+       armvirt.verbose
 plat = ArmVirtQemu-AARCH64
 dest = RHEL-9/aarch64
 cpy1 = FV/QEMU_EFI.fd
@@ -95,7 +100,8 @@ pad4 = vars-template-pflash.raw 64m
 desc = ArmVirt build for qemu, 64-bit (arm v8), silent
 conf = ArmVirtPkg/ArmVirtQemu.dsc
 arch = AARCH64
-opts = ovmf.common armvirt.silent
+opts = ovmf.common
+       armvirt.silent
 plat = ArmVirtQemu-AARCH64
 dest = RHEL-9/aarch64
 cpy1 = FV/QEMU_EFI.fd  QEMU_EFI.silent.fd

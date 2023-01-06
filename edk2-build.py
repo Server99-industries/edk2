@@ -51,13 +51,8 @@ def get_version(cfg):
         return version
     if os.path.exists(coredir + '/.git'):
         cmdline = [ 'git', 'describe', '--tags', '--abbrev=8', '--match=edk2-stable*' ]
-        result = subprocess.run(cmdline, capture_output = True, cwd = coredir)
+        result = subprocess.run(cmdline, stdout = subprocess.PIPE, cwd = coredir)
         version = result.stdout.decode().strip()
-        #cmdline = [ 'git', 'branch', '--show-current']
-        #result = subprocess.run(cmdline, capture_output = True, cwd = coredir)
-        #branch = result.stdout.decode().strip()
-        #if branch != "master":
-        #    version += f' ({branch})'
         print('')
         print(f'### version [git]: {version}')
         return version
@@ -136,7 +131,12 @@ def build_one(cfg, build, jobs = None):
         for name in cfg[build]['opts'].split():
             section = 'opts.' + name
             for opt in cfg[section]:
-                cmdline += [ '-D', opt.upper() + '=' + cfg[section][opt] ]
+                cmdline += [ '-D', opt + '=' + cfg[section][opt] ]
+    if 'pcds' in cfg[build]:
+        for name in cfg[build]['pcds'].split():
+            section = 'pcds.' + name
+            for pcd in cfg[section]:
+                cmdline += [ '--pcd', pcd + '=' + cfg[section][pcd] ]
     if 'tgts' in cfg[build]:
         tgts = cfg[build]['tgts'].split()
     else:
@@ -246,6 +246,7 @@ def main():
     (options, args) = parser.parse_args()
 
     cfg = configparser.ConfigParser()
+    cfg.optionxform = str
     cfg.read(options.configfile)
 
     if options.list:
@@ -257,6 +258,7 @@ def main():
     if options.core:
         cfg.set('global', 'core', options.core)
 
+    global version_override
     check_rebase()
     if options.version_override:
         version_override = options.version_override
