@@ -113,6 +113,7 @@ BuildRequires:  python3-devel
 BuildRequires:  libuuid-devel
 BuildRequires:  /usr/bin/iasl
 BuildRequires:  binutils gcc git gcc-c++ make
+BuildRequires:  qemu-img
 
 %if %{build_ovmf}
 # Only OVMF includes 80x86 assembly files (*.nasm*).
@@ -354,6 +355,10 @@ virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
 %else
 ./edk2-build.py --config edk2-build.fedora -m armvirt
 %endif
+for raw in */aarch64/*.raw; do
+    qcow2="${raw%.raw}.qcow2"
+    qemu-img convert -f raw -O qcow2 -o cluster_size=4096 -S 4096 "$raw" "$qcow2"
+done
 %endif
 
 
@@ -525,9 +530,9 @@ done
 %{_datadir}/AAVMF/AAVMF_CODE.fd
 %{_datadir}/AAVMF/AAVMF_VARS.fd
 %dir %{_datadir}/%{name}/aarch64/
-%{_datadir}/%{name}/aarch64/QEMU_EFI-pflash.raw
-%{_datadir}/%{name}/aarch64/QEMU_EFI-silent-pflash.raw
-%{_datadir}/%{name}/aarch64/vars-template-pflash.raw
+%{_datadir}/%{name}/aarch64/QEMU_EFI-pflash.*
+%{_datadir}/%{name}/aarch64/QEMU_EFI-silent-pflash.*
+%{_datadir}/%{name}/aarch64/vars-template-pflash.*
 %{_datadir}/%{name}/aarch64/QEMU_EFI.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.silent.fd
 %{_datadir}/%{name}/aarch64/QEMU_VARS.fd
