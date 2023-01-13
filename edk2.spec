@@ -104,6 +104,8 @@ Patch0028: 0028-OvmfPkg-PlatformPei-remove-mFeatureControlValue.patch
 Patch0029: 0029-OvmfPkg-DebugLibIoPort-use-Rom-version-for-PEI.patch
 Patch0030: 0030-OvmfPkg-QemuFwCfgLib-rewrite-fw_cfg-probe.patch
 Patch0031: 0031-OvmfPkg-QemuFwCfgLib-remove-mQemuFwCfgSupported-mQem.patch
+Patch0032: 0032-OvmfPkg-VirtNorFlashDxe-map-flash-memory-as-uncachea.patch
+Patch0033: 0033-ArmVirtPkg-ArmVirtQemu-Avoid-early-ID-map-on-Thunder.patch
 
 
 # python3-devel and libuuid-devel are required for building tools.
