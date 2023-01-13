@@ -318,7 +318,7 @@ touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 %if %{build_ovmf}
 %if %{defined rhel}
 
-./edk2-build.py --config edk2-build.rhel-9 --release-date "$RELEASE_DATE" -m ovmf
+./edk2-build.py --config edk2-build.rhel-9 --silent --release-date "$RELEASE_DATE" -m ovmf
 virt-fw-vars --input   RHEL-9/ovmf/OVMF_VARS.fd \
              --output  RHEL-9/ovmf/OVMF_VARS.secboot.fd \
              --set-dbx DBXUpdate-20200729.x64.bin \
@@ -327,7 +327,7 @@ build_iso RHEL-9/ovmf
 
 %else
 
-./edk2-build.py --config edk2-build.fedora --release-date "$RELEASE_DATE" -m ovmf
+./edk2-build.py --config edk2-build.fedora --silent --release-date "$RELEASE_DATE" -m ovmf
 virt-fw-vars --input   Fedora/ovmf/OVMF_VARS.fd \
              --output  Fedora/ovmf/OVMF_VARS.secboot.fd \
              --set-dbx DBXUpdate-20200729.x64.bin \
@@ -354,9 +354,9 @@ virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
 
 %if %{build_aarch64}
 %if %{defined rhel}
-./edk2-build.py --config edk2-build.rhel-9 --release-date "$RELEASE_DATE" -m armvirt
+./edk2-build.py --config edk2-build.rhel-9 --silent --release-date "$RELEASE_DATE" -m armvirt
 %else
-./edk2-build.py --config edk2-build.fedora --release-date "$RELEASE_DATE" -m armvirt
+./edk2-build.py --config edk2-build.fedora --silent --release-date "$RELEASE_DATE" -m armvirt
 %endif
 for raw in */aarch64/*.raw; do
     qcow2="${raw%.raw}.qcow2"
