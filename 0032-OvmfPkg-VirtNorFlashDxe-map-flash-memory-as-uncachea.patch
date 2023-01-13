@@ -1,0 +1,61 @@
+From c5c9385ffa28b9989a53c3a51ce3f8b4ef40aa41 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Wed, 11 Jan 2023 19:00:23 +0100
+Subject: [PATCH 32/34] OvmfPkg/VirtNorFlashDxe: map flash memory as
+ uncacheable
+
+Switching from the ArmPlatformPkg/NorFlashDxe driver to the
+OvmfPkg/VirtNorFlashDxe driver had the side effect that flash address
+space got registered as EFI_MEMORY_WC instead of EFI_MEMORY_UC.
+
+That confuses the linux kernel's numa code, seems this makes kernel
+consider the flash being node memory.  "lsmem" changes from ...
+
+    RANGE                                 SIZE  STATE REMOVABLE BLOCK
+    0x0000000040000000-0x000000013fffffff   4G online       yes  8-39
+
+... to ...
+
+    RANGE                                  SIZE  STATE REMOVABLE BLOCK
+    0x0000000000000000-0x0000000007ffffff  128M online       yes     0
+    0x0000000040000000-0x000000013fffffff    4G online       yes  8-39
+
+... and in the kernel log got new error lines:
+
+    NUMA: Warning: invalid memblk node 512 [mem 0x0000000004000000-0x0000000007ffffff]
+    NUMA: Faking a node at [mem 0x0000000004000000-0x000000013fffffff]
+
+Changing the attributes back to EFI_MEMORY_UC fixes this.
+
+Fixes: b92298af8218 ("ArmVirtPkg/ArmVirtQemu: migrate to OVMF's VirtNorFlashDxe")
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit e5ec3ba409b5baa9cf429cc25fdf3c8d1b8dcef0)
+---
+ OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.c b/OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.c
+index ff3121af2a40..f9a41f6aab0f 100644
+--- a/OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.c
++++ b/OvmfPkg/VirtNorFlashDxe/VirtNorFlashDxe.c
+@@ -394,14 +394,14 @@ NorFlashFvbInitialize (
+                   EfiGcdMemoryTypeMemoryMappedIo,
+                   Instance->DeviceBaseAddress,
+                   RuntimeMmioRegionSize,
+-                  EFI_MEMORY_WC | EFI_MEMORY_RUNTIME
++                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                   );
+   ASSERT_EFI_ERROR (Status);
+ 
+   Status = gDS->SetMemorySpaceAttributes (
+                   Instance->DeviceBaseAddress,
+                   RuntimeMmioRegionSize,
+-                  EFI_MEMORY_WC | EFI_MEMORY_RUNTIME
++                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                   );
+   ASSERT_EFI_ERROR (Status);
+ 
+-- 
+2.39.0
+
