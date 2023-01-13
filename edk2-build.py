@@ -9,6 +9,7 @@ import configparser
 
 rebase_prefix    = ""
 version_override = None
+release_date     = None
 
 def check_rebase():
     """ detect 'git rebase -x edk2-build.py master' testbuilds """
@@ -25,7 +26,7 @@ def check_rebase():
         head = f.read().strip().split('/')
 
     rebase_prefix = f'[ {int(msgnum/2)} / {int(end/2)} - {head[-1]} ] '
-    if msgnum != end:
+    if msgnum != end and not version_override:
         # fixed version speeds up builds
         version_override = "test-build-patch-series"
 
@@ -67,7 +68,12 @@ def pcd_version(cfg):
         return []
     return [ '--pcd', pcd_string('PcdFirmwareVersionString', version) ]
 
-def build_message(line):
+def pcd_release_date(cfg):
+    if release_date is None:
+        return []
+    return [ '--pcd', pcd_string('PcdFirmwareReleaseDateString', release_date) ]
+
+def build_message(line, line2 = None):
     if os.environ.get('TERM') in [ 'xterm', 'xterm-256color' ]:
         # setxterm  title
         start  = '\x1b]2;'
@@ -77,11 +83,32 @@ def build_message(line):
     print('')
     print('###')
     print(f'### {rebase_prefix}{line}')
+    if line2:
+        print(f'### {line2}')
     print('###')
 
-def build_run(cmdline, name):
+def build_run(cmdline, name, section, silent = False):
     print(cmdline)
-    result = subprocess.run(cmdline)
+    if silent:
+        print('### building in silent mode ...', flush = True)
+        result = subprocess.run(cmdline,
+                                stdout = subprocess.PIPE,
+                                stderr = subprocess.STDOUT)
+
+        logfile = f'{section}.log'
+        print(f'### writing log to {logfile} ...')
+        with open(logfile, 'wb') as f:
+            f.write(result.stdout)
+
+        if result.returncode:
+            print('### BUILD FAILURE')
+            print('### output')
+            print(result.stdout.decode())
+            print(f'### exit code: {result.returncode}')
+        else:
+            print('### OK')
+    else:
+        result = subprocess.run(cmdline)
     if result.returncode:
         print(f'ERROR: {cmdline[0]} exited with {result.returncode} while building {name}')
         sys.exit(result.returncode)
@@ -96,9 +123,10 @@ def build_copy(plat, tgt, dstdir, copy):
         dstfile = os.path.basename(srcfile)
     print(f'# copy: {srcdir} / {srcfile}  =>  {dstdir} / {dstfile}')
 
-    os.makedirs(dstdir, exist_ok = True)
-    shutil.copy(srcdir + '/' + srcfile,
-                dstdir + '/' + dstfile)
+    src = srcdir + '/' + srcfile
+    dst = dstdir + '/' + dstfile
+    os.makedirs(os.path.dirname(dst), exist_ok = True)
+    shutil.copy(src, dst)
 
 def pad_file(dstdir, pad):
     args = pad.split()
@@ -114,7 +142,7 @@ def pad_file(dstdir, pad):
     print(f'# padding: {dstdir} / {name}  =>  {size}')
     subprocess.run(cmdline)
 
-def build_one(cfg, build, jobs = None):
+def build_one(cfg, build, jobs = None, silent = False):
     cmdline  = [ 'build' ]
     cmdline += [ '-t', 'GCC5' ]
     cmdline += [ '-p', cfg[build]['conf'] ]
@@ -122,6 +150,7 @@ def build_one(cfg, build, jobs = None):
     if (cfg[build]['conf'].startswith('OvmfPkg/') or
         cfg[build]['conf'].startswith('ArmVirtPkg/')):
         cmdline += pcd_version(cfg)
+        cmdline += pcd_release_date(cfg)
 
     if jobs:
         cmdline += [ '-n', jobs ]
@@ -142,9 +171,15 @@ def build_one(cfg, build, jobs = None):
     else:
         tgts = [ 'DEBUG' ]
     for tgt in tgts:
-        build_message(f'building: {cfg[build]["conf"]} ({cfg[build]["arch"]}, {tgt})')
+        desc = None
+        if 'desc' in cfg[build]:
+            desc = cfg[build]['desc']
+        build_message(f'building: {cfg[build]["conf"]} ({cfg[build]["arch"]}, {tgt})',
+                      f'description: {desc}')
         build_run(cmdline + [ '-b', tgt ],
-                  cfg[build]['conf'])
+                  cfg[build]['conf'],
+                  build + '.' + tgt,
+                  silent)
 
         if 'plat' in cfg[build]:
             # copy files
@@ -162,11 +197,11 @@ def build_one(cfg, build, jobs = None):
                 pad_file(cfg[build]['dest'],
                          cfg[build][pad])
 
-def build_basetools():
+def build_basetools(silent = False):
     build_message(f'building: BaseTools')
     basedir = os.environ['EDK_TOOLS_PATH']
     cmdline = [ 'make', '-C', basedir ]
-    build_run(cmdline, 'BaseTools')
+    build_run(cmdline, 'BaseTools', 'build.basetools', silent)
 
 def binary_exists(name):
     for dir in os.environ['PATH'].split(':'):
@@ -184,12 +219,12 @@ def prepare_env(cfg):
         'BaseTools/BinWrappers/PosixLike'
     ]
 
-    coredir = get_coredir(cfg)
-    if coredir != workspace:
-        packages.append(coredir)
     if cfg.has_option('global', 'pkgs'):
         for pkgdir in cfg['global']['pkgs'].split():
             packages.append(os.path.abspath(pkgdir))
+    coredir = get_coredir(cfg)
+    if coredir != workspace:
+        packages.append(coredir)
 
     # add basetools to path
     for dir in dirs:
@@ -203,8 +238,9 @@ def prepare_env(cfg):
     # run edksetup if needed
     toolsdef = coredir + '/Conf/tools_def.txt';
     if not os.path.exists(toolsdef):
-        build_message('running edksetup')
-        cmdline = [ 'sh', 'edksetup.sh' ]
+        os.makedirs(os.path.dirname(toolsdef), exist_ok = True)
+        build_message('running BaseTools/BuildEnv')
+        cmdline = [ 'sh', 'BaseTools/BuildEnv' ]
         subprocess.run(cmdline, cwd = coredir)
 
     # set variables
@@ -220,6 +256,8 @@ def prepare_env(cfg):
         os.environ['GCC5_ARM_PREFIX'] = 'arm-linux-gnu-'
     if binary_exists('aarch64-linux-gnu-gcc'):
         os.environ['GCC5_AARCH64_PREFIX'] = 'aarch64-linux-gnu-'
+    if binary_exists('riscv64-linux-gnu-gcc'):
+        os.environ['GCC5_RISCV64_PREFIX'] = 'riscv64-linux-gnu-'
     if binary_exists('x86_64-linux-gnu-gcc'):
         os.environ['GCC5_IA32_PREFIX'] = 'x86_64-linux-gnu-'
         os.environ['GCC5_X64_PREFIX'] = 'x86_64-linux-gnu-'
@@ -240,9 +278,12 @@ def main():
                       type = 'string', default = '.edk2.builds')
     parser.add_option('-j', '--jobs', dest = 'jobs', type = 'string')
     parser.add_option('-m', '--match', dest = 'match', type = 'string')
-    parser.add_option('-l', '--list', dest = 'list', action = 'store_true')
+    parser.add_option('-l', '--list', dest = 'list', action = 'store_true', default = False)
+    parser.add_option('--silent', dest = 'silent', action = 'store_true', default = False)
     parser.add_option('--core', dest = 'core', type = 'string')
+    parser.add_option('--pkg', '--package', dest = 'pkgs', type = 'string', action = 'append')
     parser.add_option('--version-override', dest = 'version_override', type = 'string')
+    parser.add_option('--release-date', dest = 'release_date', type = 'string')
     (options, args) = parser.parse_args()
 
     cfg = configparser.ConfigParser()
@@ -257,21 +298,26 @@ def main():
         cfg.add_section('global')
     if options.core:
         cfg.set('global', 'core', options.core)
+    if options.pkgs:
+        cfg.set('global', 'pkgs', ' '.join(options.pkgs))
 
     global version_override
+    global release_date
     check_rebase()
     if options.version_override:
         version_override = options.version_override
+    if options.release_date:
+        release_date = options.release_date
 
     prepare_env(cfg)
-    build_basetools()
+    build_basetools(options.silent)
     for build in cfg.sections():
         if not build.startswith('build.'):
             continue
         if options.match and options.match not in build:
             print(f'# skipping "{build}" (not matching "{options.match}")')
             continue
-        build_one(cfg, build, options.jobs)
+        build_one(cfg, build, options.jobs, options.silent)
 
 if __name__ == '__main__':
     sys.exit(main())
