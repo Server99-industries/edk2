@@ -1,0 +1,15 @@
+[build.ext4.x64]
+desc = ext4 driver for x64
+conf = Features/Ext4Pkg/Ext4Pkg.dsc
+arch = X64
+plat = Ext4Pkg
+dest = Fedora/drivers
+cpy1 = X64/Ext4Dxe.efi ext4x64.efi
+
+[build.ext4.aa64]
+desc = ext4 driver for aarch64
+conf = Features/Ext4Pkg/Ext4Pkg.dsc
+arch = AARCH64
+plat = Ext4Pkg
+dest = Fedora/drivers
+cpy1 = AARCH64/Ext4Dxe.efi ext4aa64.efi
