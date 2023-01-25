@@ -48,6 +48,8 @@ Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-740e53ace8f6771c205bf84780e26bcd7a3275df.tar.xz
 Source3: softfloat-%{softfloat_version}.tar.xz
+Source4: edk2-platforms-b36fe8bc9b68.tar.xz
+Source5: jansson-2.13.1.tar.bz2
 
 # json description files
 Source10: 50-edk2-aarch64.json
@@ -69,7 +71,8 @@ Source45: 60-edk2-ovmf-x64-inteltdx.json
 # https://gitlab.com/kraxel/edk2-build-config
 Source80: edk2-build.py
 Source81: edk2-build.fedora
-Source82: edk2-build.rhel-9
+Source82: edk2-build.fedora.platforms
+Source83: edk2-build.rhel-9
 
 Source90: DBXUpdate-20200729.x64.bin
 
@@ -231,6 +234,14 @@ License:        BSD-2-Clause-Patent and OpenSSL
 EFI Development Kit II
 ARMv7 UEFI Firmware
 
+%package ext4
+Summary:        Ext4 filesystem driver
+License:        BSD-2-Clause-Patent and OpenSSL
+BuildArch:      noarch
+%description ext4
+EFI Development Kit II
+Ext4 filesystem driver
+
 %package tools-python
 Summary:        EFI Development Kit II Tools
 Requires:       python3
@@ -260,6 +271,8 @@ cp -a -- %{SOURCE1} .
 tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 # extract softfloat into place
 tar -xf %{SOURCE3} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
+tar -xf %{SOURCE4} --strip-components=1 "*/Drivers" "*/Features" "*/Platform" "*/Silicon"
+tar -xf %{SOURCE5} --strip-components=1 --directory RedfishPkg/Library/JsonLib/jansson
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
 chmod -Rf a+rX,u+w,g-w,o-w .
@@ -269,7 +282,7 @@ cp -a -- \
    %{SOURCE20} \
    %{SOURCE30} %{SOURCE31} %{SOURCE32} \
    %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
-   %{SOURCE80} %{SOURCE81} %{SOURCE82} \
+   %{SOURCE80} %{SOURCE81} %{SOURCE82} %{SOURCE83} \
    %{SOURCE90} \
    .
 
@@ -328,6 +341,7 @@ build_iso RHEL-9/ovmf
 %else
 
 ./edk2-build.py --config edk2-build.fedora --silent --release-date "$RELEASE_DATE" -m ovmf
+./edk2-build.py --config edk2-build.fedora.platforms --silent -m x64
 virt-fw-vars --input   Fedora/ovmf/OVMF_VARS.fd \
              --output  Fedora/ovmf/OVMF_VARS.secboot.fd \
              --set-dbx DBXUpdate-20200729.x64.bin \
@@ -357,6 +371,7 @@ virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
 ./edk2-build.py --config edk2-build.rhel-9 --silent --release-date "$RELEASE_DATE" -m armvirt
 %else
 ./edk2-build.py --config edk2-build.fedora --silent --release-date "$RELEASE_DATE" -m armvirt
+./edk2-build.py --config edk2-build.fedora.platforms --silent -m aa64
 %endif
 for raw in */aarch64/*.raw; do
     qcow2="${raw%.raw}.qcow2"
@@ -601,6 +616,11 @@ done
 %{_datadir}/%{name}/arm/QEMU_VARS.fd
 %{_datadir}/%{name}/arm/vars-template-pflash.raw
 %{_datadir}/qemu/firmware/50-edk2-arm-verbose.json
+
+%files ext4
+%common_files
+%dir %{_datadir}/%{name}/drivers
+%{_datadir}/%{name}/drivers/ext4*.efi
 
 
 %files tools-python
