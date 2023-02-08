@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    11%{?dist}
+Release:    12%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -642,6 +642,11 @@ done
 
 
 %changelog
+* Wed Feb 08 2023 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-12
+- cherry-pick aarch64 bugfixes.
+- set firmware build release date.
+- add ext4 sub-package.
+
 * Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 20221117gitfff6d81270b5-11
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
 
