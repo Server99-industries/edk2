@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    10%{?dist}
+Release:    12%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -642,6 +642,11 @@ done
 
 
 %changelog
+* Wed Feb 08 2023 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-12
+- cherry-pick aarch64 bugfixes.
+- set firmware build release date.
+- add ext4 sub-package.
+
 * Fri Jan 06 2023 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-10
 - add experimental builds with strict nx checking.
 
