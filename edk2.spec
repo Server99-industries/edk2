@@ -218,6 +218,15 @@ BuildArch:      noarch
 EFI Development Kit II
 Open Virtual Machine Firmware (ia32)
 
+%package ovmf-xen
+Summary:        Open Virtual Machine Firmware, Xen build
+License:        BSD-2-Clause-Patent and OpenSSL
+Provides:       bundled(openssl)
+BuildArch:      noarch
+%description ovmf-xen
+EFI Development Kit II
+Open Virtual Machine Firmware (Xen build)
+
 %package ovmf-experimental
 Summary:        Open Virtual Machine Firmware, experimental builds
 License:        BSD-2-Clause-Patent and OpenSSL
@@ -605,6 +614,11 @@ done
 %dir %{_datadir}/%{name}/experimental
 %{_datadir}/%{name}/experimental/*.fd
 %{_datadir}/%{name}/experimental/*.raw
+
+%files ovmf-xen
+%common_files
+%dir %{_datadir}/%{name}/xen
+%{_datadir}/%{name}/xen/*.fd
 %endif
 
 %files arm
