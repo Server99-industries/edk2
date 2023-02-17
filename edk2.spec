@@ -35,7 +35,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    13%{?dist}
+Release:    14%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -657,6 +657,9 @@ done
 
 
 %changelog
+* Fri Feb 17 2023 Gerd Hoffmann <kraxel@redhat.com>
+- add sub-package with xen build (resolves: rhbz#2170730)
+
 * Sat Feb 11 2023 Gerd Hoffmann <kraxel@redhat.com> - 20221117gitfff6d81270b5-13
 - update openssl (CVE-2023-0286, CVE-2023-0215, CVE-2022-4450, CVE-2022-4304).
 
