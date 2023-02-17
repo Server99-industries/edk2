@@ -108,6 +108,16 @@ plat = MicrovmX64
 dest = Fedora/ovmf
 cpy1 = FV/MICROVM.fd
 
+[build.ovmf.xen]
+desc = ovmf build for Xen
+conf = OvmfPkg/OvmfXen.dsc
+arch = X64
+opts = ovmf.common
+       ovmf.2m
+plat = OvmfXen
+dest = Fedora/xen
+cpy1 = FV/OVMF.fd
+
 [build.ovmf.amdsev]
 desc = ovmf build for AmdSev (2MB)
 conf = OvmfPkg/AmdSev/AmdSevX64.dsc

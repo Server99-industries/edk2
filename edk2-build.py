@@ -250,6 +250,7 @@ def prepare_env(cfg):
     os.environ['EDK_TOOLS_PATH'] = coredir + '/BaseTools'
     os.environ['CONF_PATH'] = coredir + '/Conf'
     os.environ['PYTHON_COMMAND'] = '/usr/bin/python3'
+    os.environ['PYTHONHASHSEED'] = '1'
 
     # for cross builds
     if binary_exists('arm-linux-gnu-gcc'):
@@ -258,9 +259,12 @@ def prepare_env(cfg):
         os.environ['GCC5_AARCH64_PREFIX'] = 'aarch64-linux-gnu-'
     if binary_exists('riscv64-linux-gnu-gcc'):
         os.environ['GCC5_RISCV64_PREFIX'] = 'riscv64-linux-gnu-'
+    if binary_exists('loongarch64-linux-gnu-gcc'):
+        os.environ['GCC5_LOONGARCH64_PREFIX'] = 'loongarch64-linux-gnu-'
     if binary_exists('x86_64-linux-gnu-gcc'):
         os.environ['GCC5_IA32_PREFIX'] = 'x86_64-linux-gnu-'
         os.environ['GCC5_X64_PREFIX'] = 'x86_64-linux-gnu-'
+        os.environ['GCC5_BIN'] = 'x86_64-linux-gnu-'
 
 def build_list(cfg):
     for build in cfg.sections():
@@ -276,8 +280,10 @@ def main():
     parser = optparse.OptionParser()
     parser.add_option('-c', '--config', dest = 'configfile',
                       type = 'string', default = '.edk2.builds')
+    parser.add_option('-C', '--directory', dest = 'directory', type = 'string')
     parser.add_option('-j', '--jobs', dest = 'jobs', type = 'string')
     parser.add_option('-m', '--match', dest = 'match', type = 'string')
+    parser.add_option('-x', '--exclude', dest = 'exclude', type = 'string')
     parser.add_option('-l', '--list', dest = 'list', action = 'store_true', default = False)
     parser.add_option('--silent', dest = 'silent', action = 'store_true', default = False)
     parser.add_option('--core', dest = 'core', type = 'string')
@@ -285,6 +291,9 @@ def main():
     parser.add_option('--version-override', dest = 'version_override', type = 'string')
     parser.add_option('--release-date', dest = 'release_date', type = 'string')
     (options, args) = parser.parse_args()
+
+    if options.directory:
+        os.chdir(options.directory)
 
     cfg = configparser.ConfigParser()
     cfg.optionxform = str
@@ -316,6 +325,9 @@ def main():
             continue
         if options.match and options.match not in build:
             print(f'# skipping "{build}" (not matching "{options.match}")')
+            continue
+        if options.exclude and options.exclude in build:
+            print(f'# skipping "{build}" (matching "{options.exclude}")')
             continue
         build_one(cfg, build, options.jobs, options.silent)
 
