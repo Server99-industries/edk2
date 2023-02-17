@@ -47,7 +47,8 @@ cpy3 = X64/Shell.efi
 desc = ovmf build (32/64-bit, 4MB, q35 only, needs smm, secure boot)
 conf = OvmfPkg/OvmfPkgIa32X64.dsc
 arch = IA32 X64
-opts = ovmf.common ovmf.4m
+opts = ovmf.common
+       ovmf.4m
        ovmf.sb.smm
 plat = Ovmf3264
 dest = RHEL-9/ovmf
