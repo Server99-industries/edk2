@@ -23,9 +23,11 @@ ExclusiveArch: x86_64 aarch64
 %ifarch aarch64
   %define build_aarch64 1
 %endif
+%define build_riscv64 0
 %else
 %define build_ovmf 1
 %define build_aarch64 1
+%define build_riscv64 1
 %endif
 
 %global softfloat_version 20180726-gitb64af41
@@ -121,6 +123,7 @@ BuildRequires:  python3-virt-firmware >= 1.7
 BuildRequires:  gcc-aarch64-linux-gnu
 BuildRequires:  gcc-arm-linux-gnu
 BuildRequires:  gcc-x86_64-linux-gnu
+BuildRequires:  gcc-riscv64-linux-gnu
 %endif
 
 
@@ -222,6 +225,14 @@ License:        BSD-2-Clause-Patent and OpenSSL
 %description arm
 EFI Development Kit II
 ARMv7 UEFI Firmware
+
+%package riscv64
+Summary:        RISC-V Virtual Machine Firmware
+BuildArch:      noarch
+License:        BSD-2-Clause-Patent and OpenSSL
+%description riscv64
+EFI Development Kit II
+RISC-V UEFI Firmware
 
 %package ext4
 Summary:        Ext4 filesystem driver
@@ -368,6 +379,10 @@ for raw in */aarch64/*.raw; do
 done
 %endif
 
+%if %{build_riscv64}
+./edk2-build.py --config edk2-build.fedora --silent --release-date "$RELEASE_DATE" -m riscv
+./edk2-build.py --config edk2-build.fedora.platforms --silent -m riscv
+%endif
 
 %install
 
@@ -610,6 +625,11 @@ done
 %{_datadir}/%{name}/arm/QEMU_VARS.fd
 %{_datadir}/%{name}/arm/vars-template-pflash.raw
 %{_datadir}/qemu/firmware/50-edk2-arm-verbose.json
+
+%files riscv64
+%common_files
+%{_datadir}/%{name}/riscv/*.fd
+%{_datadir}/%{name}/riscv/*.raw
 
 %files ext4
 %common_files
