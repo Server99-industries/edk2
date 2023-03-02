@@ -364,6 +364,19 @@ virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
              --set-dbx DBXUpdate-20220812.x64.bin \
              --enroll-redhat --secure-boot
 
+for image in \
+	Fedora/ovmf/OVMF_CODE.secboot.fd \
+	Fedora/ovmf-4m/OVMF_CODE.secboot.fd \
+	Fedora/experimental/OVMF.stateless.secboot.fd \
+; do
+	pcr="${image%.fd}.pcr"
+	python3 /usr/share/doc/python3-virt-firmware/experimental/measure.py \
+		--image "$image" \
+		--version "%{name}-%{version}-%{release}" \
+                --no-shim \
+		> "$pcr"
+done
+
 %endif
 %endif
 
@@ -495,7 +508,7 @@ done
 %endif
 
 %check
-for file in %{buildroot}%{_datadir}/%{name}/*/*VARS.secboot*; do
+for file in %{buildroot}%{_datadir}/%{name}/*/*VARS.secboot.fd; do
     test -f "$file" || continue
     virt-fw-vars --input $file --print | grep "SecureBootEnable.*ON" || exit 1
 done
@@ -541,6 +554,8 @@ done
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.secboot.fd
+%{_datadir}/%{name}/ovmf/*.pcr
+%{_datadir}/%{name}/ovmf-4m/*.pcr
 %endif
 # endif build_ovmf
 %endif
@@ -609,6 +624,7 @@ done
 %dir %{_datadir}/%{name}/experimental
 %{_datadir}/%{name}/experimental/*.fd
 %{_datadir}/%{name}/experimental/*.raw
+%{_datadir}/%{name}/experimental/*.pcr
 
 %files ovmf-xen
 %common_files
