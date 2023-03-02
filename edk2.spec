@@ -78,38 +78,17 @@ Source90: DBXUpdate-20200729.x64.bin
 
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
-#Patch0003: 0003-MdeModulePkg-TerminalDxe-add-other-text-resolutions-.patch
-Patch0004: 0004-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
-Patch0005: 0005-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
-Patch0006: 0006-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
-Patch0007: 0007-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
-Patch0008: 0008-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
-Patch0009: 0009-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
-Patch0010: 0010-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
-Patch0011: 0011-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
-Patch0012: 0012-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
-Patch0013: 0013-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
-Patch0014: 0014-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
-Patch0015: 0015-Tweak-the-tools_def-to-support-cross-compiling.patch
-Patch0016: 0016-tools_def-add-fno-omit-frame-pointer-to-GCC48_-IA32-.patch
-Patch0017: 0017-Revert-ArmVirtPkg-make-EFI_LOADER_DATA-non-executabl.patch
-Patch0018: 0018-Revert-OvmfPkg-PlatformDxe-Handle-all-requests-in-Ex.patch
-Patch0019: 0019-OvmfPkg-SmbiosPlatformDxe-use-PcdFirmware.patch
-Patch0020: 0020-OvmfPkg-PlatformPei-AmdSev-stop-using-mPlatformInfoH.patch
-Patch0021: 0021-OvmfPkg-PlatformPei-PeiFv-stop-using-mPlatformInfoHo.patch
-Patch0022: 0022-OvmfPkg-PlatformPei-Q35-SMM-helpers-stop-using-mPlat.patch
-Patch0023: 0023-OvmfPkg-PlatformPei-PeiMemory-stop-using-mPlatformIn.patch
-Patch0024: 0024-OvmfPkg-PlatformPei-MemTypeInfo-stop-using-mPlatform.patch
-Patch0025: 0025-OvmfPkg-PlatformPei-NoExec-stop-using-mPlatformInfoH.patch
-Patch0026: 0026-OvmfPkg-PlatformPei-Verification-stop-using-mPlatfor.patch
-Patch0027: 0027-OvmfPkg-PlatformPei-remove-mPlatformInfoHob.patch
-Patch0028: 0028-OvmfPkg-PlatformPei-remove-mFeatureControlValue.patch
-Patch0029: 0029-OvmfPkg-DebugLibIoPort-use-Rom-version-for-PEI.patch
-Patch0030: 0030-OvmfPkg-QemuFwCfgLib-rewrite-fw_cfg-probe.patch
-Patch0031: 0031-OvmfPkg-QemuFwCfgLib-remove-mQemuFwCfgSupported-mQem.patch
-Patch0032: 0032-OvmfPkg-VirtNorFlashDxe-map-flash-memory-as-uncachea.patch
-Patch0033: 0033-ArmVirtPkg-ArmVirtQemu-Avoid-early-ID-map-on-Thunder.patch
-Patch0034: 0034-rh-openssl-add-crypto-bn-rsa_sup_mul.c-to-file-list.patch
+Patch0003: 0003-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
+Patch0004: 0004-OvmfPkg-take-PcdResizeXterm-from-the-QEMU-command-li.patch
+Patch0005: 0005-ArmVirtPkg-take-PcdResizeXterm-from-the-QEMU-command.patch
+Patch0006: 0006-OvmfPkg-enable-DEBUG_VERBOSE-RHEL-only.patch
+Patch0007: 0007-OvmfPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuVide.patch
+Patch0008: 0008-ArmVirtPkg-silence-DEBUG_VERBOSE-0x00400000-in-QemuR.patch
+Patch0009: 0009-OvmfPkg-QemuRamfbDxe-Do-not-report-DXE-failure-on-Aa.patch
+Patch0010: 0010-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
+Patch0011: 0011-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
+Patch0012: 0012-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
+Patch0013: 0013-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 
 
 # python3-devel and libuuid-devel are required for building tools.
