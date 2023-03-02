@@ -15,14 +15,19 @@ def check_rebase():
     """ detect 'git rebase -x edk2-build.py master' testbuilds """
     global rebase_prefix
     global version_override
+    gitdir = '.git'
 
-    if not os.path.exists('.git/rebase-merge/msgnum'):
+    if os.path.isfile(gitdir):
+        with open(gitdir) as f:
+            (unused, gitdir) = f.read().split()
+
+    if not os.path.exists(f'{gitdir}/rebase-merge/msgnum'):
         return ""
-    with open('.git/rebase-merge/msgnum', 'r') as f:
+    with open(f'{gitdir}/rebase-merge/msgnum', 'r') as f:
         msgnum = int(f.read())
-    with open('.git/rebase-merge/end', 'r') as f:
+    with open(f'{gitdir}/rebase-merge/end', 'r') as f:
         end = int(f.read())
-    with open('.git/rebase-merge/head-name', 'r') as f:
+    with open(f'{gitdir}/rebase-merge/head-name', 'r') as f:
         head = f.read().strip().split('/')
 
     rebase_prefix = f'[ {int(msgnum/2)} / {int(end/2)} - {head[-1]} ] '
@@ -255,13 +260,15 @@ def prepare_env(cfg):
     # for cross builds
     if binary_exists('arm-linux-gnu-gcc'):
         os.environ['GCC5_ARM_PREFIX'] = 'arm-linux-gnu-'
-    if binary_exists('aarch64-linux-gnu-gcc'):
-        os.environ['GCC5_AARCH64_PREFIX'] = 'aarch64-linux-gnu-'
-    if binary_exists('riscv64-linux-gnu-gcc'):
-        os.environ['GCC5_RISCV64_PREFIX'] = 'riscv64-linux-gnu-'
     if binary_exists('loongarch64-linux-gnu-gcc'):
         os.environ['GCC5_LOONGARCH64_PREFIX'] = 'loongarch64-linux-gnu-'
-    if binary_exists('x86_64-linux-gnu-gcc'):
+
+    hostarch = os.uname().machine
+    if binary_exists('aarch64-linux-gnu-gcc') and hostarch != 'aarch64':
+        os.environ['GCC5_AARCH64_PREFIX'] = 'aarch64-linux-gnu-'
+    if binary_exists('riscv64-linux-gnu-gcc') and hostarch != 'riscv64':
+        os.environ['GCC5_RISCV64_PREFIX'] = 'riscv64-linux-gnu-'
+    if binary_exists('x86_64-linux-gnu-gcc') and hostarch != 'x86_64':
         os.environ['GCC5_IA32_PREFIX'] = 'x86_64-linux-gnu-'
         os.environ['GCC5_X64_PREFIX'] = 'x86_64-linux-gnu-'
         os.environ['GCC5_BIN'] = 'x86_64-linux-gnu-'
@@ -279,17 +286,28 @@ def build_list(cfg):
 def main():
     parser = optparse.OptionParser()
     parser.add_option('-c', '--config', dest = 'configfile',
-                      type = 'string', default = '.edk2.builds')
-    parser.add_option('-C', '--directory', dest = 'directory', type = 'string')
-    parser.add_option('-j', '--jobs', dest = 'jobs', type = 'string')
-    parser.add_option('-m', '--match', dest = 'match', type = 'string')
-    parser.add_option('-x', '--exclude', dest = 'exclude', type = 'string')
-    parser.add_option('-l', '--list', dest = 'list', action = 'store_true', default = False)
-    parser.add_option('--silent', dest = 'silent', action = 'store_true', default = False)
-    parser.add_option('--core', dest = 'core', type = 'string')
-    parser.add_option('--pkg', '--package', dest = 'pkgs', type = 'string', action = 'append')
-    parser.add_option('--version-override', dest = 'version_override', type = 'string')
-    parser.add_option('--release-date', dest = 'release_date', type = 'string')
+                      type = 'string', default = '.edk2.builds', metavar = 'FILE',
+                      help = 'read configuration from FILE (default: .edk2.builds)')
+    parser.add_option('-C', '--directory', dest = 'directory', type = 'string', metavar = 'DIR',
+                      help = 'change to DIR before building')
+    parser.add_option('-j', '--jobs', dest = 'jobs', type = 'string', metavar = 'JOBS'
+                      'allow up to JOBS parallel build jobs')
+    parser.add_option('-m', '--match', dest = 'match', type = 'string', metavar = 'INCLUDE',
+                      help = 'only run builds matching INCLUDE (substring)')
+    parser.add_option('-x', '--exclude', dest = 'exclude', type = 'string', metavar = 'EXCLUDE',
+                      help = 'skip builds matching EXCLUDE (substring)')
+    parser.add_option('-l', '--list', dest = 'list', action = 'store_true', default = False,
+                      help = 'list build configs available')
+    parser.add_option('--silent', dest = 'silent', action = 'store_true', default = False,
+                      help = 'write build output to logfiles, write to console only on errors')
+    parser.add_option('--core', dest = 'core', type = 'string', metavar = 'DIR',
+                      help = 'location of the core edk2 repository (i.e. where BuildTools are located)')
+    parser.add_option('--pkg', '--package', dest = 'pkgs', type = 'string', action = 'append', metavar = 'DIR',
+                      help = 'location(s) of additional packages (can be specified multiple times)')
+    parser.add_option('--version-override', dest = 'version_override', type = 'string', metavar = 'VERSION',
+                      help = 'set firmware build version')
+    parser.add_option('--release-date', dest = 'release_date', type = 'string', metavar = 'DATE',
+                      help = 'set firmware build release date (in MM/DD/YYYY format)')
     (options, args) = parser.parse_args()
 
     if options.directory:
