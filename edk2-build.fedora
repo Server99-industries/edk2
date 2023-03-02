@@ -172,6 +172,19 @@ pad2 = QEMU_EFI-silent-pflash.raw 64m
 
 
 #####################################################################
+# riscv
+
+[build.riscv.qemu]
+conf = OvmfPkg/RiscVVirt/RiscVVirtQemu.dsc
+arch = RISCV64
+plat = RiscVVirtQemu
+dest = Fedora/riscv
+cpy1 = FV/RISCV_VIRT.fd
+cpy2 = FV/RISCV_VIRT.fd RISCV_VIRT.raw
+pad1 = RISCV_VIRT.raw 32m
+
+
+#####################################################################
 # 32-bit builds
 
 [build.ovmf.ia32.default]
