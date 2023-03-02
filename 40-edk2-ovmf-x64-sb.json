@@ -24,7 +24,6 @@
     ],
     "features": [
         "acpi-s3",
-        "amd-sev",
         "requires-smm",
         "secure-boot",
         "verbose-dynamic"
