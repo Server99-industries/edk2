@@ -8,9 +8,9 @@
 # (such as ppc), so lets limit things to the known-good ones.
 ExclusiveArch: x86_64 aarch64
 
-# edk2-stable202211
-%define GITDATE        20221117
-%define GITCOMMIT      fff6d81270b5
+# edk2-stable202302
+%define GITDATE        20230301
+%define GITCOMMIT      f80f052277c8
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
@@ -48,7 +48,7 @@ Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-d00c3c5b8a9d6d3ea3dabfcafdf36afd61ba8bcc.tar.xz
 Source3: softfloat-%{softfloat_version}.tar.xz
-Source4: edk2-platforms-b36fe8bc9b68.tar.xz
+Source4: edk2-platforms-54306d023e7d.tar.xz
 Source5: jansson-2.13.1.tar.bz2
 
 # json description files
