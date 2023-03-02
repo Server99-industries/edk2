@@ -76,7 +76,8 @@ Source81: edk2-build.fedora
 Source82: edk2-build.fedora.platforms
 Source83: edk2-build.rhel-9
 
-Source90: DBXUpdate-20200729.x64.bin
+Source90: DBXUpdate-20220812.x64.bin
+Source91: DBXUpdate-20220812.ia32.bin
 
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
@@ -283,7 +284,7 @@ cp -a -- \
    %{SOURCE30} %{SOURCE31} %{SOURCE32} \
    %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
    %{SOURCE80} %{SOURCE81} %{SOURCE82} %{SOURCE83} \
-   %{SOURCE90} \
+   %{SOURCE90} %{SOURCE91} \
    .
 
 %build
@@ -334,7 +335,7 @@ touch OvmfPkg/AmdSev/Grub/grub.efi   # dummy
 ./edk2-build.py --config edk2-build.rhel-9 --silent --release-date "$RELEASE_DATE" -m ovmf
 virt-fw-vars --input   RHEL-9/ovmf/OVMF_VARS.fd \
              --output  RHEL-9/ovmf/OVMF_VARS.secboot.fd \
-             --set-dbx DBXUpdate-20200729.x64.bin \
+             --set-dbx DBXUpdate-20220812.x64.bin \
              --enroll-redhat --secure-boot
 build_iso RHEL-9/ovmf
 
@@ -344,15 +345,15 @@ build_iso RHEL-9/ovmf
 ./edk2-build.py --config edk2-build.fedora.platforms --silent -m x64
 virt-fw-vars --input   Fedora/ovmf/OVMF_VARS.fd \
              --output  Fedora/ovmf/OVMF_VARS.secboot.fd \
-             --set-dbx DBXUpdate-20200729.x64.bin \
+             --set-dbx DBXUpdate-20220812.x64.bin \
              --enroll-redhat --secure-boot
 virt-fw-vars --input   Fedora/ovmf-4m/OVMF_VARS.fd \
              --output  Fedora/ovmf-4m/OVMF_VARS.secboot.fd \
-             --set-dbx DBXUpdate-20200729.x64.bin \
+             --set-dbx DBXUpdate-20220812.x64.bin \
              --enroll-redhat --secure-boot
 virt-fw-vars --input   Fedora/ovmf-ia32/OVMF_VARS.fd \
              --output  Fedora/ovmf-ia32/OVMF_VARS.secboot.fd \
-             --set-dbx DBXUpdate-20200729.x64.bin \
+             --set-dbx DBXUpdate-20220812.ia32.bin \
              --enroll-redhat --secure-boot
 build_iso Fedora/ovmf
 build_iso Fedora/ovmf-ia32
@@ -360,7 +361,7 @@ build_iso Fedora/ovmf-ia32
 # experimental stateless builds
 virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
              --output  Fedora/experimental/OVMF.stateless.secboot.fd \
-             --set-dbx DBXUpdate-20200729.x64.bin \
+             --set-dbx DBXUpdate-20220812.x64.bin \
              --enroll-redhat --secure-boot
 
 %endif
