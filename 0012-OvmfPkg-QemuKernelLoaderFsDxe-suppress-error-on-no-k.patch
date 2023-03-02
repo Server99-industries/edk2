@@ -1,7 +1,7 @@
-From 2998ee646f22dc7acddcad7725c1b8d2de5b0130 Mon Sep 17 00:00:00 2001
+From b748f55a0018d1766e46d27eedf7806c95d90075 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 24 Jun 2020 11:31:36 +0200
-Subject: [PATCH 13/17] OvmfPkg/QemuKernelLoaderFsDxe: suppress error on no
+Subject: [PATCH 12/14] OvmfPkg/QemuKernelLoaderFsDxe: suppress error on no
  "-kernel" in silent aa64 build (RH)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
@@ -80,5 +80,5 @@ index d4f3cd92255f..f007f8a6c233 100644
    }
  
 -- 
-2.38.1
+2.39.2
 

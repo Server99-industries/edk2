@@ -1,7 +1,7 @@
-From 643aed66df8d427f8912f74326140b74915e73f9 Mon Sep 17 00:00:00 2001
+From 2d09cde35ac031aabf7a1dc09c8c8a5e65917ae8 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Sun, 26 Jul 2015 08:02:50 +0000
-Subject: [PATCH 06/17] ArmVirtPkg: take PcdResizeXterm from the QEMU command
+Subject: [PATCH 05/14] ArmVirtPkg: take PcdResizeXterm from the QEMU command
  line (RH only)
 
 Notes about the RHEL-8.3/20200603-ca407c7246bf [edk2-stable202005] ->
@@ -96,19 +96,19 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  create mode 100644 ArmVirtPkg/Library/TerminalPcdProducerLib/TerminalPcdProducerLib.c
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index f77443229e8e..ed66f0003082 100644
+index 72a0cacab4a8..7a3be7e8592c 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -299,6 +299,8 @@ [PcdsPatchableInModule]
+@@ -304,6 +304,8 @@ [PcdsPatchableInModule]
    gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress|0x0
  !endif
  
 +  gEfiMdeModulePkgTokenSpaceGuid.PcdResizeXterm|FALSE
 +
  [PcdsDynamicHii]
-   gArmVirtTokenSpaceGuid.PcdForceNoAcpi|L"ForceNoAcpi"|gArmVirtVariableGuid|0x0|FALSE|NV,BS
+   gUefiOvmfPkgTokenSpaceGuid.PcdForceNoAcpi|L"ForceNoAcpi"|gOvmfVariableGuid|0x0|FALSE|NV,BS
  
-@@ -413,7 +415,10 @@ [Components.common]
+@@ -418,7 +420,10 @@ [Components.common]
    MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
    MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
    MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
@@ -200,5 +200,5 @@ index 000000000000..bfd3a6a535f9
 +  return RETURN_SUCCESS;
 +}
 -- 
-2.38.1
+2.39.2
 
