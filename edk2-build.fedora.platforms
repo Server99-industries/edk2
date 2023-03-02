@@ -18,6 +18,14 @@ plat = Ext4Pkg
 dest = Fedora/drivers
 cpy1 = AARCH64/Ext4Dxe.efi ext4aa64.efi
 
+[build.ext4.riscv64]
+desc = ext4 driver
+conf = Features/Ext4Pkg/Ext4Pkg.dsc
+arch = RISCV64
+plat = Ext4Pkg
+dest = Fedora/drivers
+cpy1 = RISCV64/Ext4Dxe.efi ext4riscv64.efi
+
 
 #####################################################################
 # loongarch builds
