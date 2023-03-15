@@ -14,7 +14,7 @@ ExclusiveArch: x86_64 aarch64
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
-%define DBXDATE        20220812
+%define DBXDATE        20230314
 
 %if %{defined rhel}
 %define build_ovmf 0
