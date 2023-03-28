@@ -28,6 +28,17 @@ cpy1 = RISCV64/Ext4Dxe.efi ext4riscv64.efi
 
 
 #####################################################################
+# arm standalone mm
+
+[build.standalone.mm.aa64]
+conf = Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+arch = AARCH64
+plat = MmStandaloneRpmb
+dest = Fedora/aarch64
+cpy1 = FV/BL32_AP_MM.fd
+
+
+#####################################################################
 # loongarch builds
 
 [build.loongarch]

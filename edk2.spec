@@ -576,6 +576,9 @@ done
 %{_datadir}/%{name}/aarch64/QEMU_EFI.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.silent.fd
 %{_datadir}/%{name}/aarch64/QEMU_VARS.fd
+%if %{defined fedora}
+%{_datadir}/%{name}/aarch64/BL32_AP_MM.fd
+%endif
 %{_datadir}/qemu/firmware/50-edk2-aarch64.json
 %{_datadir}/qemu/firmware/51-edk2-aarch64-verbose.json
 # endif build_aarch64
