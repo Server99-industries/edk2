@@ -36,6 +36,10 @@ DEBUG_PRINT_ERROR_LEVEL  = 0x8040004F
 [opts.armvirt.silent]
 DEBUG_PRINT_ERROR_LEVEL  = 0x80000000
 
+[opts.armvirt.kernel]
+TPM2_ENABLE              = FALSE
+TPM2_CONFIG_ENABLE       = FALSE
+
 
 [pcds.nx.strict]
 PcdDxeNxMemoryProtectionPolicy = 0xC000000000007FD5
@@ -169,6 +173,18 @@ dest = Fedora/aarch64
 cpy1 = FV/QEMU_EFI.fd  QEMU_EFI.silent.fd
 cpy2 = FV/QEMU_EFI.fd  QEMU_EFI-silent-pflash.raw
 pad2 = QEMU_EFI-silent-pflash.raw 64m
+
+[build.armvirt.aa64.kernel]
+desc = ArmVirt build for qemu, 64-bit (arm v8)
+conf = ArmVirtPkg/ArmVirtQemuKernel.dsc
+arch = AARCH64
+opts = ovmf.common
+       armvirt.silent
+       armvirt.kernel
+pcds = nx.broken.grub
+plat = ArmVirtQemuKernel-AARCH64
+dest = Fedora/aarch64
+cpy1 = FV/QEMU_EFI.fd  QEMU_EFI.kernel.fd
 
 
 #####################################################################
