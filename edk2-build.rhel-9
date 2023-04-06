@@ -27,6 +27,12 @@ DEBUG_PRINT_ERROR_LEVEL  = 0x8040004F
 [opts.armvirt.silent]
 DEBUG_PRINT_ERROR_LEVEL  = 0x80000000
 
+[pcds.nx.strict]
+PcdDxeNxMemoryProtectionPolicy = 0xC000000000007FD5
+
+[pcds.nx.broken.grub]
+# grub.efi uses EfiLoaderData for code
+PcdDxeNxMemoryProtectionPolicy = 0xC000000000007FD1
 
 #####################################################################
 # stateful ovmf builds (with vars in flash)
@@ -89,6 +95,7 @@ conf = ArmVirtPkg/ArmVirtQemu.dsc
 arch = AARCH64
 opts = ovmf.common
        armvirt.verbose
+pcds = nx.broken.grub
 plat = ArmVirtQemu-AARCH64
 dest = RHEL-9/aarch64
 cpy1 = FV/QEMU_EFI.fd
@@ -104,6 +111,7 @@ conf = ArmVirtPkg/ArmVirtQemu.dsc
 arch = AARCH64
 opts = ovmf.common
        armvirt.silent
+pcds = nx.broken.grub
 plat = ArmVirtQemu-AARCH64
 dest = RHEL-9/aarch64
 cpy1 = FV/QEMU_EFI.fd  QEMU_EFI.silent.fd
