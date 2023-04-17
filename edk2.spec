@@ -56,10 +56,8 @@ Source4: edk2-platforms-54306d023e7d.tar.xz
 Source5: jansson-2.13.1.tar.bz2
 
 # json description files
-Source10: 50-edk2-aarch64-qcow2.json
-Source11: 51-edk2-aarch64-raw.json
-Source12: 52-edk2-aarch64-verbose-qcow2.json
-Source13: 53-edk2-aarch64-verbose-raw.json
+Source10: 50-edk2-aarch64.json
+Source11: 51-edk2-aarch64-verbose.json
 
 Source20: 50-edk2-arm-verbose.json
 
@@ -158,9 +156,6 @@ Summary:    UEFI firmware for aarch64 virtual machines
 BuildArch:  noarch
 Provides:   AAVMF = %{version}-%{release}
 Obsoletes:  AAVMF < 20180508-100.gitee3198e672e2.el7
-
-# need libvirt version with qcow2 support
-Conflicts:  libvirt-daemon-driver-qemu < 9.2.0
 
 # No Secure Boot for AAVMF yet, but we include OpenSSL for the IPv6 stack.
 Provides:   bundled(openssl) = %{OPENSSL_VER}
@@ -286,7 +281,7 @@ tar -xf %{SOURCE5} --strip-components=1 --directory RedfishPkg/Library/JsonLib/j
 chmod -Rf a+rX,u+w,g-w,o-w .
 
 cp -a -- \
-   %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
+   %{SOURCE10} %{SOURCE11} \
    %{SOURCE20} \
    %{SOURCE30} %{SOURCE31} %{SOURCE32} \
    %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
@@ -484,10 +479,8 @@ ln -s ../%{name}/arm/QEMU_EFI-pflash.raw \
 
 # json description files
 install -m 0644 \
-        50-edk2-aarch64-qcow2.json \
-        51-edk2-aarch64-raw.json \
-        52-edk2-aarch64-verbose-qcow2.json \
-        53-edk2-aarch64-verbose-raw.json \
+        50-edk2-aarch64.json \
+        51-edk2-aarch64-verbose.json \
         %{buildroot}%{_datadir}/qemu/firmware
 %if %{defined fedora}
 install -m 0644 \
@@ -587,10 +580,8 @@ done
 %{_datadir}/%{name}/aarch64/BL32_AP_MM.fd
 %{_datadir}/%{name}/aarch64/QEMU_EFI.kernel.fd
 %endif
-%{_datadir}/qemu/firmware/50-edk2-aarch64-qcow2.json
-%{_datadir}/qemu/firmware/51-edk2-aarch64-raw.json
-%{_datadir}/qemu/firmware/52-edk2-aarch64-verbose-qcow2.json
-%{_datadir}/qemu/firmware/53-edk2-aarch64-verbose-raw.json
+%{_datadir}/qemu/firmware/50-edk2-aarch64.json
+%{_datadir}/qemu/firmware/51-edk2-aarch64-verbose.json
 # endif build_aarch64
 %endif
 
