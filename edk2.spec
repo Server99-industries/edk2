@@ -39,7 +39,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -679,6 +679,9 @@ done
 
 
 %changelog
+* Mon Apr 17 2023 Gerd Hoffmann <kraxel@redhat.com> - 20230301gitf80f052277c8-3
+- revert: add json files for qcow2 images.
+
 * Thu Apr 13 2023 Gerd Hoffmann <kraxel@redhat.com> - 20230301gitf80f052277c8-2
 - add StandaloneMM and ArmVirtQemuKernel builds.
 - add json files for qcow2 images.
