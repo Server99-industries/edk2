@@ -96,6 +96,7 @@ Patch0012: 0012-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0013: 0013-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 Patch0014: 0014-SecurityPkg-add-TIS-sanity-check-tpm2.patch
 Patch0015: 0015-SecurityPkg-add-TIS-sanity-check-tpm12.patch
+Patch0016: 0016-OvmfPkg-NestedInterruptTplLib-replace-ASSERT-with-a-.patch
 
 
 # python3-devel and libuuid-devel are required for building tools.
