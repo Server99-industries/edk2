@@ -1,0 +1,40 @@
+From 7c65395d2b45e388c6c106cb619ab93c2359f5e4 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Thu, 27 Apr 2023 12:14:16 +0200
+Subject: [PATCH 16/17] OvmfPkg/NestedInterruptTplLib: replace ASSERT() with a
+ warning logged.
+
+OVMF can't guarantee that the ASSERT() doesn't happen.  Misbehaving
+EFI applications can trigger this.  So log a warning instead and try
+to continue.
+
+Reproducer: Fetch windows 11 22H2 iso image, boot it in qemu with OVMF.
+
+Traced to BootServices->Stall() being called with IPL=TPL_HIGH_LEVEL
+and Interrupts /enabled/ while windows is booting.
+
+Cc: Michael Brown <mcb30@ipxe.org>
+Cc: Laszlo Ersek <lersek@redhat.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ OvmfPkg/Library/NestedInterruptTplLib/Tpl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c b/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
+index e19d98878eb7..fdd7d15c4ba8 100644
+--- a/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
++++ b/OvmfPkg/Library/NestedInterruptTplLib/Tpl.c
+@@ -39,7 +39,9 @@ NestedInterruptRaiseTPL (
+   //
+   ASSERT (GetInterruptState () == FALSE);
+   InterruptedTPL = gBS->RaiseTPL (TPL_HIGH_LEVEL);
+-  ASSERT (InterruptedTPL < TPL_HIGH_LEVEL);
++  if (InterruptedTPL >= TPL_HIGH_LEVEL) {
++    DEBUG ((DEBUG_WARN, "%a: Called at IPL %d\n", __func__, InterruptedTPL));
++  }
+ 
+   return InterruptedTPL;
+ }
+-- 
+2.40.1
+
