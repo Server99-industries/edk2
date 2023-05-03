@@ -369,6 +369,11 @@ virt-fw-vars --input   Fedora/ovmf-ia32/OVMF_VARS.fd \
 build_iso Fedora/ovmf
 build_iso Fedora/ovmf-ia32
 
+for raw in */ovmf-4m/*.fd; do
+    qcow2="${raw%.fd}.qcow2"
+    qemu-img convert -f raw -O qcow2 -o cluster_size=4096 -S 4096 "$raw" "$qcow2"
+done
+
 # experimental stateless builds
 virt-fw-vars --input   Fedora/experimental/OVMF.stateless.fd \
              --output  Fedora/experimental/OVMF.stateless.secboot.fd \
@@ -567,6 +572,10 @@ done
 %{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.fd
 %{_datadir}/%{name}/ovmf-4m/OVMF_VARS.secboot.fd
+%{_datadir}/%{name}/ovmf-4m/OVMF_CODE.qcow2
+%{_datadir}/%{name}/ovmf-4m/OVMF_CODE.secboot.qcow2
+%{_datadir}/%{name}/ovmf-4m/OVMF_VARS.qcow2
+%{_datadir}/%{name}/ovmf-4m/OVMF_VARS.secboot.qcow2
 %{_datadir}/%{name}/ovmf/*.pcr
 %{_datadir}/%{name}/ovmf-4m/*.pcr
 %endif
