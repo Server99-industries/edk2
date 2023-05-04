@@ -123,7 +123,7 @@ BuildRequires:  xorriso
 
 # For generating the variable store template with the default certificates
 # enrolled.
-BuildRequires:  python3-virt-firmware >= 1.7
+BuildRequires:  python3-virt-firmware >= 23.5
 
 # endif build_ovmf
 %endif
