@@ -39,7 +39,7 @@ ExclusiveArch: x86_64 aarch64
 
 Name:       edk2
 Version:    %{GITDATE}git%{GITCOMMIT}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    UEFI firmware for 64-bit virtual machines
 License:    BSD-2-Clause-Patent and OpenSSL and MIT
 URL:        http://www.tianocore.org
@@ -682,6 +682,10 @@ done
 
 
 %changelog
+* Fri May 05 2023 Gerd Hoffmann <kraxel@redhat.com> - 20230301gitf80f052277c8-4
+- drop ASSERT from NestedInterruptTplLib (rhbz#2183336).
+- add tpm probe fixes.
+
 * Mon Apr 17 2023 Gerd Hoffmann <kraxel@redhat.com> - 20230301gitf80f052277c8-3
 - revert: add json files for qcow2 images.
 
