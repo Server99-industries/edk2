@@ -67,12 +67,15 @@ Source30: 30-edk2-ovmf-ia32-sb-enrolled.json
 Source31: 40-edk2-ovmf-ia32-sb.json
 Source32: 50-edk2-ovmf-ia32-nosb.json
 
-Source40: 30-edk2-ovmf-x64-sb-enrolled.json
-Source41: 40-edk2-ovmf-x64-sb.json
-Source42: 50-edk2-ovmf-x64-microvm.json
-Source43: 50-edk2-ovmf-x64-nosb.json
-Source44: 60-edk2-ovmf-x64-amdsev.json
-Source45: 60-edk2-ovmf-x64-inteltdx.json
+Source40: 30-edk2-ovmf-4m-qcow2-x64-sb-enrolled.json
+Source41: 31-edk2-ovmf-2m-raw-x64-sb-enrolled.json
+Source42: 40-edk2-ovmf-4m-qcow2-x64-sb.json
+Source43: 41-edk2-ovmf-2m-raw-x64-sb.json
+Source44: 50-edk2-ovmf-x64-microvm.json
+Source45: 50-edk2-ovmf-4m-qcow2-x64-nosb.json
+Source46: 51-edk2-ovmf-2m-raw-x64-nosb.json
+Source47: 60-edk2-ovmf-x64-amdsev.json
+Source48: 60-edk2-ovmf-x64-inteltdx.json
 
 # https://gitlab.com/kraxel/edk2-build-config
 Source80: edk2-build.py
@@ -293,7 +296,8 @@ cp -a -- \
    %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
    %{SOURCE20} \
    %{SOURCE30} %{SOURCE31} %{SOURCE32} \
-   %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} %{SOURCE45} \
+   %{SOURCE40} %{SOURCE41} %{SOURCE42} %{SOURCE43} %{SOURCE44} \
+   %{SOURCE45} %{SOURCE46} %{SOURCE47} %{SOURCE48} \
    %{SOURCE80} %{SOURCE81} %{SOURCE82} %{SOURCE83} \
    %{SOURCE90} %{SOURCE91} \
    .
@@ -459,9 +463,12 @@ ln -s OVMF_CODE.fd %{buildroot}%{_datadir}/%{name}/ovmf/OVMF_CODE.cc.fd
 # json description files
 mkdir -p %{buildroot}%{_datadir}/qemu/firmware
 install -m 0644 \
-        30-edk2-ovmf-x64-sb-enrolled.json \
-        40-edk2-ovmf-x64-sb.json \
-        50-edk2-ovmf-x64-nosb.json \
+        30-edk2-ovmf-4m-qcow2-x64-sb-enrolled.json \
+        31-edk2-ovmf-2m-raw-x64-sb-enrolled.json \
+        40-edk2-ovmf-4m-qcow2-x64-sb.json \
+        41-edk2-ovmf-2m-raw-x64-sb.json \
+        50-edk2-ovmf-4m-qcow2-x64-nosb.json \
+        51-edk2-ovmf-2m-raw-x64-nosb.json \
         60-edk2-ovmf-x64-amdsev.json \
         60-edk2-ovmf-x64-inteltdx.json \
         %{buildroot}%{_datadir}/qemu/firmware
@@ -560,9 +567,12 @@ done
 %{_datadir}/%{name}/ovmf/UefiShell.iso
 %{_datadir}/%{name}/ovmf/Shell.efi
 %{_datadir}/%{name}/ovmf/EnrollDefaultKeys.efi
-%{_datadir}/qemu/firmware/30-edk2-ovmf-x64-sb-enrolled.json
-%{_datadir}/qemu/firmware/40-edk2-ovmf-x64-sb.json
-%{_datadir}/qemu/firmware/50-edk2-ovmf-x64-nosb.json
+%{_datadir}/qemu/firmware/30-edk2-ovmf-4m-qcow2-x64-sb-enrolled.json
+%{_datadir}/qemu/firmware/31-edk2-ovmf-2m-raw-x64-sb-enrolled.json
+%{_datadir}/qemu/firmware/40-edk2-ovmf-4m-qcow2-x64-sb.json
+%{_datadir}/qemu/firmware/41-edk2-ovmf-2m-raw-x64-sb.json
+%{_datadir}/qemu/firmware/50-edk2-ovmf-4m-qcow2-x64-nosb.json
+%{_datadir}/qemu/firmware/51-edk2-ovmf-2m-raw-x64-nosb.json
 %{_datadir}/qemu/firmware/60-edk2-ovmf-x64-amdsev.json
 %{_datadir}/qemu/firmware/60-edk2-ovmf-x64-inteltdx.json
 %if %{defined fedora}
