@@ -5,6 +5,7 @@
     ],
     "mapping": {
         "device": "flash",
+        "mode" : "split",
         "executable": {
             "filename": "/usr/share/edk2/arm/QEMU_EFI-pflash.raw",
             "format": "raw"

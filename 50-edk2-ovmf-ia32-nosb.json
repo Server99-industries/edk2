@@ -5,6 +5,7 @@
     ],
     "mapping": {
         "device": "flash",
+        "mode" : "split",
         "executable": {
             "filename": "/usr/share/edk2/ovmf-ia32/OVMF_CODE.fd",
             "format": "raw"

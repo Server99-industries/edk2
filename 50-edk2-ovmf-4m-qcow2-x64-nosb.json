@@ -5,6 +5,7 @@
     ],
     "mapping": {
         "device": "flash",
+        "mode" : "split",
         "executable": {
             "filename": "/usr/share/edk2/ovmf-4m/OVMF_CODE.qcow2",
             "format": "qcow2"

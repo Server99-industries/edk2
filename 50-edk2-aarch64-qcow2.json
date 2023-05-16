@@ -5,6 +5,7 @@
     ],
     "mapping": {
         "device": "flash",
+        "mode" : "split",
         "executable": {
             "filename": "/usr/share/edk2/aarch64/QEMU_EFI-silent-pflash.qcow2",
             "format": "qcow2"
