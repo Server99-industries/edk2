@@ -71,9 +71,9 @@ arch = X64
 opts = ovmf.common
        ovmf.4m
 plat = OvmfX64
-dest = Fedora/ovmf-4m
-cpy1 = FV/OVMF_CODE.fd
-cpy2 = FV/OVMF_VARS.fd
+dest = Fedora/ovmf
+cpy1 = FV/OVMF_CODE.fd OVMF_CODE_4M.fd
+cpy2 = FV/OVMF_VARS.fd OVMF_VARS_4M.fd
 
 [build.ovmf.2m.sb.smm]
 desc = ovmf build (32/64-bit, 2MB, q35 only, needs smm, secure boot)
@@ -95,8 +95,8 @@ opts = ovmf.common
        ovmf.4m
        ovmf.sb.smm
 plat = Ovmf3264
-dest = Fedora/ovmf-4m
-cpy1 = FV/OVMF_CODE.fd OVMF_CODE.secboot.fd
+dest = Fedora/ovmf
+cpy1 = FV/OVMF_CODE.fd OVMF_CODE_4M.secboot.fd
 
 
 #####################################################################
