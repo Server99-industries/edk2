@@ -1,4 +1,4 @@
-From a7f8d385ac55fce62cc5a9a1608e4d085801e6f3 Mon Sep 17 00:00:00 2001
+From 461077f978edf909f0ef59c777c2d45ab7664526 Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Wed, 27 Jan 2016 03:05:18 +0100
 Subject: [PATCH 08/14] ArmVirtPkg: silence DEBUG_VERBOSE (0x00400000) in
@@ -61,10 +61,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  2 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/ArmVirtPkg/ArmVirtQemu.dsc b/ArmVirtPkg/ArmVirtQemu.dsc
-index 7a3be7e8592c..865172c5d56b 100644
+index 2ccbef41c23b..bc097880f79f 100644
 --- a/ArmVirtPkg/ArmVirtQemu.dsc
 +++ b/ArmVirtPkg/ArmVirtQemu.dsc
-@@ -546,7 +546,10 @@ [Components.common]
+@@ -544,7 +544,10 @@ [Components.common]
    #
    # Video support
    #
@@ -93,5 +93,5 @@ index 3cb9120e4e10..02877284bfa3 100644
    OvmfPkg/PlatformDxe/Platform.inf
  
 -- 
-2.39.2
+2.40.1
 
