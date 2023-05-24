@@ -1,4 +1,4 @@
-From ea0ec39c85e21daa5b4f31884ee1e4a198c78fcd Mon Sep 17 00:00:00 2001
+From f0d8ef8071a0b20495a5a1dc3e6e49f8f145c503 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Tue, 21 Nov 2017 00:57:46 +0100
 Subject: [PATCH 07/14] OvmfPkg: silence DEBUG_VERBOSE (0x00400000) in
@@ -82,10 +82,10 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
  4 files changed, 32 insertions(+), 8 deletions(-)
 
 diff --git a/OvmfPkg/AmdSev/AmdSevX64.dsc b/OvmfPkg/AmdSev/AmdSevX64.dsc
-index ae3f9c75c4a4..c7d7add60d44 100644
+index 14a5d10d2b67..870c4bd890fe 100644
 --- a/OvmfPkg/AmdSev/AmdSevX64.dsc
 +++ b/OvmfPkg/AmdSev/AmdSevX64.dsc
-@@ -682,8 +682,14 @@ [Components]
+@@ -684,8 +684,14 @@ [Components]
    MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
@@ -103,10 +103,10 @@ index ae3f9c75c4a4..c7d7add60d44 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgIa32.dsc b/OvmfPkg/OvmfPkgIa32.dsc
-index bb3b0c1c96f3..30b843d2287a 100644
+index 62c68d99165d..d7bce8d40d26 100644
 --- a/OvmfPkg/OvmfPkgIa32.dsc
 +++ b/OvmfPkg/OvmfPkgIa32.dsc
-@@ -851,9 +851,15 @@ [Components]
+@@ -841,9 +841,15 @@ [Components]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -125,10 +125,10 @@ index bb3b0c1c96f3..30b843d2287a 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
-index 19b968bd945d..2327c5c29611 100644
+index b03af9cacd2b..8103d1d4882a 100644
 --- a/OvmfPkg/OvmfPkgIa32X64.dsc
 +++ b/OvmfPkg/OvmfPkgIa32X64.dsc
-@@ -864,9 +864,15 @@ [Components.X64]
+@@ -855,9 +855,15 @@ [Components.X64]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -147,10 +147,10 @@ index 19b968bd945d..2327c5c29611 100644
  
    #
 diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
-index 876f2374a2cc..49b914c29f35 100644
+index a9dad1b59ee8..7fe23d9153fe 100644
 --- a/OvmfPkg/OvmfPkgX64.dsc
 +++ b/OvmfPkg/OvmfPkgX64.dsc
-@@ -937,9 +937,15 @@ [Components]
+@@ -929,9 +929,15 @@ [Components]
    MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
  
  !ifndef $(CSM_ENABLE)
@@ -169,5 +169,5 @@ index 876f2374a2cc..49b914c29f35 100644
  
    #
 -- 
-2.39.2
+2.40.1
 

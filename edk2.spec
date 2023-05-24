@@ -9,8 +9,8 @@
 ExclusiveArch: x86_64 aarch64
 
 # edk2-stable202302
-%define GITDATE        20230301
-%define GITCOMMIT      f80f052277c8
+%define GITDATE        20230524
+%define GITCOMMIT      ba91d0292e59
 %define TOOLCHAIN      GCC5
 %define OPENSSL_VER    1.1.1k
 
@@ -52,7 +52,7 @@ Source0: edk2-%{GITCOMMIT}.tar.xz
 Source1: ovmf-whitepaper-c770f8c.txt
 Source2: openssl-rhel-d00c3c5b8a9d6d3ea3dabfcafdf36afd61ba8bcc.tar.xz
 Source3: softfloat-%{softfloat_version}.tar.xz
-Source4: edk2-platforms-54306d023e7d.tar.xz
+Source4: edk2-platforms-7880b92e2a04.tar.xz
 Source5: jansson-2.13.1.tar.bz2
 
 # json description files
@@ -94,10 +94,6 @@ Patch0010: 0010-OvmfPkg-silence-EFI_D_VERBOSE-0x00400000-in-NvmExpre.patch
 Patch0011: 0011-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
 Patch0012: 0012-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0013: 0013-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
-Patch0014: 0014-SecurityPkg-add-TIS-sanity-check-tpm2.patch
-Patch0015: 0015-SecurityPkg-add-TIS-sanity-check-tpm12.patch
-Patch0016: 0016-OvmfPkg-Clarify-invariants-for-NestedInterruptTplLib.patch
-Patch0017: 0017-OvmfPkg-Relax-assertion-that-interrupts-do-not-occur.patch
 
 
 # python3-devel and libuuid-devel are required for building tools.
@@ -280,6 +276,8 @@ tar -C CryptoPkg/Library/OpensslLib -a -f %{SOURCE2} -x
 tar -xf %{SOURCE3} --strip-components=1 --directory ArmPkg/Library/ArmSoftFloatLib/berkeley-softfloat-3/
 tar -xf %{SOURCE4} --strip-components=1 "*/Drivers" "*/Features" "*/Platform" "*/Silicon"
 tar -xf %{SOURCE5} --strip-components=1 --directory RedfishPkg/Library/JsonLib/jansson
+# include paths pointing to unused submodules
+mkdir -p MdePkg/Library/MipiSysTLib/mipisyst/library/include
 
 # Done by %setup, but we do not use it for the auxiliary tarballs
 chmod -Rf a+rX,u+w,g-w,o-w .

@@ -1,4 +1,4 @@
-From 08c466269cf4728e954d61c1801b0eb6ca4175ff Mon Sep 17 00:00:00 2001
+From 58b31e995b9626e3187872c5dbb4696f04374a56 Mon Sep 17 00:00:00 2001
 From: Philippe Mathieu-Daude <philmd@redhat.com>
 Date: Thu, 1 Aug 2019 20:43:48 +0200
 Subject: [PATCH 09/14] OvmfPkg: QemuRamfbDxe: Do not report DXE failure on
@@ -59,7 +59,7 @@ index e3890b8c202f..6ffee5acb24c 100644
    FrameBufferBltLib
    MemoryAllocationLib
 diff --git a/OvmfPkg/QemuRamfbDxe/QemuRamfb.c b/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
-index f5113fbc78a6..0295986fe0f1 100644
+index 5a1044f0dc7b..3a687901b0d2 100644
 --- a/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
 +++ b/OvmfPkg/QemuRamfbDxe/QemuRamfb.c
 @@ -13,6 +13,7 @@
@@ -92,5 +92,5 @@ index f5113fbc78a6..0295986fe0f1 100644
    }
  
 -- 
-2.39.2
+2.40.1
 
