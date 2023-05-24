@@ -1,4 +1,4 @@
-From e1e3402a5bf94f2e4a5b67f9587b20ceb4a109ac Mon Sep 17 00:00:00 2001
+From 85b2dc9bb820a749e95136bf7bdd0f6c49e8389d Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Thu, 4 Jun 2020 13:34:12 +0200
 Subject: [PATCH 01/14] BaseTools: do not build BrotliCompress (RH only)
@@ -39,5 +39,5 @@ index 5275f657efe8..39d719975309 100644
    EfiRom \
    GenFfs \
 -- 
-2.39.2
+2.40.1
 

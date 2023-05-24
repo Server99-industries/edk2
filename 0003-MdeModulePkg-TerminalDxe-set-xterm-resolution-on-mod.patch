@@ -1,4 +1,4 @@
-From 84149154c873d3521bf0848d8473f2c09f3ccca0 Mon Sep 17 00:00:00 2001
+From 212665c3bc7c480d6dfa7df52c50457e83af149a Mon Sep 17 00:00:00 2001
 From: Laszlo Ersek <lersek@redhat.com>
 Date: Tue, 25 Feb 2014 22:40:01 +0100
 Subject: [PATCH 03/14] MdeModulePkg: TerminalDxe: set xterm resolution on mode
@@ -87,10 +87,10 @@ Signed-off-by: Laszlo Ersek <lersek@redhat.com>
  3 files changed, 35 insertions(+)
 
 diff --git a/MdeModulePkg/MdeModulePkg.dec b/MdeModulePkg/MdeModulePkg.dec
-index f33312fb3510..020f62fcc668 100644
+index 1609b6d9c29e..c0d376bed1f0 100644
 --- a/MdeModulePkg/MdeModulePkg.dec
 +++ b/MdeModulePkg/MdeModulePkg.dec
-@@ -2102,6 +2102,10 @@ [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
+@@ -2127,6 +2127,10 @@ [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
    # @Prompt The shared bit mask when Intel Tdx is enabled.
    gEfiMdeModulePkgTokenSpaceGuid.PcdTdxSharedBitMask|0x0|UINT64|0x10000025
  
@@ -176,5 +176,5 @@ index 7809869e7d49..496849458db4 100644
  
    Status = This->ClearScreen (This);
 -- 
-2.39.2
+2.40.1
 
