@@ -1,0 +1,72 @@
+From 55a09dea67c8818d1c871af825307fb3b2b0ba4b Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Tue, 23 May 2023 10:25:51 +0200
+Subject: [PATCH 15/27] OvmfPkg/PlatformPei: drop S3Verification()
+
+Not needed any more, SMM + 64-bit PEI + S3 suspend works now.
+
+Fixed by commits:
+ - 8bd2028f9ac3 ("MdeModulePkg: Supporting S3 in 64bit PEI")
+ - 6acf72901a2e ("UefiCpuPkg: Supporting S3 in 64bit PEI")
+See also https://bugzilla.tianocore.org/show_bug.cgi?id=4195
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Laszlo Ersek <lersek@redhat.com>
+Reviewed-by: Ray Ni <ray.ni@intel.com>
+(cherry picked from commit 098c55702318fd907de6fad7b43b5e9a6ad9ff7f)
+---
+ OvmfPkg/PlatformPei/Platform.c | 31 -------------------------------
+ 1 file changed, 31 deletions(-)
+
+diff --git a/OvmfPkg/PlatformPei/Platform.c b/OvmfPkg/PlatformPei/Platform.c
+index 5d7f50cc5876..ce9868d57de1 100644
+--- a/OvmfPkg/PlatformPei/Platform.c
++++ b/OvmfPkg/PlatformPei/Platform.c
+@@ -242,36 +242,6 @@ ReserveEmuVariableNvStore (
+   ASSERT_RETURN_ERROR (PcdStatus);
+ }
+ 
+-STATIC
+-VOID
+-S3Verification (
+-  IN EFI_HOB_PLATFORM_INFO  *PlatformInfoHob
+-  )
+-{
+- #if defined (MDE_CPU_X64)
+-  if (PlatformInfoHob->SmmSmramRequire && PlatformInfoHob->S3Supported) {
+-    DEBUG ((
+-      DEBUG_ERROR,
+-      "%a: S3Resume2Pei doesn't support X64 PEI + SMM yet.\n",
+-      __func__
+-      ));
+-    DEBUG ((
+-      DEBUG_ERROR,
+-      "%a: Please disable S3 on the QEMU command line (see the README),\n",
+-      __func__
+-      ));
+-    DEBUG ((
+-      DEBUG_ERROR,
+-      "%a: or build OVMF with \"OvmfPkgIa32X64.dsc\".\n",
+-      __func__
+-      ));
+-    ASSERT (FALSE);
+-    CpuDeadLoop ();
+-  }
+-
+- #endif
+-}
+-
+ STATIC
+ VOID
+ Q35BoardVerification (
+@@ -366,7 +336,6 @@ InitializePlatform (
+     ASSERT_EFI_ERROR (Status);
+   }
+ 
+-  S3Verification (PlatformInfoHob);
+   BootModeInitialization (PlatformInfoHob);
+ 
+   //
+-- 
+2.40.1
+

@@ -95,6 +95,20 @@ Patch0011: 0011-CryptoPkg-OpensslLib-list-RHEL8-specific-OpenSSL-fil.patch
 Patch0012: 0012-OvmfPkg-QemuKernelLoaderFsDxe-suppress-error-on-no-k.patch
 Patch0013: 0013-SecurityPkg-Tcg2Dxe-suppress-error-on-no-swtpm-in-si.patch
 
+Patch0015: 0015-OvmfPkg-PlatformPei-drop-S3Verification.patch
+Patch0016: 0016-OvmfPkg-PciHotPlugInitDxe-Do-not-reserve-IO-ports-by.patch
+Patch0017: 0017-OvmfPkg-PlatformInitLib-check-PcdUse1GPageTable.patch
+Patch0018: 0018-OvmfPkg-OvmfPkgIa32X64-enable-1G-pages.patch
+Patch0019: 0019-OvmfPkg-MicrovmX64-enable-1G-pages.patch
+Patch0020: 0020-OvmfPkg-VirtioSerialDxe-use-TPL_NOTIFY.patch
+Patch0021: 0021-OvmfPkg-QemuFlashFvbServicesRuntimeDxe-refine-flash-.patch
+Patch0022: 0022-OvmfPkg-PlatformInitLib-limit-phys-bits-to-46.patch
+Patch0023: 0023-ArmVirt-add-VirtioSerialDxe-to-ArmVirtQemu-builds.patch
+Patch0024: 0024-ArmVirt-PlatformBootManagerLib-factor-out-IsVirtio.patch
+Patch0025: 0025-ArmVirt-PlatformBootManagerLib-factor-out-IsVirtioPc.patch
+Patch0026: 0026-ArmVirt-PlatformBootManagerLib-set-up-virtio-serial-.patch
+Patch0027: 0027-UefiCpuPkg-MpInitLib-fix-apic-mode-for-cpu-hotplug.patch
+
 
 # python3-devel and libuuid-devel are required for building tools.
 # python3-devel is also needed for varstore template generation and

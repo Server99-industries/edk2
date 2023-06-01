@@ -1,0 +1,31 @@
+From f1bbf3e4195bb21d4edfb2af8e940bceacc2ced4 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Wed, 17 May 2023 12:24:48 +0200
+Subject: [PATCH 18/27] OvmfPkg/OvmfPkgIa32X64: enable 1G pages
+
+Reduces the memory footprint and speeds up booting.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit b63e17d746aa6bab2b1101711395725005e71a02)
+---
+ OvmfPkg/OvmfPkgIa32X64.dsc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/OvmfPkg/OvmfPkgIa32X64.dsc b/OvmfPkg/OvmfPkgIa32X64.dsc
+index e37ec97fbc7a..2b2f8e3e84d3 100644
+--- a/OvmfPkg/OvmfPkgIa32X64.dsc
++++ b/OvmfPkg/OvmfPkgIa32X64.dsc
+@@ -557,6 +557,9 @@ [PcdsFixedAtBuild]
+   # never lets the RAM below 4 GB exceed 2816 MB.
+   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xE0000000
+ 
++  # use 1G pages
++  gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable|TRUE
++
+ !if $(SOURCE_DEBUG_ENABLE) == TRUE
+   gEfiSourceLevelDebugPkgTokenSpaceGuid.PcdDebugLoadImageMethod|0x2
+ !endif
+-- 
+2.40.1
+

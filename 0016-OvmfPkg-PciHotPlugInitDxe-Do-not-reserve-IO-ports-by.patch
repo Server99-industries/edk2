@@ -1,0 +1,47 @@
+From e54dd3f5c1ea0171317d9054d44b35d634ac4557 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Tue, 16 May 2023 11:47:58 +0200
+Subject: [PATCH 16/27] OvmfPkg/PciHotPlugInitDxe: Do not reserve IO ports by
+ default.
+
+Flip the default for IO address space reservations for PCI(e) bridges
+and root ports with hotplug support from TRUE to FALSE.
+
+PCI(e) bridges will still get IO address space assigned in case:
+
+  (a) Downstream devices actually need IO address space, or
+  (b) Explicit configuration, using "qemu -device
+      pcie-root-port,io-reserve=<size>".
+
+In case IO address space is exhausted edk2 will stop assigning resources
+to PCI(e) bridges.  This is not limited to IO resources, the affected
+bridges will not get any memory resources assigned either.
+
+This patch solves this issue by not handing out the scarce IO address
+space, which is not needed in most cases anyway.  Result is a more
+consistent PCI configuration in virtual machine configurations with many
+PCie root ports.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit 27727338b2c0e3f50eb0176a1044e903fcb3c3b1)
+---
+ OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.c b/OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.c
+index 6b2b6797b3b6..69903a600981 100644
+--- a/OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.c
++++ b/OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.c
+@@ -589,7 +589,7 @@ GetResourcePadding (
+     return EFI_INVALID_PARAMETER;
+   }
+ 
+-  DefaultIo       = TRUE;
++  DefaultIo       = FALSE;
+   DefaultMmio     = TRUE;
+   DefaultPrefMmio = TRUE;
+ 
+-- 
+2.40.1
+
