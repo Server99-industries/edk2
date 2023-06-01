@@ -1,0 +1,51 @@
+From 543497088c1356c408f1bf79c06ab64b5c35be6b Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Wed, 17 May 2023 12:24:47 +0200
+Subject: [PATCH 17/27] OvmfPkg/PlatformInitLib: check PcdUse1GPageTable
+
+If PcdUse1GPageTable is not enabled restrict the physical address space
+used to 1TB, to limit the amount of memory needed for identity mapping
+page tables.
+
+The same already happens in case the processor has no support for
+gigabyte pages.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit d4d24001f78bcee965d8854fba6f08f48b4ec446)
+---
+ OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf | 1 +
+ OvmfPkg/Library/PlatformInitLib/MemDetect.c         | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf b/OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf
+index 86a82ad3e084..5a79d95b689c 100644
+--- a/OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf
++++ b/OvmfPkg/Library/PlatformInitLib/PlatformInitLib.inf
+@@ -58,6 +58,7 @@ [LibraryClasses.X64]
+ 
+ [Pcd]
+   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
++  gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable
+ 
+ [FixedPcd]
+   gUefiOvmfPkgTokenSpaceGuid.PcdOvmfWorkAreaBase
+diff --git a/OvmfPkg/Library/PlatformInitLib/MemDetect.c b/OvmfPkg/Library/PlatformInitLib/MemDetect.c
+index acf90b4e93fd..1102b00ecbf0 100644
+--- a/OvmfPkg/Library/PlatformInitLib/MemDetect.c
++++ b/OvmfPkg/Library/PlatformInitLib/MemDetect.c
+@@ -663,6 +663,11 @@ PlatformAddressWidthFromCpuid (
+       PhysBits = 40;
+     }
+ 
++    if (!FixedPcdGetBool (PcdUse1GPageTable) && (PhysBits > 40)) {
++      DEBUG ((DEBUG_INFO, "%a: limit PhysBits to 40 (PcdUse1GPageTable is false)\n", __func__));
++      PhysBits = 40;
++    }
++
+     PlatformInfoHob->PhysMemAddressWidth = PhysBits;
+     PlatformInfoHob->FirstNonAddress     = LShiftU64 (1, PlatformInfoHob->PhysMemAddressWidth);
+   }
+-- 
+2.40.1
+
