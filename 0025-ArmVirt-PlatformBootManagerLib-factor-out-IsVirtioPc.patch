@@ -1,0 +1,90 @@
+From 7863796aacb5dc2acd852920bd33a3fec167c80b Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Thu, 1 Jun 2023 13:57:12 +0200
+Subject: [PATCH 25/27] ArmVirt/PlatformBootManagerLib: factor out
+ IsVirtioPci()
+
+IsVirtioPciRng() becomes just a thin wrapper for IsVirtioPci().
+This allows to add similar thin wrappers for other virtio
+devices in the future.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit aaf546879ab71722c36738ccc6f0f0ab4ecf5076)
+---
+ .../PlatformBootManagerLib/PlatformBm.c       | 30 ++++++++++++++-----
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
+index 5eb6f0f9c14a..ed38c42a43ee 100644
+--- a/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
++++ b/ArmVirtPkg/Library/PlatformBootManagerLib/PlatformBm.c
+@@ -313,15 +313,16 @@ IsVirtioRng (
+ }
+ 
+ /**
+-  This FILTER_FUNCTION checks if a handle corresponds to a Virtio RNG device at
+-  the EFI_PCI_IO_PROTOCOL level.
++  This function checks if a handle corresponds to the Virtio Device ID given
++  at the EFI_PCI_IO_PROTOCOL level.
+ **/
+ STATIC
+ BOOLEAN
+ EFIAPI
+-IsVirtioPciRng (
++IsVirtioPci (
+   IN EFI_HANDLE    Handle,
+-  IN CONST CHAR16  *ReportText
++  IN CONST CHAR16  *ReportText,
++  IN UINT16        VirtIoDeviceId
+   )
+ {
+   EFI_STATUS           Status;
+@@ -387,11 +388,11 @@ IsVirtioPciRng (
+   //
+   // From DeviceId and RevisionId, determine whether the device is a
+   // modern-only Virtio 1.0 device. In case of Virtio 1.0, DeviceId can
+-  // immediately be restricted to VIRTIO_SUBSYSTEM_ENTROPY_SOURCE, and
++  // immediately be restricted to VirtIoDeviceId, and
+   // SubsystemId will only play a sanity-check role. Otherwise, DeviceId can
+   // only be sanity-checked, and SubsystemId will decide.
+   //
+-  if ((DeviceId == 0x1040 + VIRTIO_SUBSYSTEM_ENTROPY_SOURCE) &&
++  if ((DeviceId == 0x1040 + VirtIoDeviceId) &&
+       (RevisionId >= 0x01))
+   {
+     Virtio10 = TRUE;
+@@ -419,7 +420,7 @@ IsVirtioPciRng (
+     return TRUE;
+   }
+ 
+-  if (!Virtio10 && (SubsystemId == VIRTIO_SUBSYSTEM_ENTROPY_SOURCE)) {
++  if (!Virtio10 && (SubsystemId == VirtIoDeviceId)) {
+     return TRUE;
+   }
+ 
+@@ -430,6 +431,21 @@ IsVirtioPciRng (
+   return FALSE;
+ }
+ 
++/**
++  This FILTER_FUNCTION checks if a handle corresponds to a Virtio RNG device at
++  the EFI_PCI_IO_PROTOCOL level.
++**/
++STATIC
++BOOLEAN
++EFIAPI
++IsVirtioPciRng (
++  IN EFI_HANDLE    Handle,
++  IN CONST CHAR16  *ReportText
++  )
++{
++  return IsVirtioPci (Handle, ReportText, VIRTIO_SUBSYSTEM_ENTROPY_SOURCE);
++}
++
+ /**
+   This CALLBACK_FUNCTION attempts to connect a handle non-recursively, asking
+   the matching driver to produce all first-level child handles.
+-- 
+2.40.1
+

@@ -1,0 +1,51 @@
+From 8372a31938eb57921bd8a9a5dd5d56b838b074a2 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Thu, 1 Jun 2023 08:08:03 +0200
+Subject: [PATCH 21/27] OvmfPkg/QemuFlashFvbServicesRuntimeDxe: refine flash
+ detection
+
+Flash can be write-protected in qemu (which is usually the case for
+code).  In case the variable store flash block is configured read-only
+ovmf wouldn't be able to store EFI variables there, so not setting up
+fvb in that case (and fallhack to emulation) is the better option.
+It'll avoid problems later due to flash writes failing.
+
+The patch tries to write back the original value read earlier, so flash
+content doesn't change in case the write succeeds.  But the status we
+read back after the attempt to write will tell us whenever flash is
+writable or not.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+(cherry picked from commit 578a715cfc6abc08ead8f585f096789374254b2a)
+---
+ OvmfPkg/QemuFlashFvbServicesRuntimeDxe/QemuFlash.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/QemuFlash.c b/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/QemuFlash.c
+index 54f859de9ff9..a577aea55614 100644
+--- a/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/QemuFlash.c
++++ b/OvmfPkg/QemuFlashFvbServicesRuntimeDxe/QemuFlash.c
+@@ -114,9 +114,17 @@ QemuFlashDetected (
+       DEBUG ((DEBUG_INFO, "QemuFlashDetected => FD behaves as RAM\n"));
+       *Ptr = OriginalUint8;
+     } else if (ProbeUint8 == CLEARED_ARRAY_STATUS) {
+-      DEBUG ((DEBUG_INFO, "QemuFlashDetected => FD behaves as FLASH\n"));
+-      FlashDetected = TRUE;
+-      *Ptr          = READ_ARRAY_CMD;
++      *Ptr       = WRITE_BYTE_CMD;
++      *Ptr       = OriginalUint8;
++      *Ptr       = READ_STATUS_CMD;
++      ProbeUint8 = *Ptr;
++      *Ptr       = READ_ARRAY_CMD;
++      if (ProbeUint8 & 0x10 /* programming error */) {
++        DEBUG ((DEBUG_INFO, "QemuFlashDetected => FD behaves as FLASH, write-protected\n"));
++      } else {
++        DEBUG ((DEBUG_INFO, "QemuFlashDetected => FD behaves as FLASH, writable\n"));
++        FlashDetected = TRUE;
++      }
+     }
+   }
+ 
+-- 
+2.40.1
+

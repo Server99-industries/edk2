@@ -1,0 +1,47 @@
+From cdb34f5003b9001d12d1841e8a4eeab9471ab928 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Thu, 1 Jun 2023 09:57:31 +0200
+Subject: [PATCH 22/27] OvmfPkg/PlatformInitLib: limit phys-bits to 46.
+
+Older linux kernels have problems with phys-bits larger than 46,
+ubuntu 18.04 (kernel 4.15) has been reported to be affected.
+
+Reduce phys-bits limit from 47 to 46.
+
+Reported-by: Fiona Ebner <f.ebner@proxmox.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+(cherry picked from commit c1e853769046b322690ad336fdb98966757e7414)
+---
+ OvmfPkg/Library/PlatformInitLib/MemDetect.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/OvmfPkg/Library/PlatformInitLib/MemDetect.c b/OvmfPkg/Library/PlatformInitLib/MemDetect.c
+index 1102b00ecbf0..662e7e85bbc5 100644
+--- a/OvmfPkg/Library/PlatformInitLib/MemDetect.c
++++ b/OvmfPkg/Library/PlatformInitLib/MemDetect.c
+@@ -646,16 +646,19 @@ PlatformAddressWidthFromCpuid (
+     ));
+ 
+   if (Valid) {
+-    if (PhysBits > 47) {
++    if (PhysBits > 46) {
+       /*
+        * Avoid 5-level paging altogether for now, which limits
+        * PhysBits to 48.  Also avoid using address bit 48, due to sign
+        * extension we can't identity-map these addresses (and lots of
+        * places in edk2 assume we have everything identity-mapped).
+        * So the actual limit is 47.
++       *
++       * Also some older linux kernels apparently have problems handling
++       * phys-bits > 46 correctly, so use that as limit.
+        */
+-      DEBUG ((DEBUG_INFO, "%a: limit PhysBits to 47 (avoid 5-level paging)\n", __func__));
+-      PhysBits = 47;
++      DEBUG ((DEBUG_INFO, "%a: limit PhysBits to 46 (avoid 5-level paging)\n", __func__));
++      PhysBits = 46;
+     }
+ 
+     if (!Page1GSupport && (PhysBits > 40)) {
+-- 
+2.40.1
+

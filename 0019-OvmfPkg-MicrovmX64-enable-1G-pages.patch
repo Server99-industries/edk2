@@ -1,0 +1,31 @@
+From 9c6bc52b413feda953158ad623237f6c9e7b533d Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Wed, 17 May 2023 12:24:49 +0200
+Subject: [PATCH 19/27] OvmfPkg/MicrovmX64: enable 1G pages
+
+Reduces the memory footprint and speeds up booting.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+(cherry picked from commit 04c5b3023e49c35d291f41d2c39b4d12a62b8f9c)
+---
+ OvmfPkg/Microvm/MicrovmX64.dsc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/OvmfPkg/Microvm/MicrovmX64.dsc b/OvmfPkg/Microvm/MicrovmX64.dsc
+index 02c225f6d2a7..b0acab41103b 100644
+--- a/OvmfPkg/Microvm/MicrovmX64.dsc
++++ b/OvmfPkg/Microvm/MicrovmX64.dsc
+@@ -544,6 +544,9 @@ [PcdsFixedAtBuild]
+   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiRuntimeServicesCode|0x100
+   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiRuntimeServicesData|0x100
+ 
++  # use 1G pages
++  gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable|TRUE
++
+   #
+   # Network Pcds
+   #
+-- 
+2.40.1
+
