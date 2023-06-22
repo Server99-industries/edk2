@@ -1,0 +1,77 @@
+From 40efdacf7f4f378c0acf95a73d1dcc5e200d42d8 Mon Sep 17 00:00:00 2001
+From: Oliver Steffen <osteffen@redhat.com>
+Date: Mon, 19 Jun 2023 22:32:25 +0200
+Subject: [PATCH 28/28] ArmPkg: Add Pcd to disable
+ EFI_MEMORY_ATTRIBUTE_PROTOCOL
+
+Recent versions of shim (15.6 and 15.7) crash when the newly added
+EFI_MEMORY_ATTRIBUTE_PROTOCOL is provided by the firmware.  To allow
+existing installations to boot, provide a workaround in form of a Pcd
+that allows tuning it off at build time (defaults to 'enabled').
+
+Additionally, check the return code of the protocol installation calls.
+
+Signed-off-by: Oliver Steffen <osteffen@redhat.com>
+Message-ID: <20230619203244.228933-1-osteffen@redhat.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ ArmPkg/ArmPkg.dec                |  3 +++
+ ArmPkg/Drivers/CpuDxe/CpuDxe.inf |  1 +
+ ArmPkg/Drivers/CpuDxe/CpuDxe.c   | 13 +++++++++++--
+ 3 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/ArmPkg/ArmPkg.dec b/ArmPkg/ArmPkg.dec
+index 2444457ae58a..625e45c3e0c0 100644
+--- a/ArmPkg/ArmPkg.dec
++++ b/ArmPkg/ArmPkg.dec
+@@ -167,6 +167,9 @@ [PcdsFixedAtBuild.common]
+   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|0xffff0000|UINT64|0x00000004
+   gArmTokenSpaceGuid.PcdCpuResetAddress|0x00000000|UINT32|0x00000005
+ 
++  # Enable/Disable EFI_MEMORY_ATTRIBUTE_PROTOCOL
++  gArmTokenSpaceGuid.PcdEnableEfiMemoryAttributeProtocol|FALSE|BOOLEAN|0x000000EE
++
+   #
+   # ARM Secure Firmware PCDs
+   #
+diff --git a/ArmPkg/Drivers/CpuDxe/CpuDxe.inf b/ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+index e732e21cb94a..1bad4ae160af 100644
+--- a/ArmPkg/Drivers/CpuDxe/CpuDxe.inf
++++ b/ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+@@ -64,6 +64,7 @@ [Guids]
+ 
+ [Pcd.common]
+   gArmTokenSpaceGuid.PcdVFPEnabled
++  gArmTokenSpaceGuid.PcdEnableEfiMemoryAttributeProtocol
+ 
+ [FeaturePcd.common]
+   gArmTokenSpaceGuid.PcdDebuggerExceptionSupport
+diff --git a/ArmPkg/Drivers/CpuDxe/CpuDxe.c b/ArmPkg/Drivers/CpuDxe/CpuDxe.c
+index d04958e79e52..ff7d735b2bde 100644
+--- a/ArmPkg/Drivers/CpuDxe/CpuDxe.c
++++ b/ArmPkg/Drivers/CpuDxe/CpuDxe.c
+@@ -244,10 +244,19 @@ CpuDxeInitialize (
+                   &mCpuHandle,
+                   &gEfiCpuArchProtocolGuid,
+                   &mCpu,
+-                  &gEfiMemoryAttributeProtocolGuid,
+-                  &mMemoryAttribute,
+                   NULL
+                   );
++  ASSERT_EFI_ERROR (Status);
++
++  if (PcdGetBool (PcdEnableEfiMemoryAttributeProtocol)) {
++    Status = gBS->InstallMultipleProtocolInterfaces (
++                    &mCpuHandle,
++                    &gEfiMemoryAttributeProtocolGuid,
++                    &mMemoryAttribute,
++                    NULL
++                    );
++    ASSERT_EFI_ERROR (Status);
++  }
+ 
+   //
+   // Make sure GCD and MMU settings match. This API calls gDS->SetMemorySpaceAttributes ()
+-- 
+2.41.0
+
