@@ -37,7 +37,7 @@ ExclusiveArch: x86_64 aarch64
 %define disable_werror %{defined fedora}
 
 
-Name:       edk2
+Name:       server99-edk2
 Version:    %{GITDATE}
 Release:    %autorelease
 Summary:    UEFI firmware for 64-bit virtual machines
