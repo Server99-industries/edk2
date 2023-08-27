@@ -86,6 +86,9 @@ Source83: edk2-build.rhel-9
 Source90: DBXUpdate-%{DBXDATE}.x64.bin
 Source91: DBXUpdate-%{DBXDATE}.ia32.bin
 
+# Logo source
+Source92: Logo.bmp
+
 Patch0001: 0001-BaseTools-do-not-build-BrotliCompress-RH-only.patch
 Patch0002: 0002-MdeModulePkg-remove-package-private-Brotli-include-p.patch
 Patch0003: 0003-MdeModulePkg-TerminalDxe-set-xterm-resolution-on-mod.patch
@@ -313,6 +316,9 @@ cp -a -- \
    %{SOURCE80} %{SOURCE81} %{SOURCE82} %{SOURCE83} \
    %{SOURCE90} %{SOURCE91} \
    .
+
+# Copy logo
+cp -a -- %{SOURCE92} MdeModulePkg/Logo/Logo.bmp
 
 %build
 
