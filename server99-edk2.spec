@@ -158,6 +158,7 @@ Summary:    UEFI firmware for x86_64 virtual machines
 BuildArch:  noarch
 Provides:   OVMF = %{version}-%{release}
 Obsoletes:  OVMF < 20180508-100.gitee3198e672e2.el7
+Conflicts:  edk2-ovmf
 
 # OVMF includes the Secure Boot and IPv6 features; it has a builtin OpenSSL
 # library.
