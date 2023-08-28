@@ -48,12 +48,12 @@ URL:        http://www.tianocore.org
 # COMMIT=bb1bba3d7767
 # git archive --format=tar --prefix=edk2-$COMMIT/ $COMMIT \
 # | xz -9ev >/tmp/edk2-$COMMIT.tar.xz
-Source0: edk2-%{GITCOMMIT}.tar.xz
-Source1: ovmf-whitepaper-c770f8c.txt
-Source2: openssl-rhel-d00c3c5b8a9d6d3ea3dabfcafdf36afd61ba8bcc.tar.xz
-Source3: softfloat-%{softfloat_version}.tar.xz
-Source4: edk2-platforms-7880b92e2a04.tar.xz
-Source5: jansson-2.13.1.tar.bz2
+Source0: https://src.fedoraproject.org/repo/pkgs/edk2/edk2-%{GITCOMMIT}.tar.xz
+Source1: https://src.fedoraproject.org/repo/pkgs/edk2/ovmf-whitepaper-c770f8c.txt
+Source2: https://src.fedoraproject.org/repo/pkgs/edk2/openssl-rhel-d00c3c5b8a9d6d3ea3dabfcafdf36afd61ba8bcc.tar.xz
+Source3: https://src.fedoraproject.org/repo/pkgs/edk2/softfloat-%{softfloat_version}.tar.xz
+Source4: https://src.fedoraproject.org/repo/pkgs/edk2/edk2-platforms-7880b92e2a04.tar.xz
+Source5: https://src.fedoraproject.org/repo/pkgs/edk2/jansson-2.13.1.tar.bz2
 
 # json description files
 Source10: 50-edk2-aarch64-qcow2.json
